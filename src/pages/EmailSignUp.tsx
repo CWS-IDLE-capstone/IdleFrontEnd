@@ -18,10 +18,31 @@ function EmailSignUp({navigation}: ScreenProps) {
   const toFinSignUp = useCallback(() => {
     navigation.navigate('FinishSignUp');
   }, [navigation]);
+  const [name, setName] = useState('');
   const [isCheckMan, setIsCheckMan] = useState(false);
   const [isCheckFem, setIsCheckFem] = useState(false);
-  const onCheck = () => {
-    setIsCheckMan((current: any) => !current);
+  const [email, setEmail] = useState('');
+  const onChangeName = payload => setName(payload);
+  const onSubmitName = () => {
+    alert(name);
+    console.log(name);
+  };
+  const onCheckMan = () => {
+    setIsCheckMan(true);
+    if (isCheckFem === true) {
+      setIsCheckFem(current => !current);
+    }
+  };
+  const onCheckFem = () => {
+    setIsCheckFem(true);
+    if (isCheckMan === true) {
+      setIsCheckMan(current => !current);
+    }
+  };
+  const onChangeEmail = (payload: React.SetStateAction<string>) =>
+    setEmail(payload);
+  const onSubmitEmail = () => {
+    alert(email);
   };
   return (
     <KeyboardAwareScrollView>
@@ -31,23 +52,28 @@ function EmailSignUp({navigation}: ScreenProps) {
       <View style={styles.container2}>
         <View style={styles.nameView1}>
           <Text style={styles.nameText}>이름</Text>
-          <TextInput style={styles.nameInput} placeholder="이름입력칸" />
+          <TextInput
+            style={styles.nameInput}
+            placeholder="이름입력칸"
+            onChangeText={onChangeName}
+            onSubmitEditing={onSubmitName}
+          />
           <Text style={styles.sexText}>성별</Text>
           <TouchableOpacity
             style={[
               styles.sexManBtn,
-              {backgroundColor: isCheckMan ? 'green' : 'white'},
+              {backgroundColor: isCheckMan ? 'lightskyblue' : 'white'},
             ]}>
-            <Text style={styles.sexManText} onPress={onCheck}>
+            <Text style={styles.sexManText} onPress={onCheckMan}>
               남
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
               styles.sexFemBtn,
-              {backgroundColor: isCheckMan ? 'white' : 'green'},
+              {backgroundColor: isCheckFem ? 'lightskyblue' : 'white'},
             ]}>
-            <Text style={styles.sexFemText} onPress={onCheck}>
+            <Text style={styles.sexFemText} onPress={onCheckFem}>
               여
             </Text>
           </TouchableOpacity>
@@ -55,7 +81,12 @@ function EmailSignUp({navigation}: ScreenProps) {
         <View style={styles.emailViewContainer}>
           <View style={styles.emailView}>
             <Text style={styles.emailText}>이메일</Text>
-            <TextInput style={styles.emailInput} />
+            <TextInput
+              style={styles.emailInput}
+              onChangeText={onChangeEmail}
+              onSubmitEditing={onSubmitEmail}
+              keyboardType="email-address"
+            />
           </View>
           <TouchableOpacity>
             <Text style={styles.emailBtn}>이메일 인증</Text>
@@ -97,6 +128,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     paddingBottom: 10,
     marginBottom: 10,
+    marginTop: 50,
   },
   container2: {
     flex: 1,

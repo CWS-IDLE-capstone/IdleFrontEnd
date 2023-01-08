@@ -27,6 +27,7 @@ function SignUp({navigation}: ScreenProps) {
           <Button color="green" title="네이버로 시작하기" />
           <Text />
           <Button title="구글로 시작하기" />
+          <Button title="카카오로 시작하기" />
         </View>
         <View style={styles.contain3}>
           <TouchableOpacity activeOpacity={0.9} onPress={toEmailSignUp}>

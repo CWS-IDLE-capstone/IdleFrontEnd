@@ -12,6 +12,7 @@ import Login from './src/pages/Login';
 export type RootStackParamList = {
   Start: undefined;
   SignUp: undefined;
+  Login: undefined;
   EmailSignUp: undefined;
   FinishSignUp: undefined;
 };

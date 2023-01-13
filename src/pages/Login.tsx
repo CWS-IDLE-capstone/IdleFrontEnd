@@ -1,6 +1,14 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useCallback} from 'react';
-import {Pressable, Text, View, Button, Alert, TextInput, StyleSheet } from 'react-native';
+import {
+  Pressable,
+  Text,
+  View,
+  Button,
+  Alert,
+  TextInput,
+  StyleSheet,
+} from 'react-native';
 import {RootStackParamList} from '../../App';
 
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
@@ -13,8 +21,8 @@ function Login({navigation}: ScreenProps) {
     <>
       <View>
         <Text>Login</Text>
-        <TextInput  placeholder="Email" />
-        <TextInput  placeholder="Password" />
+        <TextInput placeholder="Email" />
+        <TextInput placeholder="Password" />
 
         <Button title="Login" onPress={toStart} />
         <Button title="구글 로그인" onPress={toStart} />
@@ -22,9 +30,9 @@ function Login({navigation}: ScreenProps) {
         <Button title="카카오 로그인" onPress={toStart} />
 
         <Pressable>
-            <Text onPress = {() => navigation.navigate('SignUp')}>
-                Don't have account?  Sign up
-            </Text>
+          <Text onPress={() => navigation.navigate('SignUp')}>
+            Don't have account? Sign up
+          </Text>
         </Pressable>
       </View>
     </>

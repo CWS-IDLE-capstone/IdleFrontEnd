@@ -3,7 +3,11 @@ import React, {useCallback} from 'react';
 import {Pressable, Text, View, Button} from 'react-native';
 import {RootStackParamList} from '../../App';
 
-type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
+type ScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'SignUp',
+  'Login'
+>;
 
 function Start({navigation}: ScreenProps) {
   const toSignUp = useCallback(() => {
@@ -12,7 +16,7 @@ function Start({navigation}: ScreenProps) {
   return (
     <>
       <View>
-        <Button title="Login" onPress = {() => navigation.navigate('Login')}/>
+        <Button title="Login" onPress={() => navigation.navigate('Login')} />
         <Text>or</Text>
         <Button title="Create Account" onPress={toSignUp} />
       </View>

@@ -1,8 +1,11 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useCallback} from 'react';
 import {
+  Alert,
   Button,
+  Image,
   KeyboardAvoidingView,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -16,6 +19,13 @@ function SignUp({navigation}: ScreenProps) {
   const toEmailSignUp = useCallback(() => {
     navigation.navigate('EmailSignUp');
   }, [navigation]);
+
+  const onKaKaoSignUp = () => {
+    Alert.alert('login', '카카오로 로그인하기', [
+      {text: 'Cancel'},
+      {text: 'OK'},
+    ]);
+  };
   return (
     <>
       <View style={styles.container}>
@@ -27,7 +37,12 @@ function SignUp({navigation}: ScreenProps) {
           <Button color="green" title="네이버로 시작하기" />
           <Text />
           <Button title="구글로 시작하기" />
-          <Button title="카카오로 시작하기" />
+          <Pressable onPress={onKaKaoSignUp}>
+            <Image
+              style={styles.img}
+              source={require('../assets/kakao_login_medium_wide.png')}
+            />
+          </Pressable>
         </View>
         <View style={styles.contain3}>
           <TouchableOpacity activeOpacity={0.9} onPress={toEmailSignUp}>
@@ -62,6 +77,10 @@ const styles = StyleSheet.create({
     borderTopColor: '#778899',
     borderStyle: 'dashed',
     paddingTop: 10,
+  },
+  img: {
+    alignSelf: 'center',
+    marginTop: 10,
   },
   mainText: {fontSize: 35, fontWeight: 'bold', color: 'black'},
   subText: {fontSize: 20, color: 'black'},

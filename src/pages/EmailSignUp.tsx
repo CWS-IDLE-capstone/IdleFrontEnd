@@ -1,5 +1,6 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useCallback, useState} from 'react';
+import SignTextInput from '../components/signTextInput';
 import {
   TextInput,
   Text,
@@ -10,31 +11,32 @@ import {
 } from 'react-native';
 import {RootStackParamList} from '../../App';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
-
+// import Config from 'react-native-config';
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'FinishSignUp'>;
 const {width: WIDTH} = Dimensions.get('window');
 
 function EmailSignUp({navigation}: ScreenProps) {
-  const toFinSignUp = useCallback(() => {
-    navigation.navigate('FinishSignUp');
-  }, [navigation]);
   const [name, setName] = useState('');
   const [isCheckMan, setIsCheckMan] = useState(false);
-  const [isCheckFem, setIsCheckFem] = useState(false);
+  const [isCheckWoman, setIsCheckWoman] = useState(false);
   const [email, setEmail] = useState('');
-  const onChangeName = payload => setName(payload);
+  const [password, setPassword] = useState('');
+  const [checkPass, setCheckPass] = useState('');
+
+  const onChangeName = (payload: React.SetStateAction<string>) =>
+    setName(payload);
   const onSubmitName = () => {
     alert(name);
     console.log(name);
   };
   const onCheckMan = () => {
     setIsCheckMan(true);
-    if (isCheckFem === true) {
-      setIsCheckFem(current => !current);
+    if (isCheckWoman === true) {
+      setIsCheckWoman(current => !current);
     }
   };
-  const onCheckFem = () => {
-    setIsCheckFem(true);
+  const onCheckWoman = () => {
+    setIsCheckWoman(true);
     if (isCheckMan === true) {
       setIsCheckMan(current => !current);
     }
@@ -44,6 +46,20 @@ function EmailSignUp({navigation}: ScreenProps) {
   const onSubmitEmail = () => {
     alert(email);
   };
+  const onChangePass = (payload: React.SetStateAction<string>) => {
+    setPassword(payload);
+  };
+  const onCheckPass = (payload: React.SetStateAction<string>) => {
+    setCheckPass(payload);
+  };
+  const toFinSignUp = useCallback(() => {
+    if (password === checkPass) {
+      navigation.navigate('FinishSignUp');
+    }
+  }, [checkPass, navigation, password]);
+  // const toFinSignUp = useCallback(async () => {
+  //   console.log(Config.API_URL);
+  // }, []);
   return (
     <KeyboardAwareScrollView>
       <View style={styles.container}>
@@ -63,49 +79,64 @@ function EmailSignUp({navigation}: ScreenProps) {
             style={[
               styles.sexManBtn,
               {backgroundColor: isCheckMan ? 'lightskyblue' : 'white'},
-            ]}>
-            <Text style={styles.sexManText} onPress={onCheckMan}>
-              남
-            </Text>
+            ]}
+            onPress={onCheckMan}>
+            <Text style={styles.sexManText}>남</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
               styles.sexFemBtn,
-              {backgroundColor: isCheckFem ? 'lightskyblue' : 'white'},
-            ]}>
-            <Text style={styles.sexFemText} onPress={onCheckFem}>
-              여
-            </Text>
+              {backgroundColor: isCheckWoman ? 'lightskyblue' : 'white'},
+            ]}
+            onPress={onCheckWoman}>
+            <Text style={styles.sexFemText}>여</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.emailViewContainer}>
           <View style={styles.emailView}>
             <Text style={styles.emailText}>이메일</Text>
-            <TextInput
-              style={styles.emailInput}
+            <SignTextInput
+              placeholder="이메일 입력칸"
               onChangeText={onChangeEmail}
-              onSubmitEditing={onSubmitEmail}
+              // onSubmitEditing={onSubmitEmail}
               keyboardType="email-address"
+              textContentType="password"
+              secureTextEntry
             />
           </View>
-          <TouchableOpacity>
-            <Text style={styles.emailBtn}>이메일 인증</Text>
+          <TouchableOpacity onPress={onSubmitEmail}>
+            <Text
+              style={[
+                styles.emailBtn,
+                {
+                  backgroundColor:
+                    email.length < 6 ? 'lightgray' : 'lightskyblue',
+                },
+              ]}>
+              이메일 인증
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
       <View style={styles.container3}>
         <View style={styles.passView1}>
           <Text style={styles.passText}>비밀번호</Text>
-          <TextInput
-            style={styles.passInput}
+          <SignTextInput
+            placeholder="비밀번호 입력칸"
+            onChangeText={onChangePass}
+            onSubmitEditing={undefined}
+            keyboardType={undefined}
             textContentType="password"
             secureTextEntry
           />
         </View>
         <View style={styles.passView2}>
           <Text style={styles.passChkText}>비밀번호 확인</Text>
-          <TextInput
-            style={styles.passChkInput}
+          <SignTextInput
+            placeholder="비밀번호확인 입력칸"
+            onChangeText={onCheckPass}
+            onSubmitEditing={undefined}
+            keyboardType={undefined}
             textContentType="password"
             secureTextEntry
           />
@@ -113,7 +144,13 @@ function EmailSignUp({navigation}: ScreenProps) {
       </View>
       <View style={styles.signView}>
         <TouchableOpacity activeOpacity={0.9} onPress={toFinSignUp}>
-          <Text style={styles.signBtn}>회원가입</Text>
+          <Text
+            style={[
+              styles.signBtn,
+              {backgroundColor: onChangePass ? 'lightgray' : 'lightskyblue'},
+            ]}>
+            회원가입
+          </Text>
         </TouchableOpacity>
       </View>
     </KeyboardAwareScrollView>
@@ -142,7 +179,7 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     marginLeft: 20,
     marginRight: 20,
-    borderTopColor: 'black',
+    borderTopColor: '#778899',
     borderTopWidth: 1,
     borderStyle: 'dashed',
   },
@@ -221,13 +258,6 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     textAlignVertical: 'center',
   },
-  emailInput: {
-    backgroundColor: 'white',
-    marginLeft: 15,
-    width: WIDTH * 0.67,
-    borderWidth: 1,
-    borderRadius: 3,
-  },
   emailBtn: {
     backgroundColor: 'skyblue',
     width: WIDTH * 0.8,
@@ -249,13 +279,6 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     textAlignVertical: 'center',
   },
-  passInput: {
-    backgroundColor: 'white',
-    width: WIDTH * 0.67,
-    marginLeft: 15,
-    borderWidth: 1,
-    borderRadius: 3,
-  },
   //--//
   passView2: {
     flexDirection: 'row',
@@ -266,15 +289,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     textAlignVertical: 'center',
   },
-  passChkInput: {
-    backgroundColor: 'white',
-    width: WIDTH * 0.67,
-    marginLeft: 15,
-    borderWidth: 1,
-    borderRadius: 3,
-  },
   //--//
-
   signBtn: {
     backgroundColor: 'lightgray',
     width: WIDTH * 0.8,
@@ -284,7 +299,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textAlignVertical: 'center',
     borderRadius: 15,
-    marginTop: 10,
+    marginTop: 40,
     marginBottom: 5,
   },
 });

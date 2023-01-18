@@ -1,8 +1,17 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import {Dimensions, StyleSheet, TextInput} from 'react-native';
 
 const {width: WIDTH} = Dimensions.get('window');
+
+type props = {
+  placeholder: any;
+  onChangeText: any;
+  onSubmitEditing: any;
+  keyboardType: any;
+  textContentType: any;
+  secureTextEntry: any;
+  value: any;
+};
 function SignTextInput({
   onChangeText,
   placeholder,
@@ -10,7 +19,8 @@ function SignTextInput({
   keyboardType,
   textContentType,
   secureTextEntry,
-}) {
+  value,
+}: props) {
   return (
     <TextInput
       style={styles.textInput}
@@ -20,6 +30,7 @@ function SignTextInput({
       keyboardType={keyboardType}
       textContentType={textContentType}
       secureTextEntry={secureTextEntry}
+      value={value}
     />
   );
 }

@@ -8,17 +8,21 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from 'react-native';
 import {RootStackParamList} from '../../App';
+import axios, {AxiosError} from 'axios';
+import Config from 'react-native-config';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
+import SignBtn from '../components/signBtn';
 // import Config from 'react-native-config';
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'FinishSignUp'>;
 const {width: WIDTH} = Dimensions.get('window');
 
 function EmailSignUp({navigation}: ScreenProps) {
   const [name, setName] = useState('');
-  const [isCheckMan, setIsCheckMan] = useState(false);
-  const [isCheckWoman, setIsCheckWoman] = useState(false);
+  const [isCheckMan, setIsCheckMan] = useState<String>('0');
+  const [sex, setSex] = useState<String>('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [checkPass, setCheckPass] = useState('');
@@ -30,21 +34,19 @@ function EmailSignUp({navigation}: ScreenProps) {
     console.log(name);
   };
   const onCheckMan = () => {
-    setIsCheckMan(true);
-    if (isCheckWoman === true) {
-      setIsCheckWoman(current => !current);
-    }
+    setIsCheckMan('1');
+    setSex('man');
   };
   const onCheckWoman = () => {
-    setIsCheckWoman(true);
-    if (isCheckMan === true) {
-      setIsCheckMan(current => !current);
-    }
+    setIsCheckMan('2');
+
+    setSex('woman');
   };
   const onChangeEmail = (payload: React.SetStateAction<string>) =>
     setEmail(payload);
   const onSubmitEmail = () => {
     alert(email);
+    console.log(name, sex, email);
   };
   const onChangePass = (payload: React.SetStateAction<string>) => {
     setPassword(payload);
@@ -52,14 +54,45 @@ function EmailSignUp({navigation}: ScreenProps) {
   const onCheckPass = (payload: React.SetStateAction<string>) => {
     setCheckPass(payload);
   };
-  const toFinSignUp = useCallback(() => {
-    if (password === checkPass) {
-      navigation.navigate('FinishSignUp');
+  const toFinSignUp = useCallback(async () => {
+    if (!password || !checkPass) {
+      return Alert.alert('비밀번호를 확인해주세요');
     }
-  }, [checkPass, navigation, password]);
-  // const toFinSignUp = useCallback(async () => {
-  //   console.log(Config.API_URL);
-  // }, []);
+    if (
+      !/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/.test(
+        email,
+      )
+    ) {
+      return Alert.alert('알림', '올바른 이메일 주소가 아닙니다.');
+    }
+    if (password !== checkPass) {
+      Alert.alert('비밀번호가 다릅니다');
+    }
+    if (password === checkPass) {
+      console.log(name, sex, email, password);
+      console.log(Config.API_URL);
+      try {
+        const response = await axios
+          .post(`${Config.API_URL}/api/book`, {
+            name,
+            sex,
+            email,
+            password,
+          })
+          .then(response1 => {
+            console.log(response1);
+          });
+        navigation.navigate('FinishSignUp');
+      } catch (error) {
+        const errorResponse = (error as AxiosError<{message: string}>).response;
+        console.error(errorResponse);
+        if (errorResponse) {
+          Alert.alert('알림', errorResponse.data.message);
+        }
+      } finally {
+      }
+    }
+  }, [checkPass, name, sex, email, password, navigation]);
   return (
     <KeyboardAwareScrollView>
       <View style={styles.container}>
@@ -78,7 +111,7 @@ function EmailSignUp({navigation}: ScreenProps) {
           <TouchableOpacity
             style={[
               styles.sexManBtn,
-              {backgroundColor: isCheckMan ? 'lightskyblue' : 'white'},
+              {backgroundColor: isCheckMan === '1' ? 'lightskyblue' : 'white'},
             ]}
             onPress={onCheckMan}>
             <Text style={styles.sexManText}>남</Text>
@@ -86,7 +119,7 @@ function EmailSignUp({navigation}: ScreenProps) {
           <TouchableOpacity
             style={[
               styles.sexFemBtn,
-              {backgroundColor: isCheckWoman ? 'lightskyblue' : 'white'},
+              {backgroundColor: isCheckMan === '2' ? 'lightskyblue' : 'white'},
             ]}
             onPress={onCheckWoman}>
             <Text style={styles.sexFemText}>여</Text>
@@ -98,25 +131,15 @@ function EmailSignUp({navigation}: ScreenProps) {
             <SignTextInput
               placeholder="이메일 입력칸"
               onChangeText={onChangeEmail}
-              // onSubmitEditing={onSubmitEmail}
+              onSubmitEditing={undefined}
               keyboardType="email-address"
-              textContentType="password"
+              textContentType="emailAddress"
               secureTextEntry
+              value={email}
             />
           </View>
-          <TouchableOpacity onPress={onSubmitEmail}>
-            <Text
-              style={[
-                styles.emailBtn,
-                {
-                  backgroundColor:
-                    email.length < 6 ? 'lightgray' : 'lightskyblue',
-                },
-              ]}>
-              이메일 인증
-            </Text>
-          </TouchableOpacity>
         </View>
+        <SignBtn text="이메일 확인" onPress={onSubmitEmail} />
       </View>
       <View style={styles.container3}>
         <View style={styles.passView1}>
@@ -128,6 +151,7 @@ function EmailSignUp({navigation}: ScreenProps) {
             keyboardType={undefined}
             textContentType="password"
             secureTextEntry
+            value={password}
           />
         </View>
         <View style={styles.passView2}>
@@ -139,19 +163,12 @@ function EmailSignUp({navigation}: ScreenProps) {
             keyboardType={undefined}
             textContentType="password"
             secureTextEntry
+            value={undefined}
           />
         </View>
       </View>
       <View style={styles.signView}>
-        <TouchableOpacity activeOpacity={0.9} onPress={toFinSignUp}>
-          <Text
-            style={[
-              styles.signBtn,
-              {backgroundColor: onChangePass ? 'lightgray' : 'lightskyblue'},
-            ]}>
-            회원가입
-          </Text>
-        </TouchableOpacity>
+        <SignBtn activeOpacity={0.9} onPress={toFinSignUp} text="회원가입" />
       </View>
     </KeyboardAwareScrollView>
   );
@@ -162,7 +179,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#778899',
     borderStyle: 'dashed',
-    justifyContent: 'flex-end',
+    justifyemail: 'flex-end',
     paddingBottom: 10,
     marginBottom: 10,
     marginTop: 50,
@@ -220,8 +237,7 @@ const styles = StyleSheet.create({
   sexManBtn: {
     backgroundColor: 'white',
     width: WIDTH * 0.13,
-    height: 38,
-    justifyContent: 'center',
+    justifyemail: 'center',
     marginLeft: 10,
     borderColor: 'black',
     borderWidth: 1,
@@ -229,14 +245,16 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 3,
   },
   sexManText: {
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+    height: 50.7,
+    textAlignVertical: 'center',
   },
   sexFemBtn: {
     backgroundColor: 'white',
     width: WIDTH * 0.13,
-    height: 38,
-    justifyContent: 'center',
+    justifyemail: 'center',
     borderColor: 'black',
     borderTopWidth: 1,
     borderRightWidth: 1,
@@ -245,8 +263,11 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 3,
   },
   sexFemText: {
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+    height: 50.7,
+    textAlignVertical: 'center',
   },
   emailViewContainer: {},
   //--//
@@ -257,18 +278,6 @@ const styles = StyleSheet.create({
     width: WIDTH * 0.2,
     textAlign: 'right',
     textAlignVertical: 'center',
-  },
-  emailBtn: {
-    backgroundColor: 'skyblue',
-    width: WIDTH * 0.8,
-    height: 35,
-    alignSelf: 'flex-end',
-    color: 'white',
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    borderRadius: 15,
-    marginTop: 10,
-    marginBottom: 5,
   },
   //--//
   passView1: {
@@ -290,17 +299,5 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
   },
   //--//
-  signBtn: {
-    backgroundColor: 'lightgray',
-    width: WIDTH * 0.8,
-    height: 40,
-    alignSelf: 'flex-end',
-    color: 'white',
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    borderRadius: 15,
-    marginTop: 40,
-    marginBottom: 5,
-  },
 });
 export default EmailSignUp;

@@ -8,13 +8,16 @@ import SignUp from './src/pages/SignUp';
 import Start from './src/pages/Start';
 import Welcome from './src/pages/Welcome';
 import Login from './src/pages/Login';
+import Main from './src/pages/Main';
 
 export type RootStackParamList = {
+  Welcome: undefined;
   Start: undefined;
   SignUp: undefined;
   Login: undefined;
   EmailSignUp: undefined;
   FinishSignUp: undefined;
+  Main: undefined;
 };
 const Stack = createNativeStackNavigator<RootStackParamList>();
 function App() {
@@ -28,6 +31,7 @@ function App() {
           <Stack.Screen name="SignUp" component={SignUp} />
           <Stack.Screen name="EmailSignUp" component={EmailSignUp} />
           <Stack.Screen name="FinishSignUp" component={FinishSignUp} />
+          <Stack.Screen name="Main" component={Main} />
         </Stack.Navigator>
         {/* <EmailSignUp /> */}
         {/*  */}

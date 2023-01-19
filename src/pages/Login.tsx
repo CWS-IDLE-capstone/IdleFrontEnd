@@ -13,15 +13,18 @@ import {
   Dimensions,
   ImageBackground
 } from 'react-native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import { RootStackParamList } from '../../App';
 import axios, { AxiosError } from 'axios';
 import Config from 'react-native-config';
 import DaonBtn from '../components/daonBtn';
+import Hyperlink from 'react-native-hyperlink';
+import openURL from '../../openUrl';
+import { Linking } from "react-native";
 
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
 function Login({ navigation }: ScreenProps) {
+  const NAVER_LINK = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=ZJgU_ewa3JbBsSyXwPJG&redirect_uri=http://localhost:8081/login/oauth2/code/naver&state=test";
   const toMain = useCallback(() => {
     navigation.navigate('Main');
   }, [navigation]);
@@ -38,8 +41,10 @@ function Login({ navigation }: ScreenProps) {
 
           <View style={{flex:1}}>
             <View>
-              <TouchableOpacity style={styles.row} onPress={toMain}>
-                <Text style={styles.naverLogin}>네이버 로그인</Text>
+              <TouchableOpacity style={styles.row}>
+                <Hyperlink >
+                  <Text style={styles.naverLogin} onPress={() => Linking.openURL(`${NAVER_LINK}`)}>네이버 로그인</Text>
+                </Hyperlink>
                 <Text style={styles.googleLogin}>구글 로그인</Text>
               </TouchableOpacity>
               <Pressable>

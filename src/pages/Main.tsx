@@ -9,7 +9,7 @@ function Main({navigation}: ScreenProps) {
   return (
     <>
       <View>
-        <Text style = {{fontSize: 100}}>메인 화면</Text>
+        <Text style = {{alignSelf:'center', marginTop:220 ,fontSize: 60}}>메인 화면</Text>
       </View>
     </>
   );

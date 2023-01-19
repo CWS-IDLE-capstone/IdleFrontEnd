@@ -13,6 +13,7 @@ import {
   Dimensions,
   ImageBackground
 } from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import { RootStackParamList } from '../../App';
 import axios, { AxiosError } from 'axios';
 import Config from 'react-native-config';
@@ -25,7 +26,6 @@ function Login({ navigation }: ScreenProps) {
     navigation.navigate('Main');
   }, [navigation]);
   return (
-    <>
       <View style={styles.header}>
         <ImageBackground source={require("../assets/bg1.jpg")} style={styles.bgImage}>
 
@@ -48,13 +48,10 @@ function Login({ navigation }: ScreenProps) {
                 </Text>
               </Pressable>
             </View>
-            
-            
           </View>
 
         </ImageBackground>
       </View>
-    </>
   );
 }
 

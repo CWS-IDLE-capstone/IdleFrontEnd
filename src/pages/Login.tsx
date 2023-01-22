@@ -25,6 +25,7 @@ type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
 function Login({ navigation }: ScreenProps) {
   const NAVER_LINK = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=ZJgU_ewa3JbBsSyXwPJG&redirect_uri=http://localhost:8081/login/oauth2/code/naver&state=test";
+  const KAKAO_LINK = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=66b908073e71736afd522a9e0c71871d&redirect_uri=http://localhost:8080/login/oauth2/code/kakao";
   const toMain = useCallback(() => {
     navigation.navigate('Main');
   }, [navigation]);
@@ -45,7 +46,7 @@ function Login({ navigation }: ScreenProps) {
                 <Hyperlink >
                   <Text style={styles.naverLogin} onPress={() => Linking.openURL(`${NAVER_LINK}`)}>네이버 로그인</Text>
                 </Hyperlink>
-                <Text style={styles.googleLogin}>구글 로그인</Text>
+                <Text style={styles.googleLogin} onPress={() => Linking.openURL(`${KAKAO_LINK}`)}>카카오 로그인</Text>
               </TouchableOpacity>
               <Pressable>
                 <Text style={styles.lastline} onPress={() => navigation.navigate('SignUp')}>
@@ -85,10 +86,10 @@ const styles = StyleSheet.create({
     //alignSelf: 'flex-end',
     marginTop: 30,
     marginBottom: 5,
-    backgroundColor: '#4285F4',
+    backgroundColor: '#fae100',
     width: 150,
     height: 40,
-    color: 'white',
+    color: 'black',
     textAlign: 'center',
     textAlignVertical: 'center',
     borderRadius: 77,

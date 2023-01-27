@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import SignTextInput from '../components/signTextInput';
 import {
   TextInput,
@@ -15,9 +15,6 @@ import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import SignBtn from '../components/signBtn';
-import {sendEmail, sentEmail, signIn, signUp} from '../components/auth';
-import {getAuth, sendEmailVerification} from 'firebase/auth';
-import {firebase} from '@react-native-firebase/auth';
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'FinishSignUp'>;
 const {width: WIDTH} = Dimensions.get('window');
 
@@ -26,13 +23,16 @@ function EmailSignUp({navigation}: ScreenProps) {
   const [isCheckMan, setIsCheckMan] = useState<String>('0');
   const [sex, setSex] = useState<String>('');
   const [email, setEmail] = useState('');
+  const [verifyNum, setVerifyNum] = useState('');
+  const [verifyUserNum, setVerifyUserNum] = useState('');
+  const [verify, setVerify] = useState(false);
   const [password, setPassword] = useState('');
   const [checkPass, setCheckPass] = useState('');
 
   const onChangeName = (payload: React.SetStateAction<string>) =>
     setName(payload);
   const onSubmitName = () => {
-    alert(name);
+    Alert.alert(name);
     console.log(name);
   };
   const onCheckMan = () => {
@@ -47,67 +47,38 @@ function EmailSignUp({navigation}: ScreenProps) {
   const onChangeEmail = (payload: React.SetStateAction<string>) =>
     setEmail(payload);
   const onSubmitEmail = async () => {
-    // console.log(name, sex, email);
+    console.log(email);
     try {
-      // const actionCodeSettings = {
-      //   handleCodeInApp: true,
-      //   url: 'https://idlefrontend.page.link/n3UL',
-      //   android: {
-      //     packageName: 'com.idlefrontend',
-      //     installApp: true,
-      //     minimumVersion: '12',
-      //   },
-      //   // dynamicLinkDomain: 'https://idlefrontend.page.link/n3UL',
-      // };
-      const {user} = await signUp({email, password});
-      // const {user} = await sendEmail({email, actionCodeSettings});
-      await user.sendEmailVerification();
-      console.log(email);
-      console.log(user);
-      return true;
+      const send = await axios
+        .post(`${Config.API_URL}/api/verify`, {
+          email,
+        })
+        .then(() => {
+          console.log(send);
+        });
     } catch (error) {
       console.log(error);
-      switch (error.code) {
-        case 'auth/email-already-in-use': {
-          return console.log('이미 사용중인 이메일입니다.');
-        }
-        case 'auth/invalid-email': {
-          return console.log('이메일을 입력해주세요');
-        }
-        case 'auth/weak-password': {
-          return console.log(
-            '안전하지 않은 짧은 비밀번호입니다.\n다른 비밀번호를 사용해 주세요.',
-          );
-        }
-        case 'auth/operation-not-allowed': {
-          return console.log('operation-not-allowed \n관리자에게 문의하세요 ');
-        }
-      }
-      console.log('error1 = ', error.code);
     }
+    return setVerifyUserNum;
   };
   const onSubmitEmail1 = () => {
-    const user = firebase.auth().currentUser;
-    // console.log(setUsers);
-    console.log(user);
-    console.log(user?.emailVerified);
-    console.log('새로고침');
+    console.log('재전송');
   };
-  const onSubmitEmail2 = async () => {
-    const user = firebase.auth().currentUser;
-    try {
-      await user?.sendEmailVerification();
-      console.log('인증 메일 재 전송 완료');
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const onChangePass = (payload: React.SetStateAction<string>) => {
+  const onVerifyNum = useCallback(
+    text => {
+      setVerifyNum(text);
+      if (verifyUserNum === verifyNum) {
+        console.log('이메일 인증 번호 일치');
+        setVerify(true);
+        console.log(verify);
+      }
+    },
+    [verifyUserNum, verifyNum, verify],
+  );
+  const onChangePass = (payload: React.SetStateAction<string>) =>
     setPassword(payload);
-  };
-  const onCheckPass = (payload: React.SetStateAction<string>) => {
+  const onCheckPass = (payload: React.SetStateAction<string>) =>
     setCheckPass(payload);
-  };
   const toFinSignUp = useCallback(async () => {
     if (!password || !checkPass) {
       return Alert.alert('비밀번호를 확인해주세요');
@@ -122,7 +93,7 @@ function EmailSignUp({navigation}: ScreenProps) {
     if (password !== checkPass) {
       Alert.alert('비밀번호가 다릅니다');
     }
-    if (password === checkPass) {
+    if (password === checkPass && verify === true) {
       console.log(name, sex, email, password);
       console.log(Config.API_URL);
       try {
@@ -133,8 +104,8 @@ function EmailSignUp({navigation}: ScreenProps) {
             email,
             password,
           })
-          .then(response1 => {
-            console.log(response1);
+          .then(() => {
+            console.log(response);
           });
         navigation.navigate('FinishSignUp');
       } catch (error) {
@@ -146,7 +117,7 @@ function EmailSignUp({navigation}: ScreenProps) {
       } finally {
       }
     }
-  }, [checkPass, name, sex, email, password, navigation]);
+  }, [password, checkPass, email, verify, name, sex, navigation]);
   return (
     <KeyboardAwareScrollView>
       <View style={styles.container}>
@@ -194,14 +165,20 @@ function EmailSignUp({navigation}: ScreenProps) {
           </View>
         </View>
         <SignBtn text="이메일 확인" onPress={onSubmitEmail} />
-        {/* <View style={styles.emailverify}>
-          <TouchableOpacity style={styles.sexManBtn} onPress={onSubmitEmail1}>
-            <Text style={styles.sexManText}>인증확인</Text>
+        <View style={styles.emailverify}>
+          <TouchableOpacity style={styles.emailRetry} onPress={onSubmitEmail1}>
+            <Text style={styles.emailRetryText}>재전송</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.emailInput}>
-            <TextInput style={styles.emailInput}>이메일 재전송</TextInput>
-          </TouchableOpacity>
-        </View> */}
+          <SignTextInput
+            placeholder="인증번호 입력"
+            onChangeText={onVerifyNum}
+            onSubmitEditing={undefined}
+            keyboardType={undefined}
+            textContentType="oneTimeCode"
+            secureTextEntry
+            value={verifyNum}
+          />
+        </View>
       </View>
       <View style={styles.container3}>
         <View style={styles.passView1}>
@@ -241,7 +218,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#778899',
     borderStyle: 'dashed',
-    justifyemail: 'flex-end',
     paddingBottom: 10,
     marginBottom: 10,
     marginTop: 50,
@@ -250,7 +226,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 20,
     marginRight: 20,
-    marginBottom: 5,
+    marginBottom: 20,
     paddingBottom: 5,
   },
   container3: {
@@ -343,10 +319,24 @@ const styles = StyleSheet.create({
   },
   emailverify: {
     flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
   emailInput: {
-    backgroundColor: 'yellow',
-    width: WIDTH * 0.6,
+    backgroundColor: 'red',
+    width: WIDTH * 0.67,
+    borderWidth: 1,
+    borderRadius: 3,
+  },
+  emailRetry: {
+    backgroundColor: 'lightblue',
+    justifyContent: 'center',
+    width: WIDTH * 0.13,
+    borderRadius: 15,
+  },
+  emailRetryText: {
+    color: 'white',
+    textAlign: 'center',
+    textAlignVertical: 'center',
   },
   //--//
   passView1: {

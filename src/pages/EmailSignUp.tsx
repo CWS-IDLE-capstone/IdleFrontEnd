@@ -44,10 +44,19 @@ function EmailSignUp({navigation}: ScreenProps) {
   };
   const onChangeEmail = (payload: React.SetStateAction<string>) =>
     setEmail(payload);
+<<<<<<< Updated upstream
   const onSubmitEmail = () => {
     alert(email);
     console.log(name, sex, email);
+=======
+  const onSubmitEmail = async () => {
+    // console.log(name, sex, email);
+    try {
+    } catch (error) {}
+>>>>>>> Stashed changes
   };
+  const onSubmitEmail1 = () => {};
+  const onSubmitEmail2 = async () => {};
   const onChangePass = (payload: React.SetStateAction<string>) => {
     setPassword(payload);
   };
@@ -140,6 +149,17 @@ function EmailSignUp({navigation}: ScreenProps) {
           </View>
         </View>
         <SignBtn text="이메일 확인" onPress={onSubmitEmail} />
+<<<<<<< Updated upstream
+=======
+        <View style={styles.emailverify}>
+          <TouchableOpacity style={styles.sexManBtn} onPress={onSubmitEmail1}>
+            <Text style={styles.sexManText}>인증확인</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.emailInput}>
+            <TextInput style={styles.emailInput}>이메일 재전송</TextInput>
+          </TouchableOpacity>
+        </View>
+>>>>>>> Stashed changes
       </View>
       <View style={styles.container3}>
         <View style={styles.passView1}>

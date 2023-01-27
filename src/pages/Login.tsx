@@ -1,5 +1,5 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useCallback } from 'react';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import React, {useCallback} from 'react';
 import SignTextInput from '../components/signTextInput';
 import {
   Pressable,
@@ -11,62 +11,79 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  ImageBackground
+  ImageBackground,
 } from 'react-native';
-import { RootStackParamList } from '../../App';
-import axios, { AxiosError } from 'axios';
+import {RootStackParamList} from '../../App';
+import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import DaonBtn from '../components/daonBtn';
 import Hyperlink from 'react-native-hyperlink';
 import openURL from '../../openUrl';
-import { Linking } from "react-native";
+import {Linking} from 'react-native';
 
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
-function Login({ navigation }: ScreenProps) {
-  const NAVER_LINK = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=ZJgU_ewa3JbBsSyXwPJG&redirect_uri=http://localhost:8081/login/oauth2/code/naver&state=test";
+function Login({navigation}: ScreenProps) {
+  const NAVER_LINK =
+    'https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=ZJgU_ewa3JbBsSyXwPJG&redirect_uri=http://localhost:8081/login/oauth2/code/naver&state=test';
   const toMain = useCallback(() => {
     navigation.navigate('Main');
   }, [navigation]);
   return (
-      <View style={styles.header}>
-        <ImageBackground source={require("../assets/bg1.jpg")} style={styles.bgImage}>
+    <View style={styles.header}>
+      <ImageBackground
+        source={require('../assets/bg1.jpg')}
+        style={styles.bgImage}>
+        <View style={{flex: 2}}>
+          <Text style={styles.login}>Login</Text>
+          <TextInput style={styles.Input} placeholder="Email" />
+          <TextInput style={styles.Input} placeholder="Password" />
+          <DaonBtn
+            text="Login"
+            style={styles.gangstyle}
+            activeOpacity={0.5}
+            onPress={toMain}
+          />
+        </View>
 
-          <View style={{flex:2}}>
-            <Text style={styles.login}>Login</Text>
-            <TextInput style={styles.Input} placeholder="Email" />
-            <TextInput style={styles.Input} placeholder="Password" />
-            <DaonBtn text="Login" style={styles.gangstyle} activeOpacity={0.5} onPress={toMain} />
-          </View>
-
-          <View style={{flex:1}}>
-            <View>
-              <TouchableOpacity style={styles.row}>
-                <Hyperlink >
-                  <Text style={styles.naverLogin} onPress={() => Linking.openURL(`${NAVER_LINK}`)}>네이버 로그인</Text>
-                </Hyperlink>
-                <Text style={styles.googleLogin}>구글 로그인</Text>
-              </TouchableOpacity>
-              <Pressable>
-                <Text style={styles.lastline} onPress={() => navigation.navigate('SignUp')}>
-                  Don't have account? <Text style={{ color: '#6A74CF' }}>Sign up</Text>
+        <View style={{flex: 1}}>
+          <View>
+            <TouchableOpacity style={styles.row}>
+              <Hyperlink>
+                <Text
+                  style={styles.naverLogin}
+                  onPress={() => Linking.openURL(`${NAVER_LINK}`)}>
+                  네이버 로그인
                 </Text>
-              </Pressable>
-            </View>
+              </Hyperlink>
+              <Text style={styles.googleLogin}>구글 로그인</Text>
+            </TouchableOpacity>
+            <Pressable>
+              <Text
+                style={styles.lastline}
+                onPress={() => navigation.navigate('SignUp')}>
+                Don't have account?{' '}
+                <Text style={{color: '#6A74CF'}}>Sign up</Text>
+              </Text>
+            </Pressable>
           </View>
-
-        </ImageBackground>
-      </View>
+        </View>
+      </ImageBackground>
+    </View>
   );
 }
 
-const { width: WIDTH } = Dimensions.get('window');
+const {width: WIDTH} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-   
-  row: { flexDirection:'row', alignSelf: 'center', marginTop:50, justifyContent: 'space-around', },
-  header: { flex: 1 },
-  bgImage: { width: '100%', height: '100%' },
+  row: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    marginTop: 50,
+    justifyContent: 'space-around',
+  },
+  header: {flex: 1},
+  bgImage: {width: '100%', height: '100%'},
 
   naverLogin: {
     //alignSelf: 'flex-start',
@@ -137,7 +154,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: 50,
   },
-
 });
 
 export default Login;

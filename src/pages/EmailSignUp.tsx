@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import SignTextInput from '../components/signTextInput';
 import {
   TextInput,
@@ -15,7 +15,9 @@ import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import SignBtn from '../components/signBtn';
-// import Config from 'react-native-config';
+import {sendEmail, sentEmail, signIn, signUp} from '../components/auth';
+import {getAuth, sendEmailVerification} from 'firebase/auth';
+import {firebase} from '@react-native-firebase/auth';
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'FinishSignUp'>;
 const {width: WIDTH} = Dimensions.get('window');
 
@@ -44,9 +46,61 @@ function EmailSignUp({navigation}: ScreenProps) {
   };
   const onChangeEmail = (payload: React.SetStateAction<string>) =>
     setEmail(payload);
-  const onSubmitEmail = () => {
-    alert(email);
-    console.log(name, sex, email);
+  const onSubmitEmail = async () => {
+    // console.log(name, sex, email);
+    try {
+      // const actionCodeSettings = {
+      //   handleCodeInApp: true,
+      //   url: 'https://idlefrontend.page.link/n3UL',
+      //   android: {
+      //     packageName: 'com.idlefrontend',
+      //     installApp: true,
+      //     minimumVersion: '12',
+      //   },
+      //   // dynamicLinkDomain: 'https://idlefrontend.page.link/n3UL',
+      // };
+      const {user} = await signUp({email, password});
+      // const {user} = await sendEmail({email, actionCodeSettings});
+      await user.sendEmailVerification();
+      console.log(email);
+      console.log(user);
+      return true;
+    } catch (error) {
+      console.log(error);
+      switch (error.code) {
+        case 'auth/email-already-in-use': {
+          return console.log('이미 사용중인 이메일입니다.');
+        }
+        case 'auth/invalid-email': {
+          return console.log('이메일을 입력해주세요');
+        }
+        case 'auth/weak-password': {
+          return console.log(
+            '안전하지 않은 짧은 비밀번호입니다.\n다른 비밀번호를 사용해 주세요.',
+          );
+        }
+        case 'auth/operation-not-allowed': {
+          return console.log('operation-not-allowed \n관리자에게 문의하세요 ');
+        }
+      }
+      console.log('error1 = ', error.code);
+    }
+  };
+  const onSubmitEmail1 = () => {
+    const user = firebase.auth().currentUser;
+    // console.log(setUsers);
+    console.log(user);
+    console.log(user?.emailVerified);
+    console.log('새로고침');
+  };
+  const onSubmitEmail2 = async () => {
+    const user = firebase.auth().currentUser;
+    try {
+      await user?.sendEmailVerification();
+      console.log('인증 메일 재 전송 완료');
+    } catch (error) {
+      console.log(error);
+    }
   };
   const onChangePass = (payload: React.SetStateAction<string>) => {
     setPassword(payload);
@@ -140,6 +194,14 @@ function EmailSignUp({navigation}: ScreenProps) {
           </View>
         </View>
         <SignBtn text="이메일 확인" onPress={onSubmitEmail} />
+        {/* <View style={styles.emailverify}>
+          <TouchableOpacity style={styles.sexManBtn} onPress={onSubmitEmail1}>
+            <Text style={styles.sexManText}>인증확인</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.emailInput}>
+            <TextInput style={styles.emailInput}>이메일 재전송</TextInput>
+          </TouchableOpacity>
+        </View> */}
       </View>
       <View style={styles.container3}>
         <View style={styles.passView1}>
@@ -278,6 +340,13 @@ const styles = StyleSheet.create({
     width: WIDTH * 0.2,
     textAlign: 'right',
     textAlignVertical: 'center',
+  },
+  emailverify: {
+    flexDirection: 'row',
+  },
+  emailInput: {
+    backgroundColor: 'yellow',
+    width: WIDTH * 0.6,
   },
   //--//
   passView1: {

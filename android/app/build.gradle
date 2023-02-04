@@ -277,7 +277,10 @@ dependencies {
     implementation "com.google.android.gms:play-services-auth:20.4.1"
     implementation "com.google.firebase:firebase-dynamic-links"
     // implementation "com.google.firebase:firebase-invites"
-    implementation 'com.naver.maps:map-sdk:3.16.0'
+    implementation 'com.android.support:appcompat-v7:27.0.0'
+    implementation ('com.naver.maps:map-sdk:3.16.0') {
+        exclude group: 'com.android.support'
+    }
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 

@@ -23,12 +23,16 @@ import {Linking} from 'react-native';
 
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
-function Login({navigation}: ScreenProps) {
+// function Login(navigation: ScreenProps) {
+function Login({navigation, setIsLoggedIn}: any) {
   const NAVER_LINK =
     'https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=ZJgU_ewa3JbBsSyXwPJG&redirect_uri=http://localhost:8081/login/oauth2/code/naver&state=test';
-  const toMain = useCallback(() => {
-    navigation.navigate('Main');
-  }, [navigation]);
+  // const toMain = useCallback(() => {
+  //   navigation.navigate('Main');
+  // }, [navigation]);
+  const toMain = () => {
+    setIsLoggedIn(true);
+  };
   return (
     <View style={styles.header}>
       <ImageBackground

@@ -22,6 +22,7 @@ DerivedData
 *.xcuserstate
 # Android
 AndroidManifest.xml
+android/app/src/main/AndroidManifest.xml
 # Android/IntelliJ
 #
 build/

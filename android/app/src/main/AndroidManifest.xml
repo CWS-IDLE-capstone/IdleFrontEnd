@@ -2,7 +2,12 @@
   package="com.idlefrontend">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -11,7 +16,7 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme">
       <meta-data
-            android:name="com.naver.maps.map.6t1iteeyke"
+            android:name="com.naver.maps.map.CLIENT_ID"
             android:value="6t1iteeyke" />
       <activity
         android:name=".MainActivity"

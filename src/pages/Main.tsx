@@ -11,7 +11,7 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
-import NaverMapView from 'react-native-nmap';
+import NaverMapView, {Marker} from 'react-native-nmap';
 import {LoggedInParamList} from '../../App';
 
 // type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
@@ -21,10 +21,18 @@ const {height: HEIGHT} = Dimensions.get('window');
 
 function Main({navigation}: MainScreenProps) {
   const [myPosition, setMyPosition] = useState<{
-    latitude: Number;
-    longitude: Number;
+    latitude: number;
+    longitude: number;
   } | null>(null);
 
+  useEffect(() => {
+    Geolocation.getCurrentPosition(position => {
+      const {latitude, longitude} = position.coords;
+      setMyPosition({latitude, longitude});
+      console.log('1');
+      console.log(myPosition?.latitude);
+    }, console.error);
+  }, []);
   useEffect(() => {
     Geolocation.watchPosition(
       info => {
@@ -32,15 +40,22 @@ function Main({navigation}: MainScreenProps) {
           latitude: info.coords.latitude,
           longitude: info.coords.longitude,
         });
+        // console.log(info.coords.latitude);
+        // console.log(info.coords.longitude);
+        // console.log(typeof myPosition);
+        console.log('2');
+        console.log(myPosition);
+        // console.log(typeof myPosition.latitude);
+        // console.log(typeof myPosition);
       },
       console.error,
       {
         enableHighAccuracy: true,
-        timeout: 10000,
-        distanceFilter: 50,
+        timeout: 1000,
+        distanceFilter: 20,
       },
     );
-  }, []);
+  }, [myPosition]);
   return (
     <View
       // eslint-disable-next-line react-native/no-inline-styles
@@ -53,13 +68,24 @@ function Main({navigation}: MainScreenProps) {
         style={{width: '100%', height: '100%'}}
         zoomControl={false}
         center={{
-          zoom: 14,
-          latitude: 37.377287648,
-          longitude: 126.6329412,
+          zoom: myPosition ? 14 : 5.5,
+          latitude: myPosition?.latitude ? myPosition?.latitude : 37,
+          longitude: myPosition?.longitude ? myPosition?.longitude : 127.6,
           // latitude: myPosition?.latitude,
           // longitude: myPosition?.longitude,
-        }}
-      />
+        }}>
+        {myPosition?.latitude && (
+          <Marker
+            coordinate={{
+              latitude: myPosition?.latitude,
+              longitude: myPosition?.longitude,
+            }}
+            width={20}
+            height={20}
+            image={require('../assets/dpic.jpg')}
+          />
+        )}
+      </NaverMapView>
     </View>
   );
 }

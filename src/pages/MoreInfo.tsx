@@ -217,7 +217,7 @@ function MoreInfo() {
                       <Picker
                           selectedValue={dogBreed}
                           onValueChange={(itemValue, itemIndex) =>
-                            setDogBreed(itemValue)
+                             setDogBreed(itemValue)
                           }
                           style={{ 
                             width: 140, 
@@ -229,8 +229,8 @@ function MoreInfo() {
                             top: 0,
                             left: 45,
                           }}
-                          >
-                            
+                          >  
+                          <Picker.Item label="선택하기" value="선택하기" style={{ color : 'grey' }}  />
                           <Picker.Item label="몰티즈" value="몰티즈" />
                           <Picker.Item label="푸들" value="푸들" />
                           <Picker.Item label="포메라니안" value="포메라니안" />

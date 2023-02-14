@@ -22,6 +22,9 @@ import Config from 'react-native-config';
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { launchImageLibrary, launchCamera } from "react-native-image-picker";
+import Icon from "react-native-vector-icons/Ionicons";
+import Material from 'react-native-vector-icons/MaterialIcons'
+import {Picker} from '@react-native-picker/picker';
 
 
 
@@ -36,6 +39,9 @@ function MoreInfo() {
   const [dogSex, setDogSex] = useState('');
   const [dogBreed, setDogBreed] = useState('');
   const [dogAge, setDogAge] = useState('');
+  // const [dogGender, setDogGender] = useState('');
+
+  const [selectedLanguage, setSelectedLanguage] = useState();
 
   
   // 카메라 촬영
@@ -169,17 +175,92 @@ function MoreInfo() {
                     </View>
                     <View style={styles.row}>
                         <Text style={styles.login2}>sex</Text>
-                        <TextInput style={styles.Input} value={dogSex} onChangeText={setDogSex} />
+                        {/* <TextInput style={styles.Input} value={dogSex} onChangeText={setDogSex} /> */}
+                        <View 
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            alignContent: 'center',
+                            backgroundColor: 'white',
+                            width: 75,
+                            height: 40,
+                            borderRadius: 77,
+                            marginTop: 5,
+                            marginBottom: 5,
+                            justifyContent: 'center'
+                          }}
+                        >
+                          <TouchableOpacity 
+                            style={{ backgroundColor: 'white', padding: 2, borderRightColor: 'gray', borderRightWidth: 1 }}
+                            onPress={() => setDogSex('male')}
+                            > 
+                            <Icon name='male' style={{ fontSize: 25, color: dogSex === 'male' ? '#6A74CF' : 'grey' }}/>
+                          </TouchableOpacity>
+                          <TouchableOpacity 
+                            style={{ backgroundColor: 'white', padding: 2}}
+                            onPress={() => setDogSex('female')}
+                            > 
+                            <Icon name='female' style={{ fontSize: 25, color: dogSex === 'female' ? '#6A74CF' : 'grey' }}/>
+                          </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
                 <View style={styles.row}>
                 <View style={styles.row}>
                         <Text style={styles.login2}>breed</Text>
-                        <TextInput style={styles.Input} value={dogBreed} onChangeText={setDogBreed} />
+                        {/* <TextInput style={styles.Input} value={dogBreed} onChangeText={setDogBreed} /> */}
+                      <View
+                        style={styles.Input}
+                      >
+                        
+                      </View>
+                      <Picker
+                          selectedValue={dogBreed}
+                          onValueChange={(itemValue, itemIndex) =>
+                            setDogBreed(itemValue)
+                          }
+                          style={{ 
+                            width: 140, 
+                            height: 10, 
+                            alignSelf: 'center',
+                            // backgroundColor: 'yellow',
+                            position: 'absolute',
+                            zIndex: 1,
+                            top: 0,
+                            left: 45,
+                          }}
+                          >
+                            
+                          <Picker.Item label="몰티즈" value="몰티즈" />
+                          <Picker.Item label="푸들" value="푸들" />
+                          <Picker.Item label="포메라니안" value="포메라니안" />
+                          <Picker.Item label="믹스견" value="믹스견" />
+                          <Picker.Item label="치와와" value="치와와" />
+                          <Picker.Item label="시추" value="시추" />
+                          <Picker.Item label="골든리트리버" value="골든리트리버" />
+                          <Picker.Item label="진돗개" value="진돗개" />
+                        </Picker>
+                        
+                        
                     </View>
                     <View style={styles.row}>
                         <Text style={styles.login2}>age</Text>
-                        <TextInput style={styles.Input} value={dogAge} onChangeText={setDogAge} />
+                        <TextInput 
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            alignContent: 'center',
+                            backgroundColor: 'white',
+                            width: 75,
+                            height: 40,
+                            borderRadius: 77,
+                            marginTop: 5,
+                            marginBottom: 5,
+                            justifyContent: 'center'
+                          }} 
+                          value={dogAge} 
+                          onChangeText={setDogAge} 
+                          />
                     </View>
                 </View>
           </View>
@@ -204,6 +285,7 @@ function MoreInfo() {
               alignSelf: 'center',     
               top: windowHeight / 3,
               // left: windowWidth / 4,
+              borderRadius: 5,
               
             }}
           >
@@ -212,13 +294,21 @@ function MoreInfo() {
                 style={{ 
                 width :'100%',
                 height: 40,
-                backgroundColor: "yellow",
+                backgroundColor: "white",
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems :'center',
+                borderRadius: 5,
+                borderBottomColor: 'grey',
+                borderBottomWidth: 0.5,
                 }}>
-                    <Text>아이콘</Text>
-                    <Text style={{fontWeight: 'bold'}}>카메라로 촬영하기</Text>   
+                    <Material name='photo-camera' 
+                      style={{
+                        fontSize: 25,
+                        padding: 4,
+                      }}
+                    />
+                    <Text style={{fontWeight: 'bold', padding: 4}}>카메라로 촬영하기</Text>   
               </View>
             </TouchableOpacity>
 
@@ -227,14 +317,22 @@ function MoreInfo() {
               style={{ 
                 width :'100%',
                 height: 40,
-                backgroundColor: "green",
+                backgroundColor: "white",
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems :'center',
+                borderRadius: 5,
+                borderBottomColor: 'grey',
+                borderBottomWidth: 0.5,
                 }}
             >
-              <Text>아이콘</Text>
-              <Text style={{fontWeight: 'bold'}}>갤러리에서 선택</Text>
+              <Material name='photo' 
+                      style={{
+                        fontSize: 25,
+                        padding: 4,
+                      }}
+                    />
+              <Text style={{fontWeight: 'bold',padding: 4}}>갤러리에서 선택</Text>
             </View>
             </TouchableOpacity>
           </View>

@@ -13,7 +13,9 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Community from './src/pages/Community';
 import MyPage from './src/pages/MyPage';
 import messaging from '@react-native-firebase/messaging';
+import MoreInfo from './src/pages/MoreInfo';
 import ApppA from './src/pages/ApppA';
+
 
 export type LoggedInParamList = {
   Community: undefined;
@@ -29,6 +31,7 @@ export type RootStackParamList = {
   EmailSignUp: undefined;
   FinishSignUp: undefined;
   Main: undefined;
+  MoreInfo: undefined;
 };
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -37,7 +40,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   return (
     <>
-      <NavigationContainer>
+     <NavigationContainer>
         {isLoggedIn ? (
           <Tab.Navigator initialRouteName="Main">
             <Tab.Screen
@@ -73,6 +76,7 @@ function App() {
             <Stack.Screen name="SignUp" component={SignUp} />
             <Stack.Screen name="EmailSignUp" component={EmailSignUp} />
             <Stack.Screen name="FinishSignUp" component={FinishSignUp} />
+            <Stack.Screen name="MoreInfo" component={MoreInfo} />
             {/* <Stack.Screen name="Main" component={Main} /> */}
           </Stack.Navigator>
         )}

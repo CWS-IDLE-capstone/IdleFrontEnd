@@ -97,8 +97,8 @@ function Main({navigation}: MainScreenProps) {
               latitude: myPosition?.latitude,
               longitude: myPosition?.longitude,
             }}
-            width={30}
-            height={40}
+            width={20}
+            height={20}
             image={require('../assets/dpic.jpg')}
           />
         )}

@@ -15,7 +15,7 @@ import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import SignBtn from '../components/signBtn';
-// import Config from 'react-native-config';
+import SignText from '../components/signText';
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'FinishSignUp'>;
 const {width: WIDTH} = Dimensions.get('window');
 
@@ -24,13 +24,16 @@ function EmailSignUp({navigation}: ScreenProps) {
   const [isCheckMan, setIsCheckMan] = useState<String>('0');
   const [sex, setSex] = useState<String>('');
   const [email, setEmail] = useState('');
+  const [verifyNum, setVerifyNum] = useState('');
+  const [verifyUserNum, setVerifyUserNum] = useState('');
+  const [verify, setVerify] = useState(false);
   const [password, setPassword] = useState('');
   const [checkPass, setCheckPass] = useState('');
 
   const onChangeName = (payload: React.SetStateAction<string>) =>
     setName(payload);
   const onSubmitName = () => {
-    alert(name);
+    Alert.alert(name);
     console.log(name);
   };
   const onCheckMan = () => {
@@ -44,16 +47,40 @@ function EmailSignUp({navigation}: ScreenProps) {
   };
   const onChangeEmail = (payload: React.SetStateAction<string>) =>
     setEmail(payload);
-  const onSubmitEmail = () => {
-    alert(email);
-    console.log(name, sex, email);
+  const onSubmitEmail = async () => {
+    console.log(email);
+    try {
+      const send = await axios
+        .post(`${Config.API_URL}/api/verify`, {
+          email,
+        })
+        .then(() => {
+          console.log(send);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+    return setVerifyUserNum;
   };
+  const onSubmitEmail1 = () => {
+    console.log('재전송');
+  };
+  const onVerifyNum = useCallback(
+    text => {
+      setVerifyNum(text);
+      if (verifyUserNum === verifyNum) {
+        console.log('이메일 인증 번호 일치');
+        setVerify(true);
+        console.log(verify);
+      }
+    },
+    [verifyUserNum, verifyNum, verify],
+  );
   const onChangePass = (payload: React.SetStateAction<string>) => {
     setPassword(payload);
   };
-  const onCheckPass = (payload: React.SetStateAction<string>) => {
+  const onCheckPass = (payload: React.SetStateAction<string>) =>
     setCheckPass(payload);
-  };
   const toFinSignUp = useCallback(async () => {
     if (!password || !checkPass) {
       return Alert.alert('비밀번호를 확인해주세요');
@@ -68,7 +95,7 @@ function EmailSignUp({navigation}: ScreenProps) {
     if (password !== checkPass) {
       Alert.alert('비밀번호가 다릅니다');
     }
-    if (password === checkPass) {
+    if (password === checkPass && verify === true) {
       console.log(name, sex, email, password);
       console.log(Config.API_URL);
       try {
@@ -79,8 +106,8 @@ function EmailSignUp({navigation}: ScreenProps) {
             email,
             password,
           })
-          .then(response1 => {
-            console.log(response1);
+          .then(() => {
+            console.log(response);
           });
         navigation.navigate('FinishSignUp');
       } catch (error) {
@@ -92,7 +119,7 @@ function EmailSignUp({navigation}: ScreenProps) {
       } finally {
       }
     }
-  }, [checkPass, name, sex, email, password, navigation]);
+  }, [password, checkPass, email, verify, name, sex, navigation]);
   return (
     <KeyboardAwareScrollView>
       <View style={styles.container}>
@@ -100,7 +127,7 @@ function EmailSignUp({navigation}: ScreenProps) {
       </View>
       <View style={styles.container2}>
         <View style={styles.nameView1}>
-          <Text style={styles.nameText}>이름</Text>
+          <SignText text="이름" />
           <TextInput
             style={styles.nameInput}
             placeholder="이름입력칸"
@@ -127,7 +154,7 @@ function EmailSignUp({navigation}: ScreenProps) {
         </View>
         <View style={styles.emailViewContainer}>
           <View style={styles.emailView}>
-            <Text style={styles.emailText}>이메일</Text>
+            <SignText text="이메일" />
             <SignTextInput
               placeholder="이메일 입력칸"
               onChangeText={onChangeEmail}
@@ -140,10 +167,24 @@ function EmailSignUp({navigation}: ScreenProps) {
           </View>
         </View>
         <SignBtn text="이메일 확인" onPress={onSubmitEmail} />
+        <View style={styles.emailverify}>
+          <TouchableOpacity style={styles.emailRetry} onPress={onSubmitEmail1}>
+            <Text style={styles.emailRetryText}>재전송</Text>
+          </TouchableOpacity>
+          <SignTextInput
+            placeholder="인증번호 입력"
+            onChangeText={onVerifyNum}
+            onSubmitEditing={undefined}
+            keyboardType={undefined}
+            textContentType="oneTimeCode"
+            secureTextEntry
+            value={verifyNum}
+          />
+        </View>
       </View>
       <View style={styles.container3}>
         <View style={styles.passView1}>
-          <Text style={styles.passText}>비밀번호</Text>
+          <SignText text="비밀번호" />
           <SignTextInput
             placeholder="비밀번호 입력칸"
             onChangeText={onChangePass}
@@ -155,7 +196,7 @@ function EmailSignUp({navigation}: ScreenProps) {
           />
         </View>
         <View style={styles.passView2}>
-          <Text style={styles.passChkText}>비밀번호 확인</Text>
+          <SignText text="비밀번호 확인" />
           <SignTextInput
             placeholder="비밀번호확인 입력칸"
             onChangeText={onCheckPass}
@@ -179,7 +220,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#778899',
     borderStyle: 'dashed',
-    justifyemail: 'flex-end',
     paddingBottom: 10,
     marginBottom: 10,
     marginTop: 50,
@@ -188,7 +228,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 20,
     marginRight: 20,
-    marginBottom: 5,
+    marginBottom: 20,
     paddingBottom: 5,
   },
   container3: {
@@ -217,11 +257,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 20,
     marginBottom: 20,
-  },
-  nameText: {
-    textAlignVertical: 'center',
-    width: WIDTH * 0.2,
-    textAlign: 'right',
   },
   nameInput: {
     backgroundColor: 'white',
@@ -274,29 +309,35 @@ const styles = StyleSheet.create({
   emailView: {
     flexDirection: 'row',
   },
-  emailText: {
-    width: WIDTH * 0.2,
-    textAlign: 'right',
+  emailverify: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  emailInput: {
+    backgroundColor: 'red',
+    width: WIDTH * 0.67,
+    borderWidth: 1,
+    borderRadius: 3,
+  },
+  emailRetry: {
+    backgroundColor: 'lightblue',
+    justifyContent: 'center',
+    width: WIDTH * 0.13,
+    borderRadius: 15,
+  },
+  emailRetryText: {
+    color: 'white',
+    textAlign: 'center',
     textAlignVertical: 'center',
   },
   //--//
   passView1: {
     flexDirection: 'row',
   },
-  passText: {
-    width: WIDTH * 0.2,
-    textAlign: 'right',
-    textAlignVertical: 'center',
-  },
   //--//
   passView2: {
     flexDirection: 'row',
     marginTop: 20,
-  },
-  passChkText: {
-    width: WIDTH * 0.2,
-    textAlign: 'right',
-    textAlignVertical: 'center',
   },
   //--//
 });

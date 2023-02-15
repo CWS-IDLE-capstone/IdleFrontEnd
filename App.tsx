@@ -26,7 +26,7 @@ function App() {
     <>
         <NavigationContainer>
           <Stack.Navigator>
-            <Stack.Screen name="Welcome" component={MoreInfo} />
+            <Stack.Screen name="Welcome" component={Welcome} />
             <Stack.Screen name="Start" component={Start} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="SignUp" component={SignUp} />

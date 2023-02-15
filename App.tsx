@@ -12,11 +12,14 @@ import Main from './src/pages/Main';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Community from './src/pages/Community';
 import MyPage from './src/pages/MyPage';
+import messaging from '@react-native-firebase/messaging';
+import ApppA from './src/pages/ApppA';
 
 export type LoggedInParamList = {
   Community: undefined;
   MyPage: undefined;
   Main: undefined;
+  ApppA: undefined;
 };
 export type RootStackParamList = {
   Welcome: undefined;
@@ -51,6 +54,11 @@ function App() {
               name="MyPage"
               component={MyPage}
               options={{title: '마이페이지'}}
+            />
+            <Tab.Screen
+              name="ApppA"
+              component={ApppA}
+              options={{title: 'aaaa'}}
             />
           </Tab.Navigator>
         ) : (

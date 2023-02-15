@@ -18,24 +18,37 @@ import {LoggedInParamList} from '../../App';
 type MainScreenProps = NativeStackScreenProps<LoggedInParamList, 'Community'>;
 const {width: WIDTH} = Dimensions.get('window');
 const {height: HEIGHT} = Dimensions.get('window');
-
+console.log('------');
 function Main({navigation}: MainScreenProps) {
   const [myPosition, setMyPosition] = useState<{
     latitude: number;
     longitude: number;
   } | null>(null);
+  console.log('1');
 
   useEffect(() => {
-    Geolocation.getCurrentPosition(position => {
-      const {latitude, longitude} = position.coords;
-      setMyPosition({latitude, longitude});
-      console.log('1');
-      console.log(myPosition?.latitude);
-    }, console.error);
-  }, []);
+    console.log('!!');
+    Geolocation.getCurrentPosition(
+      position => {
+        const {latitude, longitude} = position.coords;
+        setMyPosition({latitude, longitude});
+        console.log('2');
+        console.log(myPosition?.latitude);
+      },
+      console.error,
+      {
+        enableHighAccuracy: true,
+        timeout: 3000,
+        distanceFilter: 50,
+      },
+    );
+  }, [myPosition?.latitude]);
+
+  console.log('3');
   useEffect(() => {
     Geolocation.watchPosition(
       info => {
+        console.log(info);
         setMyPosition({
           latitude: info.coords.latitude,
           longitude: info.coords.longitude,
@@ -43,19 +56,23 @@ function Main({navigation}: MainScreenProps) {
         // console.log(info.coords.latitude);
         // console.log(info.coords.longitude);
         // console.log(typeof myPosition);
-        console.log('2');
+        console.log('4');
         console.log(myPosition);
         // console.log(typeof myPosition.latitude);
         // console.log(typeof myPosition);
       },
-      console.error,
+      error => {
+        console.log(error);
+      },
       {
         enableHighAccuracy: true,
-        timeout: 1000,
-        distanceFilter: 20,
+        timeout: 3000,
+        distanceFilter: 50,
       },
     );
   }, [myPosition]);
+  console.log('5');
+  console.log(myPosition);
   return (
     <View
       // eslint-disable-next-line react-native/no-inline-styles
@@ -68,7 +85,7 @@ function Main({navigation}: MainScreenProps) {
         style={{width: '100%', height: '100%'}}
         zoomControl={false}
         center={{
-          zoom: myPosition ? 14 : 5.5,
+          zoom: myPosition ? 18 : 5.5,
           latitude: myPosition?.latitude ? myPosition?.latitude : 37,
           longitude: myPosition?.longitude ? myPosition?.longitude : 127.6,
           // latitude: myPosition?.latitude,
@@ -80,8 +97,8 @@ function Main({navigation}: MainScreenProps) {
               latitude: myPosition?.latitude,
               longitude: myPosition?.longitude,
             }}
-            width={20}
-            height={20}
+            width={30}
+            height={40}
             image={require('../assets/dpic.jpg')}
           />
         )}

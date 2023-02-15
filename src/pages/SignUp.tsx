@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#778899',
     borderStyle: 'dashed',
-    marginBottom: 10,
+    marginBottom: '5%',
   },
   contain2: {
     flex: 1,
@@ -76,11 +76,11 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#778899',
     borderStyle: 'dashed',
-    paddingTop: 10,
+    paddingTop: '5%',
   },
   img: {
     alignSelf: 'center',
-    marginTop: 10,
+    marginTop: '5%',
   },
   mainText: {fontSize: 35, fontWeight: 'bold', color: 'black'},
   subText: {fontSize: 20, color: 'black'},

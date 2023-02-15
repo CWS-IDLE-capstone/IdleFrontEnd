@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: "com.google.gms.google-services"
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 import com.android.build.OutputFile
@@ -134,13 +135,19 @@ android {
     ndkVersion rootProject.ext.ndkVersion
 
     compileSdkVersion rootProject.ext.compileSdkVersion
-
+    packagingOptions {
+    pickFirst 'lib/x86/libc++_shared.so'
+    pickFirst 'lib/x86_64/libc++_shared.so'
+    pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+    pickFirst 'lib/arm64-v8a/libc++_shared.so'
+    }
     defaultConfig {
         applicationId "com.idlefrontend"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         resValue "string", "build_config_package", "com.idlefrontend"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
@@ -264,7 +271,17 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-
+    implementation platform("com.google.firebase:firebase-bom:31.2.0")
+    implementation "com.google.firebase:firebase-analytics"
+    implementation "com.google.firebase:firebase-auth"
+    implementation "com.google.android.gms:play-services-auth:20.4.1"
+    implementation "com.google.firebase:firebase-dynamic-links"
+    // implementation "com.google.firebase:firebase-invites"
+    implementation 'com.google.firebase:firebase-messaging:21.1.0'
+    implementation 'com.android.support:appcompat-v7:27.0.0'
+    implementation ('com.naver.maps:map-sdk:3.16.0') {
+        exclude group: 'com.android.support'
+    }
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
@@ -291,7 +308,7 @@ dependencies {
         implementation jscFlavor
     }
 }
-
+apply plugin: 'com.google.gms.google-services'
 if (isNewArchitectureEnabled()) {
     // If new architecture is enabled, we let you build RN from source
     // Otherwise we fallback to a prebuilt .aar bundled in the NPM package.

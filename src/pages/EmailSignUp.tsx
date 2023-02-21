@@ -51,31 +51,55 @@ function EmailSignUp({navigation}: ScreenProps) {
     console.log(email);
     try {
       const send = await axios
-        .post(`${Config.API_URL}/api/verify`, {
+        .post(`${Config.API_URL}/api/login/mailConfirm`, {
           email,
         })
-        .then(() => {
-          console.log(send);
+        .then(response1 => {
+          if (response1.status) {
+            Alert.alert('이메일로 인증코드를 보냈습니다.');
+            console.log(send);
+            console.log(response1.data);
+            setVerifyNum(String(response1.data));
+          }
         });
     } catch (error) {
       console.log(error);
     }
-    return setVerifyUserNum;
+    return;
   };
-  const onSubmitEmail1 = () => {
-    console.log('재전송');
+  // const onVerifyUserNum = useCallback(
+  //   text => {
+  //     // setVerifyUserNum(text);
+  //     console.log(verifyUserNum);
+  //     // console.log(verifyUserNum);
+  //     if (verifyUserNum.length > 5 && verifyUserNum === verifyNum) {
+  //       console.log('이메일 인증 번호 일치');
+  //       setVerify(true);
+  //       console.log(verify);
+  //     } else {
+  //       setVerify(false);
+  //       console.log(verify);
+  //     }
+  //   },
+  //   [verifyUserNum, verifyNum, verify],
+  // );
+  const onVerifyUserNum = useCallback(() => {
+    if (verifyUserNum.length === 8 && verifyUserNum === verifyNum) {
+      console.log('이메일 인증 번호 일치');
+      Alert.alert('인증번호가 일치합니다');
+      setVerify(true);
+    } else {
+      setVerify(false);
+      console.log(verify);
+      Alert.alert('인증번호가 일치하지 않습니다');
+    }
+  }, [verifyUserNum, verifyNum, verify]);
+  const onUserNum = (text: React.SetStateAction<string>) => {
+    setVerifyUserNum(text);
   };
-  const onVerifyNum = useCallback(
-    text => {
-      setVerifyNum(text);
-      if (verifyUserNum === verifyNum) {
-        console.log('이메일 인증 번호 일치');
-        setVerify(true);
-        console.log(verify);
-      }
-    },
-    [verifyUserNum, verifyNum, verify],
-  );
+  console.log(verifyUserNum);
+  console.log(verify);
+  console.log(verifyNum);
   const onChangePass = (payload: React.SetStateAction<string>) => {
     setPassword(payload);
   };
@@ -95,7 +119,7 @@ function EmailSignUp({navigation}: ScreenProps) {
     if (password !== checkPass) {
       Alert.alert('비밀번호가 다릅니다');
     }
-    if (password === checkPass && verify === true) {
+    if (password === checkPass && verify === true && name !== '') {
       console.log(name, sex, email, password);
       console.log(Config.API_URL);
       try {
@@ -166,19 +190,33 @@ function EmailSignUp({navigation}: ScreenProps) {
             />
           </View>
         </View>
-        <SignBtn text="이메일 확인" onPress={onSubmitEmail} />
+        {/* <SignBtn text="이메일 확인" onPress={onSubmitEmail} /> */}
         <View style={styles.emailverify}>
-          <TouchableOpacity style={styles.emailRetry} onPress={onSubmitEmail1}>
-            <Text style={styles.emailRetryText}>재전송</Text>
+          <TouchableOpacity style={styles.emailRetry} onPress={onSubmitEmail}>
+            <Text style={styles.emailRetryText}>전송</Text>
+          </TouchableOpacity>
+          <Text
+            style={{
+              width: WIDTH * 0.67,
+              marginLeft: 15,
+              textAlignVertical: 'center',
+            }}>
+            이메일을 확인 후 인증코드를 작성해주세요
+          </Text>
+        </View>
+        <View style={styles.emailverify}>
+          <TouchableOpacity style={styles.emailRetry} onPress={onVerifyUserNum}>
+            <Text style={styles.emailRetryText}>확인</Text>
           </TouchableOpacity>
           <SignTextInput
             placeholder="인증번호 입력"
-            onChangeText={onVerifyNum}
+            // onChangeText={onVerifyUserNum}
+            onChangeText={onUserNum}
             onSubmitEditing={undefined}
             keyboardType={undefined}
             textContentType="oneTimeCode"
             secureTextEntry
-            value={verifyNum}
+            value={verifyUserNum}
           />
         </View>
       </View>
@@ -261,12 +299,12 @@ const styles = StyleSheet.create({
   nameInput: {
     backgroundColor: 'white',
     width: WIDTH * 0.26,
-    marginLeft: 17,
+    marginLeft: 15,
     borderWidth: 1,
     borderRadius: 3,
   },
   sexText: {
-    marginLeft: 20,
+    marginLeft: 22,
     textAlignVertical: 'center',
   },
   sexManBtn: {
@@ -314,7 +352,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   emailInput: {
-    backgroundColor: 'red',
     width: WIDTH * 0.67,
     borderWidth: 1,
     borderRadius: 3,
@@ -323,10 +360,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightblue',
     justifyContent: 'center',
     width: WIDTH * 0.13,
+    height: 40,
     borderRadius: 15,
+    margin: 4,
   },
   emailRetryText: {
-    color: 'white',
     textAlign: 'center',
     textAlignVertical: 'center',
   },

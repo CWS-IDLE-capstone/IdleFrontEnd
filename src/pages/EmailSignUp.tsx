@@ -67,22 +67,6 @@ function EmailSignUp({navigation}: ScreenProps) {
     }
     return;
   };
-  // const onVerifyUserNum = useCallback(
-  //   text => {
-  //     // setVerifyUserNum(text);
-  //     console.log(verifyUserNum);
-  //     // console.log(verifyUserNum);
-  //     if (verifyUserNum.length > 5 && verifyUserNum === verifyNum) {
-  //       console.log('이메일 인증 번호 일치');
-  //       setVerify(true);
-  //       console.log(verify);
-  //     } else {
-  //       setVerify(false);
-  //       console.log(verify);
-  //     }
-  //   },
-  //   [verifyUserNum, verifyNum, verify],
-  // );
   const onVerifyUserNum = useCallback(() => {
     if (verifyUserNum.length === 8 && verifyUserNum === verifyNum) {
       console.log('이메일 인증 번호 일치');
@@ -97,9 +81,6 @@ function EmailSignUp({navigation}: ScreenProps) {
   const onUserNum = (text: React.SetStateAction<string>) => {
     setVerifyUserNum(text);
   };
-  console.log(verifyUserNum);
-  console.log(verify);
-  console.log(verifyNum);
   const onChangePass = (payload: React.SetStateAction<string>) => {
     setPassword(payload);
   };

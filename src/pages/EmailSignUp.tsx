@@ -215,7 +215,7 @@ function EmailSignUp({navigation}: ScreenProps) {
           />
         </View>
         <View style={styles.passView2}>
-          <SignText text="비밀번호 확인" />
+          <SignText text="비밀번호   확인" />
           <SignTextInput
             placeholder="비밀번호확인 입력칸"
             onChangeText={onCheckPass}

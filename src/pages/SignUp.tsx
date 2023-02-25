@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {RootStackParamList} from '../../App';
+import {RootStackParamList} from '../../AppInner';
 
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'EmailSignUp'>;
 

@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useCallback} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import SignTextInput from '../components/signTextInput';
 import {
   Pressable,
@@ -13,13 +13,16 @@ import {
   Dimensions,
   ImageBackground,
 } from 'react-native';
-import {RootStackParamList} from '../../App';
+import {RootStackParamList} from '../../AppInner';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import DaonBtn from '../components/daonBtn';
 import Hyperlink from 'react-native-hyperlink';
 import openURL from '../../openUrl';
 import {Linking} from 'react-native';
+import {useAppDispatch} from '../store';
+import userSlice from '../slices/user';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
@@ -33,6 +36,57 @@ function Login({navigation, setIsLoggedIn}: any) {
   const toMain = () => {
     setIsLoggedIn(true);
   };
+  const dispatch = useAppDispatch();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const emailRef = useRef<TextInput | null> (null); //generic
+  const passwordRef = useRef<TextInput | null> (null);
+
+  const onChangeEmail = useCallback(text => {
+    setEmail(text);
+  }, []);
+
+  const onChangePassword = useCallback(text => {
+    setPassword(text);
+  }, []);
+
+  const onSubmit = useCallback(async () => {
+    if(!email || !email.trim()) { //trim()은 좌우 공백을 없애줌 만약 한칸 공백일때 입력되는것을 방지하기 위해
+      return Alert.alert('알림', '이메일을 입력해주세요.');
+    }
+    if(!password || !password.trim()) {
+      return Alert.alert('알림', '비밀번호를 입력해주세요.');
+    }
+    try {
+      const response = await axios.post(`${Config.API_URL}/api/book`, {
+        email,
+        password,
+      });
+      console.log(response.data);
+      Alert.alert('알림', '로그인 되었습니다.')
+      dispatch( //리덕스에 넣어주기
+        userSlice.actions.setUser({ //TODO 서버에서 무엇을 데이터로 줄지 알아봐야됨 현재는 name, email, accessToken, refreshToken
+          name: response.data.data.name, 
+          email: response.data.data.email,
+          accessToken: response.data.data.accessToken, // 유효기간 10분, 5분, 1시간
+        }),
+      );
+      await EncryptedStorage.setItem(
+        'refreshToken',
+        response.data.data.refreshToken,
+      ); 
+      navigation.navigate('Main'); //성공했을시 메인으로 이동
+    } catch(error) {
+      const errorResponse = (error as AxiosError<{ message: string }>).response;
+      if (errorResponse) {
+        Alert.alert('알림', errorResponse.data.message);
+      }
+    } finally {
+
+    } 
+  },[dispatch, email, password]);
+
+
   return (
     <View style={styles.header}>
       <ImageBackground
@@ -40,13 +94,39 @@ function Login({navigation, setIsLoggedIn}: any) {
         style={styles.bgImage}>
         <View style={{flex: 2}}>
           <Text style={styles.login}>Login</Text>
-          <TextInput style={styles.Input} placeholder="Email" />
-          <TextInput style={styles.Input} placeholder="Password" />
+          <TextInput 
+            style={styles.Input} 
+            placeholder="Email" 
+            value={email}
+            onChangeText={onChangeEmail} 
+            importantForAutofill="yes"
+            autoComplete='email'
+            textContentType='emailAddress'
+            returnKeyType='next'
+            keyboardType='email-address'
+            onSubmitEditing={() => { //엔터쳤을때 무슨 동작을 할건지
+              passwordRef.current?.focus();
+            }}
+            blurOnSubmit={false} //키보드 내려가는거 막아줌
+            ref={emailRef}
+          />
+          <TextInput 
+            style={styles.Input} 
+            placeholder="Password"
+            value={password} 
+            onChangeText={onChangePassword} 
+            secureTextEntry
+            importantForAutofill="yes"
+            autoComplete='password'
+            textContentType='password'
+            ref={passwordRef}
+            onSubmitEditing={onSubmit}
+          />
           <DaonBtn
             text="Login"
             style={styles.gangstyle}
             activeOpacity={0.5}
-            onPress={toMain}
+            // onPress={toMain}
           />
         </View>
 

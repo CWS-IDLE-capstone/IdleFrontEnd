@@ -10,7 +10,7 @@ import {
   Dimensions,
   Alert,
 } from 'react-native';
-import {RootStackParamList} from '../../App';
+import {RootStackParamList} from '../../AppInner';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
@@ -29,6 +29,7 @@ function EmailSignUp({navigation}: ScreenProps) {
   const [verify, setVerify] = useState(false);
   const [password, setPassword] = useState('');
   const [checkPass, setCheckPass] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const onChangeName = (payload: React.SetStateAction<string>) =>
     setName(payload);

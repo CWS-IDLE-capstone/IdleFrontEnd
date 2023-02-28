@@ -43,7 +43,6 @@ function Main({navigation}: MainScreenProps) {
       },
     );
   }, [myPosition?.latitude]);
-
   console.log('3');
   useEffect(() => {
     Geolocation.watchPosition(
@@ -84,8 +83,9 @@ function Main({navigation}: MainScreenProps) {
       <NaverMapView
         style={{width: '100%', height: '100%'}}
         zoomControl={false}
+        showsMyLocationButton={true}
         center={{
-          zoom: myPosition ? 18 : 5.5,
+          zoom: myPosition ? 17 : 5.5,
           latitude: myPosition?.latitude ? myPosition?.latitude : 37,
           longitude: myPosition?.longitude ? myPosition?.longitude : 127.6,
           // latitude: myPosition?.latitude,

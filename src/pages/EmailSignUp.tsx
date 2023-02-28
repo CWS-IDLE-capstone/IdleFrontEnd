@@ -29,21 +29,26 @@ function EmailSignUp({navigation}: ScreenProps) {
   const [verify, setVerify] = useState(false);
   const [password, setPassword] = useState('');
   const [checkPass, setCheckPass] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [provider, setProvider] = useState('');
+  const [providerId, setProviderId] = useState('');
 
-  const onChangeName = (payload: React.SetStateAction<string>) =>
+  const onChangeName = (payload: React.SetStateAction<string>) => {
     setName(payload);
+    setNickname(payload);
+  };
   const onSubmitName = () => {
     Alert.alert(name);
     console.log(name);
   };
   const onCheckMan = () => {
     setIsCheckMan('1');
-    setSex('man');
+    setSex('MALE');
   };
   const onCheckWoman = () => {
     setIsCheckMan('2');
 
-    setSex('woman');
+    setSex('FEMALE');
   };
   const onChangeEmail = (payload: React.SetStateAction<string>) =>
     setEmail(payload);
@@ -72,6 +77,8 @@ function EmailSignUp({navigation}: ScreenProps) {
       console.log('이메일 인증 번호 일치');
       Alert.alert('인증번호가 일치합니다');
       setVerify(true);
+      setProvider('NORMAL');
+      setProviderId('');
     } else {
       setVerify(false);
       console.log(verify);
@@ -86,6 +93,7 @@ function EmailSignUp({navigation}: ScreenProps) {
   };
   const onCheckPass = (payload: React.SetStateAction<string>) =>
     setCheckPass(payload);
+
   const toFinSignUp = useCallback(async () => {
     if (!password || !checkPass) {
       return Alert.alert('비밀번호를 확인해주세요');
@@ -108,11 +116,14 @@ function EmailSignUp({navigation}: ScreenProps) {
       console.log(Config.API_URL);
       try {
         const response = await axios
-          .post(`${Config.API_URL}/api/book`, {
+          .post(`${Config.API_URL}/api/user/signup`, {
             name,
-            sex,
             email,
             password,
+            nickname,
+            provider,
+            providerId,
+            sex,
           })
           .then(() => {
             console.log(response);
@@ -127,7 +138,19 @@ function EmailSignUp({navigation}: ScreenProps) {
       } finally {
       }
     }
-  }, [password, checkPass, email, verify, name, sex, navigation]);
+  }, [
+    password,
+    checkPass,
+    email,
+    verifyUserNum,
+    verify,
+    name,
+    sex,
+    nickname,
+    provider,
+    providerId,
+    navigation,
+  ]);
   return (
     <KeyboardAwareScrollView>
       <View style={styles.container}>

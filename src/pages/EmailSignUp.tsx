@@ -98,7 +98,10 @@ function EmailSignUp({navigation}: ScreenProps) {
       return Alert.alert('알림', '올바른 이메일 주소가 아닙니다.');
     }
     if (password !== checkPass) {
-      Alert.alert('비밀번호가 다릅니다');
+      return Alert.alert('비밀번호가 다릅니다');
+    }
+    if (verifyUserNum === '') {
+      return Alert.alert('이메일 인증을 완료해주세요');
     }
     if (password === checkPass && verify === true && name !== '') {
       console.log(name, sex, email, password);

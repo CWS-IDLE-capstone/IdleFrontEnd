@@ -15,6 +15,9 @@ function FinishSignUp({navigation}: ScreenProps) {
   const toMoreInfo = useCallback(() => {
     navigation.navigate('MoreInfo');
   }, [navigation]);
+  const toLogin = useCallback(() => {
+    navigation.navigate('Login');
+  }, [navigation]);
 
   return (
     <>
@@ -24,6 +27,9 @@ function FinishSignUp({navigation}: ScreenProps) {
       <View style={styles.container2}>
         <TouchableOpacity activeOpacity={0.9} onPress={toMoreInfo}>
           <Text style={styles.nextBtn}>다음 단계로</Text>
+        </TouchableOpacity>
+        <TouchableOpacity activeOpacity={0.9} onPress={toLogin}>
+          <Text style={styles.nextBtn}>로그인하기</Text>
         </TouchableOpacity>
       </View>
     </>

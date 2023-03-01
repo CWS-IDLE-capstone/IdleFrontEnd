@@ -39,7 +39,7 @@ function Main({navigation}: MainScreenProps) {
       {
         enableHighAccuracy: true,
         timeout: 3000,
-        distanceFilter: 50,
+        distanceFilter: 200,
       },
     );
   }, [myPosition?.latitude]);
@@ -65,8 +65,8 @@ function Main({navigation}: MainScreenProps) {
       },
       {
         enableHighAccuracy: true,
-        timeout: 3000,
-        distanceFilter: 50,
+        timeout: 5000,
+        distanceFilter: 200,
       },
     );
   }, [myPosition]);
@@ -77,7 +77,7 @@ function Main({navigation}: MainScreenProps) {
       // eslint-disable-next-line react-native/no-inline-styles
       style={{
         width: WIDTH,
-        height: HEIGHT - 55,
+        height: HEIGHT - 65,
         backgroundColor: 'yellow',
       }}>
       <NaverMapView

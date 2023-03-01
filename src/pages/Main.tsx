@@ -71,7 +71,7 @@ function Main({navigation}: MainScreenProps) {
           latitude,
           longitude
         };
-        SetRouteCoordinates(routeCoordinates => [...routeCoordinates, newCoordinate]);
+        // SetRouteCoordinates(routeCoordinates => [...routeCoordinates, newCoordinate]);
         // routeCoordinatesRef.current = [...routeCoordinates, newCoordinate];
         console.log('getCurrentPosition 실행');
         // console.log(myPosition?.latitude);
@@ -83,12 +83,17 @@ function Main({navigation}: MainScreenProps) {
         distanceFilter: 50,
       },
     );
+
+    return () => {
+      // Geolocation.clearWatch;
+      console.log("currentPosition 그만");
+    }
   }, []); //1번만 받아오면 될듯
 
   useEffect(() => {
     Geolocation.watchPosition(
       info => {
-        // console.log(info);
+        // console.log("info: ", info);
         const {latitude, longitude} = info.coords;
         setMyPosition({
           latitude: info.coords.latitude,
@@ -104,7 +109,6 @@ function Main({navigation}: MainScreenProps) {
         // console.log(info.coords.longitude);
         // console.log(typeof myPosition);
         console.log('watchPosition 실행');
-        console.log("이동한 포지션: ", myPosition);
         // console.log(typeof myPosition.latitude);
         // console.log(typeof myPosition);
       },
@@ -118,11 +122,11 @@ function Main({navigation}: MainScreenProps) {
       },
     );
 
-    return () => {
-      console.log('그만');
+    return () => { //cleanUp 함수
+      console.log('watchposition 그만');
     }
     
-  }, [myPosition]);
+  }, []);
   // console.log('5');
   // console.log(myPosition);
   console.log(routeCoordinates);

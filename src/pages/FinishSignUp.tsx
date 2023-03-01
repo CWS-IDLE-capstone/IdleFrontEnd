@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {RootStackParamList} from '../../App';
+import {RootStackParamList} from '../../AppInner';
 
 const {width: WIDTH} = Dimensions.get('window');
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'MoreInfo'>;

@@ -40,8 +40,8 @@ export type LoggedInParamList = {
 
 function AppInner() {
     // TODO: isLoggedIn = useSelector 이용하여 상태관리
-    const isLoggedIn = useSelector((state: RootState) => !!state.user.email);
-    // const [isLoggedIn, setIsLoggedIn] = useState(false);
+    // const isLoggedIn = useSelector((state: RootState) => !!state.user.email); //리덕스에서 가져오기
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     return (
         <NavigationContainer>
         {isLoggedIn ? (
@@ -69,12 +69,12 @@ function AppInner() {
           </Tab.Navigator>
         ) : (
           <Stack.Navigator>
-            <Stack.Screen name="Welcome" component={MoreInfo} />
+            <Stack.Screen name="Welcome" component={Welcome} />
             <Stack.Screen name="Start" component={Start} />
             <Stack.Screen
               name="Login"
               // component={Login}
-              children={() => <Login /* setIsLoggedIn={setIsLoggedIn} */ />}
+              children={() => <Login setIsLoggedIn={setIsLoggedIn}  />}
             />
             <Stack.Screen name="SignUp" component={SignUp} />
             <Stack.Screen name="EmailSignUp" component={EmailSignUp} />

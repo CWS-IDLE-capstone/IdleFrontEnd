@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   Dimensions,
   Alert,
+  KeyboardAvoidingView,
+  ScrollView,
 } from 'react-native';
 import {RootStackParamList} from '../../AppInner';
 import axios, {AxiosError} from 'axios';
@@ -16,6 +18,8 @@ import Config from 'react-native-config';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import SignBtn from '../components/signBtn';
 import SignText from '../components/signText';
+import DismissKeyboardView from '../components/DismissKeyboardView'
+
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'FinishSignUp'>;
 const {width: WIDTH} = Dimensions.get('window');
 
@@ -30,6 +34,9 @@ function EmailSignUp({navigation}: ScreenProps) {
   const [password, setPassword] = useState('');
   const [checkPass, setCheckPass] = useState('');
   const [loading, setLoading] = useState(false);
+  const provider = 'NORMAL';
+  const nickname = 'hihi2';
+  const providerId = null;
 
   const onChangeName = (payload: React.SetStateAction<string>) =>
     setName(payload);
@@ -39,12 +46,12 @@ function EmailSignUp({navigation}: ScreenProps) {
   };
   const onCheckMan = () => {
     setIsCheckMan('1');
-    setSex('man');
+    setSex('MALE');
   };
   const onCheckWoman = () => {
     setIsCheckMan('2');
 
-    setSex('woman');
+    setSex('FEMALE');
   };
   const onChangeEmail = (payload: React.SetStateAction<string>) =>
     setEmail(payload);
@@ -106,11 +113,14 @@ function EmailSignUp({navigation}: ScreenProps) {
       console.log(Config.API_URL);
       try {
         const response = await axios
-          .post(`${Config.API_URL}/api/book`, {
+          .post(`${Config.API_URL}/api/user/signup`, {
             name,
-            sex,
             email,
             password,
+            nickname,
+            provider,
+            providerId,
+            sex,
           })
           .then(() => {
             console.log(response);
@@ -127,111 +137,112 @@ function EmailSignUp({navigation}: ScreenProps) {
     }
   }, [password, checkPass, email, verify, name, sex, navigation]);
   return (
-    <KeyboardAwareScrollView>
-      <View style={styles.container}>
-        <Text style={styles.conText}>이메일회원가입페이지</Text>
-      </View>
-      <View style={styles.container2}>
-        <View style={styles.nameView1}>
-          <SignText text="이름" />
-          <TextInput
-            style={styles.nameInput}
-            placeholder="이름입력칸"
-            onChangeText={onChangeName}
-            onSubmitEditing={onSubmitName}
-          />
-          <Text style={styles.sexText}>성별</Text>
-          <TouchableOpacity
-            style={[
-              styles.sexManBtn,
-              {backgroundColor: isCheckMan === '1' ? 'lightskyblue' : 'white'},
-            ]}
-            onPress={onCheckMan}>
-            <Text style={styles.sexManText}>남</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.sexFemBtn,
-              {backgroundColor: isCheckMan === '2' ? 'lightskyblue' : 'white'},
-            ]}
-            onPress={onCheckWoman}>
-            <Text style={styles.sexFemText}>여</Text>
-          </TouchableOpacity>
+    <DismissKeyboardView style={undefined} >
+        <View style={styles.container}>
+          <Text style={styles.conText}>이메일회원가입페이지</Text>
         </View>
-        <View style={styles.emailViewContainer}>
-          <View style={styles.emailView}>
-            <SignText text="이메일" />
+        <View style={styles.container2}>
+          <View style={styles.nameView1}>
+            <SignText text="이름" />
+            <TextInput
+              style={styles.nameInput}
+              placeholder="이름입력칸"
+              onChangeText={onChangeName}
+              onSubmitEditing={onSubmitName}
+              keyboardType='default'
+            />
+            <Text style={styles.sexText}>성별</Text>
+            <TouchableOpacity
+              style={[
+                styles.sexManBtn,
+                {backgroundColor: isCheckMan === '1' ? 'lightskyblue' : 'white'},
+              ]}
+              onPress={onCheckMan}>
+              <Text style={styles.sexManText}>남</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.sexFemBtn,
+                {backgroundColor: isCheckMan === '2' ? 'lightskyblue' : 'white'},
+              ]}
+              onPress={onCheckWoman}>
+              <Text style={styles.sexFemText}>여</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.emailViewContainer}>
+            <View style={styles.emailView}>
+              <SignText text="이메일" />
+              <SignTextInput
+                placeholder="이메일 입력칸"
+                onChangeText={onChangeEmail}
+                onSubmitEditing={undefined}
+                keyboardType="email-address"
+                textContentType="emailAddress"
+                secureTextEntry
+                value={email}
+              />
+            </View>
+          </View>
+          {/* <SignBtn text="이메일 확인" onPress={onSubmitEmail} /> */}
+          <View style={styles.emailverify}>
+            <TouchableOpacity style={styles.emailRetry} onPress={onSubmitEmail}>
+              <Text style={styles.emailRetryText}>전송</Text>
+            </TouchableOpacity>
+            <Text
+              style={{
+                width: WIDTH * 0.67,
+                marginLeft: 15,
+                textAlignVertical: 'center',
+              }}>
+              이메일을 확인 후 인증코드를 작성해주세요
+            </Text>
+          </View>
+          <View style={styles.emailverify}>
+            <TouchableOpacity style={styles.emailRetry} onPress={onVerifyUserNum}>
+              <Text style={styles.emailRetryText}>확인</Text>
+            </TouchableOpacity>
             <SignTextInput
-              placeholder="이메일 입력칸"
-              onChangeText={onChangeEmail}
+              placeholder="인증번호 입력"
+              // onChangeText={onVerifyUserNum}
+              onChangeText={onUserNum}
               onSubmitEditing={undefined}
-              keyboardType="email-address"
-              textContentType="emailAddress"
+              keyboardType={undefined}
+              textContentType="oneTimeCode"
               secureTextEntry
-              value={email}
+              value={verifyUserNum}
             />
           </View>
         </View>
-        {/* <SignBtn text="이메일 확인" onPress={onSubmitEmail} /> */}
-        <View style={styles.emailverify}>
-          <TouchableOpacity style={styles.emailRetry} onPress={onSubmitEmail}>
-            <Text style={styles.emailRetryText}>전송</Text>
-          </TouchableOpacity>
-          <Text
-            style={{
-              width: WIDTH * 0.67,
-              marginLeft: 15,
-              textAlignVertical: 'center',
-            }}>
-            이메일을 확인 후 인증코드를 작성해주세요
-          </Text>
+        <View style={styles.container3}>
+          <View style={styles.passView1}>
+            <SignText text="비밀번호" />
+            <SignTextInput
+              placeholder="비밀번호 입력칸"
+              onChangeText={onChangePass}
+              onSubmitEditing={undefined}
+              keyboardType={undefined}
+              textContentType="password"
+              secureTextEntry
+              value={password}
+            />
+          </View>
+          <View style={styles.passView2}>
+            <SignText text="비밀번호   확인" />
+            <SignTextInput
+              placeholder="비밀번호확인 입력칸"
+              onChangeText={onCheckPass}
+              onSubmitEditing={undefined}
+              keyboardType={undefined}
+              textContentType="password"
+              secureTextEntry
+              value={undefined}
+            />
+          </View>
         </View>
-        <View style={styles.emailverify}>
-          <TouchableOpacity style={styles.emailRetry} onPress={onVerifyUserNum}>
-            <Text style={styles.emailRetryText}>확인</Text>
-          </TouchableOpacity>
-          <SignTextInput
-            placeholder="인증번호 입력"
-            // onChangeText={onVerifyUserNum}
-            onChangeText={onUserNum}
-            onSubmitEditing={undefined}
-            keyboardType={undefined}
-            textContentType="oneTimeCode"
-            secureTextEntry
-            value={verifyUserNum}
-          />
+        <View style={styles.signView}>
+          <SignBtn activeOpacity={0.9} onPress={toFinSignUp} text="회원가입" />
         </View>
-      </View>
-      <View style={styles.container3}>
-        <View style={styles.passView1}>
-          <SignText text="비밀번호" />
-          <SignTextInput
-            placeholder="비밀번호 입력칸"
-            onChangeText={onChangePass}
-            onSubmitEditing={undefined}
-            keyboardType={undefined}
-            textContentType="password"
-            secureTextEntry
-            value={password}
-          />
-        </View>
-        <View style={styles.passView2}>
-          <SignText text="비밀번호   확인" />
-          <SignTextInput
-            placeholder="비밀번호확인 입력칸"
-            onChangeText={onCheckPass}
-            onSubmitEditing={undefined}
-            keyboardType={undefined}
-            textContentType="password"
-            secureTextEntry
-            value={undefined}
-          />
-        </View>
-      </View>
-      <View style={styles.signView}>
-        <SignBtn activeOpacity={0.9} onPress={toFinSignUp} text="회원가입" />
-      </View>
-    </KeyboardAwareScrollView>
+    </DismissKeyboardView>
   );
 }
 const styles = StyleSheet.create({

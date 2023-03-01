@@ -17,8 +17,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
+  ScrollView
 } from 'react-native';
-import { RootStackParamList } from '../../App';
+import { RootStackParamList } from '../../AppInner';
 import axios, { AxiosError } from 'axios';
 import Config from 'react-native-config';
 import { useState } from 'react';
@@ -141,11 +142,11 @@ function MoreInfo() {
   //   } finally {
   //     setLoading(false);
   //   }
-  // }, [dogName,dogAge, dogBreed, dogSex, loading])
+  // }, [dogName,dogAge, dogBreed, dogSex, loading]) 
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView style={styles.header} behavior="position">
+      <KeyboardAvoidingView style={styles.header} behavior="position"> 
         <ImageBackground source={require("../assets/bg1.jpg")} style={styles.bgImage}>
 
           <View style={{ marginBottom: 15 }}>

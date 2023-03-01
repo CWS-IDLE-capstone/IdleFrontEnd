@@ -71,10 +71,10 @@ function Login({navigation, setIsLoggedIn}: any) {
           accessToken: response.data.data.accessToken, // 유효기간 10분, 5분, 1시간
         }),
       );
-      await EncryptedStorage.setItem(
-        'refreshToken',
-        response.data.data.refreshToken,
-      ); 
+      // await EncryptedStorage.setItem(
+      //   'refreshToken',
+      //   response.data.data.refreshToken,
+      // ); 
       navigation.navigate('Main'); //성공했을시 메인으로 이동
     } catch(error) {
       const errorResponse = (error as AxiosError<{ message: string }>).response;
@@ -126,7 +126,7 @@ function Login({navigation, setIsLoggedIn}: any) {
             text="Login"
             style={styles.gangstyle}
             activeOpacity={0.5}
-            // onPress={toMain}
+            onPress={toMain}
           />
         </View>
 

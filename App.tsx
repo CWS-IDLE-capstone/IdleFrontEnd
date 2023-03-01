@@ -1,7 +1,7 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React, {useState} from 'react';
-import {} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Alert} from 'react-native';
 import EmailSignUp from './src/pages/EmailSignUp';
 import FinishSignUp from './src/pages/FinishSignUp';
 import SignUp from './src/pages/SignUp';
@@ -15,7 +15,6 @@ import MyPage from './src/pages/MyPage';
 import messaging from '@react-native-firebase/messaging';
 import MoreInfo from './src/pages/MoreInfo';
 import ApppA from './src/pages/ApppA';
-
 
 export type LoggedInParamList = {
   Community: undefined;
@@ -35,12 +34,26 @@ export type RootStackParamList = {
 };
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
 function App() {
   // TODO: isLoggedIn = useSelector 이용하여 상태관리
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      console.log(
+        'A new foreground FCM message arrived!!',
+        JSON.stringify(remoteMessage),
+      );
+    });
+
+    return unsubscribe;
+  }, []);
+
   return (
     <>
-     <NavigationContainer>
+      <NavigationContainer>
         {isLoggedIn ? (
           <Tab.Navigator initialRouteName="Main">
             <Tab.Screen

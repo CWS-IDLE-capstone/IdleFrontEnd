@@ -9,13 +9,17 @@ import {
   TouchableOpacity,
   Dimensions,
   Alert,
+  KeyboardAvoidingView,
+  ScrollView,
 } from 'react-native';
-import {RootStackParamList} from '../../App';
+import {RootStackParamList} from '../../AppInner';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import SignBtn from '../components/signBtn';
 import SignText from '../components/signText';
+import DismissKeyboardView from '../components/DismissKeyboardView';
+
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'FinishSignUp'>;
 const {width: WIDTH} = Dimensions.get('window');
 
@@ -152,7 +156,7 @@ function EmailSignUp({navigation}: ScreenProps) {
     navigation,
   ]);
   return (
-    <KeyboardAwareScrollView>
+    <DismissKeyboardView style={undefined}>
       <View style={styles.container}>
         <Text style={styles.conText}>이메일회원가입페이지</Text>
       </View>
@@ -164,6 +168,7 @@ function EmailSignUp({navigation}: ScreenProps) {
             placeholder="이름입력칸"
             onChangeText={onChangeName}
             onSubmitEditing={onSubmitName}
+            keyboardType="default"
           />
           <Text style={styles.sexText}>성별</Text>
           <TouchableOpacity
@@ -256,7 +261,7 @@ function EmailSignUp({navigation}: ScreenProps) {
       <View style={styles.signView}>
         <SignBtn activeOpacity={0.9} onPress={toFinSignUp} text="회원가입" />
       </View>
-    </KeyboardAwareScrollView>
+    </DismissKeyboardView>
   );
 }
 const styles = StyleSheet.create({

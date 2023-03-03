@@ -153,6 +153,8 @@ function AppInner() {
                 title: '설정',
               }}
             />
+            {/* 정보수정페이지만든후연결위치 */}
+            {/* <Stack.Screen name="AddInfo" /> */}
           </Stack.Navigator>
         ) : (
           <Stack.Navigator>

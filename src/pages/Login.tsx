@@ -1,12 +1,9 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useCallback} from 'react';
-import SignTextInput from '../components/signTextInput';
+import React, {useCallback, useState} from 'react';
 import {
   Pressable,
   Text,
   View,
-  Button,
-  Alert,
   TextInput,
   StyleSheet,
   TouchableOpacity,
@@ -14,25 +11,25 @@ import {
   ImageBackground,
 } from 'react-native';
 import {RootStackParamList} from '../../App';
-import axios, {AxiosError} from 'axios';
-import Config from 'react-native-config';
 import DaonBtn from '../components/daonBtn';
-import Hyperlink from 'react-native-hyperlink';
-import openURL from '../../openUrl';
-import {Linking} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
-type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
+type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp', 'Main'>;
 
-// function Login(navigation: ScreenProps) {
-function Login({navigation, setIsLoggedIn}: any) {
-  const NAVER_LINK =
-    'https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=ZJgU_ewa3JbBsSyXwPJG&redirect_uri=http://localhost:8081/login/oauth2/code/naver&state=test';
-  // const toMain = useCallback(() => {
-  //   navigation.navigate('Main');
-  // }, [navigation]);
+function Login() {
+  const navigation = useNavigation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const toMain = () => {
     setIsLoggedIn(true);
   };
+
+  if (isLoggedIn) {
+    // isLoggedIn 값이 true일 때, 다른 화면으로 이동
+    navigation.navigate('Main');
+    return null;
+  }
+
   return (
     <View style={styles.header}>
       <ImageBackground
@@ -53,15 +50,13 @@ function Login({navigation, setIsLoggedIn}: any) {
         <View style={{flex: 1}}>
           <View>
             <TouchableOpacity style={styles.row}>
-              <Hyperlink>
-                <Text
-                  style={styles.naverLogin}
-                  onPress={() => Linking.openURL(`${NAVER_LINK}`)}>
-                  네이버 로그인
-                </Text>
-              </Hyperlink>
-              <Text style={styles.googleLogin}>구글 로그인</Text>
+              <Text
+                style={styles.naverLogin}
+                onPress={() => navigation.navigate('NaverLogin')}>
+                네이버 로그인
+              </Text>
             </TouchableOpacity>
+            <Text style={styles.kakaoLogin}>카카오 로그인</Text>
             <Pressable>
               <Text
                 style={styles.lastline}
@@ -90,7 +85,7 @@ const styles = StyleSheet.create({
   bgImage: {width: '100%', height: '100%'},
 
   naverLogin: {
-    //alignSelf: 'flex-start',
+    alignSelf: 'flex-start',
     marginTop: 30,
     marginBottom: 5,
     backgroundColor: '#03C75A',
@@ -102,11 +97,11 @@ const styles = StyleSheet.create({
     borderRadius: 77,
   },
 
-  googleLogin: {
-    //alignSelf: 'flex-end',
+  kakaoLogin: {
+    alignSelf: 'flex-end',
     marginTop: 30,
     marginBottom: 5,
-    backgroundColor: '#4285F4',
+    backgroundColor: 'orange',
     width: 150,
     height: 40,
     color: 'white',

@@ -15,13 +15,15 @@ import MyPage from './src/pages/MyPage';
 import messaging from '@react-native-firebase/messaging';
 import MoreInfo from './src/pages/MoreInfo';
 import ApppA from './src/pages/ApppA';
-
+import NaverLogin from './src/pages/NaverLogin';
+import AddInfo from './src/pages/AddInfo';
 
 export type LoggedInParamList = {
   Community: undefined;
   MyPage: undefined;
   Main: undefined;
   ApppA: undefined;
+  AddInfo: undefined;
 };
 export type RootStackParamList = {
   Welcome: undefined;
@@ -32,6 +34,7 @@ export type RootStackParamList = {
   FinishSignUp: undefined;
   Main: undefined;
   MoreInfo: undefined;
+  NaverLogin: undefined;
 };
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -40,7 +43,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   return (
     <>
-     <NavigationContainer>
+      <NavigationContainer>
         {isLoggedIn ? (
           <Tab.Navigator initialRouteName="Main">
             <Tab.Screen
@@ -63,6 +66,11 @@ function App() {
               component={ApppA}
               options={{title: 'aaaa'}}
             />
+            <Tab.Screen
+              name="AddInfo"
+              component={AddInfo}
+              options={{title: '회원정보수정'}}
+            />
           </Tab.Navigator>
         ) : (
           <Stack.Navigator>
@@ -70,14 +78,15 @@ function App() {
             <Stack.Screen name="Start" component={Start} />
             <Stack.Screen
               name="Login"
-              // component={Login}
               children={() => <Login setIsLoggedIn={setIsLoggedIn} />}
             />
             <Stack.Screen name="SignUp" component={SignUp} />
             <Stack.Screen name="EmailSignUp" component={EmailSignUp} />
             <Stack.Screen name="FinishSignUp" component={FinishSignUp} />
             <Stack.Screen name="MoreInfo" component={MoreInfo} />
-            {/* <Stack.Screen name="Main" component={Main} /> */}
+            <Stack.Screen name="NaverLogin" component={NaverLogin} />
+            <Stack.Screen name="Main" component={Main} />
+            <Stack.Screen name="AddInfo" component={AddInfo} />
           </Stack.Navigator>
         )}
       </NavigationContainer>

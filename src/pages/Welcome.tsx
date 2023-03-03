@@ -1,21 +1,34 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useCallback } from 'react';
-import { Text, View, StyleSheet, ImageBackground, TouchableOpacity, Dimensions } from 'react-native';
-import { RootStackParamList } from '../../App';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import React, {useCallback} from 'react';
+import {
+  Text,
+  View,
+  StyleSheet,
+  ImageBackground,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
+import {RootStackParamList} from '../../App';
 
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
-function Welcome({ navigation }: ScreenProps) {
+function Welcome({navigation}: ScreenProps) {
   const toStart = useCallback(() => {
     navigation.navigate('Start');
+    console.log('스타뚜');
   }, [navigation]);
   return (
     <>
       <View>
-        <ImageBackground source={require("../assets/bg1.jpg")} style={styles.bgImage}>
+        <ImageBackground
+          source={require('../assets/bg1.jpg')}
+          style={styles.bgImage}>
           <Text style={styles.text1}>CWS-IDLE</Text>
           <Text style={styles.text2}>환영합니다!</Text>
-          <TouchableOpacity style={styles.btnAlign} activeOpacity={0.5} onPress={toStart}>
+          <TouchableOpacity
+            style={styles.btnAlign}
+            activeOpacity={0.5}
+            onPress={toStart}>
             <Text style={styles.btnStyle}>Login</Text>
           </TouchableOpacity>
         </ImageBackground>
@@ -26,23 +39,23 @@ function Welcome({ navigation }: ScreenProps) {
 
 const {width: WIDTH} = Dimensions.get('window');
 const styles = StyleSheet.create({
-  bgImage: { 
-    width: '100%', 
-    height: '100%' 
+  bgImage: {
+    width: '100%',
+    height: '100%',
   },
   text1: {
     alignSelf: 'center',
     marginTop: 149,
     marginBottom: 5,
     fontSize: 40,
-    color:'#FFFFFF'
+    color: '#FFFFFF',
   },
   text2: {
     alignSelf: 'center',
     marginTop: 5,
     marginBottom: 5,
     fontSize: 40,
-    color:'#FFFFFF'
+    color: '#FFFFFF',
   },
   btnAlign: {
     alignSelf: 'center',
@@ -59,7 +72,6 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     borderRadius: 77,
   },
-
 });
 
 export default Welcome;

@@ -16,6 +16,7 @@ import NaverMapView, {Marker, Polyline} from 'react-native-nmap';
 import {LoggedInParamList} from '../../AppInner';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { current } from '@reduxjs/toolkit';
+import haversine from 'haversine';
 
 const useCounter = (initialValue: number, ms: number) => { //커스텀 hook
   const [count, setCount] = useState(initialValue);
@@ -42,39 +43,38 @@ const useCounter = (initialValue: number, ms: number) => { //커스텀 hook
   return {count, startcnt, stop, reset};
 }
 
+interface CoordinateLongitudeLatitude {
+  latitude: number;
+  longitude: number;
+}
+
+
 // type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 type MainScreenProps = NativeStackScreenProps<LoggedInParamList, 'Community'>;
 const {width: WIDTH} = Dimensions.get('window');
 const {height: HEIGHT} = Dimensions.get('window');
-console.log('------');
+console.log('------');  //const { count, startcnt, stop, reset} = useCounter(0, 1000);
 function Main({navigation}: MainScreenProps) {
   const [myPosition, setMyPosition] = useState<{
     latitude: number;
     longitude: number;
   } | null>(null);
-  const [routeCoordinates, SetRouteCoordinates] = useState<any>([]);
-  // const routeCoordinatesRef = useRef<any>([]); //TODO useRef 적용해서 배열 무한렌더링 해결하기...
+  const [routeCoordinates, setRouteCoordinates] = useState<CoordinateLongitudeLatitude[]>([]);
+  const [distanceTravelled, setDistanceTravelled] = useState(0);
+  const [prevLatLng, setPrevLatLng] = useState<CoordinateLongitudeLatitude | null>(null);
   const [startBtn, setStartBtn] = useState(true); //산책 시작 버튼 state
   const [currentHours, setCurrentHours] = useState<Number>(0);
   const [currentMinutes, setCurrentMinutes] = useState<Number>(0);
   const [currentSeconds, setCurrentSeconds] = useState<Number>(0);
   const { count, startcnt, stop, reset} = useCounter(0, 1000);
-  console.log('state 렌더링');
 
   useEffect(() => {
-    // console.log('!!');
     Geolocation.getCurrentPosition(
       position => {
-        const {latitude, longitude} = position.coords;
-        setMyPosition({latitude, longitude});
-        const newCoordinate = {
-          latitude,
-          longitude
-        };
-        // SetRouteCoordinates(routeCoordinates => [...routeCoordinates, newCoordinate]);
-        // routeCoordinatesRef.current = [...routeCoordinates, newCoordinate];
-        console.log('getCurrentPosition 실행');
-        // console.log(myPosition?.latitude);
+        const { latitude, longitude } = position.coords;
+        const newCoordinate: CoordinateLongitudeLatitude = { latitude, longitude };
+        setMyPosition(newCoordinate);
+        setRouteCoordinates([newCoordinate]);
       },
       console.error,
       {
@@ -83,34 +83,22 @@ function Main({navigation}: MainScreenProps) {
         distanceFilter: 50,
       },
     );
-
-    return () => {
-      // Geolocation.clearWatch;
-      console.log("currentPosition 그만");
-    }
-  }, []); //1번만 받아오면 될듯
+    console.log('getCurrentPosition 실행')
+  }, []);
 
   useEffect(() => {
-    Geolocation.watchPosition(
+    const watchId = Geolocation.watchPosition(
       info => {
-        // console.log("info: ", info);
-        const {latitude, longitude} = info.coords;
-        setMyPosition({
-          latitude: info.coords.latitude,
-          longitude: info.coords.longitude,
-        });
-        const newCoordinate = {
-          latitude,
-          longitude
-        };
-        SetRouteCoordinates(routeCoordinates => [...routeCoordinates, newCoordinate]);
-        // routeCoordinatesRef.current = [...routeCoordinates, newCoordinate];
-        // console.log(info.coords.latitude);
-        // console.log(info.coords.longitude);
-        // console.log(typeof myPosition);
-        console.log('watchPosition 실행');
-        // console.log(typeof myPosition.latitude);
-        // console.log(typeof myPosition);
+        const { latitude, longitude } = info.coords;
+        const newCoordinate: CoordinateLongitudeLatitude = { latitude, longitude };
+        setMyPosition(newCoordinate);
+        setRouteCoordinates(prev => [...prev, newCoordinate]);
+        
+        if (prevLatLng) {
+          setDistanceTravelled(distanceTravelled + calcDistance(prevLatLng, newCoordinate));
+        }
+
+        setPrevLatLng(newCoordinate);
       },
       error => {
         console.log(error);
@@ -118,19 +106,20 @@ function Main({navigation}: MainScreenProps) {
       {
         enableHighAccuracy: true,
         timeout: 3000,
-        distanceFilter: 100, //미터임
+        distanceFilter: 1, //미터임
       },
     );
+    console.log('watchposition 실행')
 
-    return () => { //cleanUp 함수
-      console.log('watchposition 그만');
-    }
-    
-  }, []);
-  // console.log('5');
-  // console.log(myPosition);
-  console.log(routeCoordinates);
-  // console.log("routeCoordinatesRef: ", routeCoordinatesRef.current);
+    return () => {
+      Geolocation.clearWatch(watchId);
+      console.log('clearWatch 실행')
+    };
+  }, [distanceTravelled]);
+
+  const calcDistance = (prevLatLng: CoordinateLongitudeLatitude, newLatLng: CoordinateLongitudeLatitude) => {
+    return haversine(prevLatLng, newLatLng) || 0;
+  };
 
   const timer = () => {
     const checkMinutes = Math.floor(count / 60);
@@ -143,6 +132,12 @@ function Main({navigation}: MainScreenProps) {
   }
 
   useEffect(timer, [count]);
+
+  console.log('거리: ', distanceTravelled.toFixed(2), 'km');
+  // console.log('5');
+  // console.log(myPosition);
+  console.log(routeCoordinates);
+  // console.log("routeCoordinatesRef: ", routeCoordinatesRef.current);
   
   return (
     <View
@@ -177,12 +172,8 @@ function Main({navigation}: MainScreenProps) {
          {myPosition?.latitude && (
             <Polyline
               coordinates={routeCoordinates.length <= 2 ? [
-                {
-                  latitude: 37.3777, //myPosition.latitude
-                  longitude: 126.6356,
-                },
+                {latitude: myPosition.latitude, longitude: myPosition.longitude},
                 {latitude: myPosition.latitude, longitude: myPosition.longitude}, 
-                {latitude: 37.39, longitude: 126.6356}
               ]: routeCoordinates}
               strokeWidth={5}
             />
@@ -247,9 +238,9 @@ function Main({navigation}: MainScreenProps) {
                   height: 30,
                   marginTop: 10,
                   }}>
-                    10m
+                    {distanceTravelled.toFixed(2)} km
                 </Text>
-                <Text style={{ textAlign: 'center'}}>거리</Text>
+                <Text style={{ textAlign: 'center'}}> 거리</Text>
               </View>
               <View style={{
                 backgroundColor: 'white',

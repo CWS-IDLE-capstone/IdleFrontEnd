@@ -283,6 +283,10 @@ dependencies {
         exclude group: 'com.android.support'
     }
     //noinspection GradleDynamicVersion
+    project.ext.vectoricons = [
+    iconFontNames: [ 'MaterialIcons.ttf', 'FontAwesome.ttf', 'Ionicons.ttf' ] // 추가한 아이콘 폰트 이름도 추가합니다.
+]
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
@@ -308,7 +312,6 @@ dependencies {
         implementation jscFlavor
     }
 }
-apply plugin: 'com.google.gms.google-services'
 if (isNewArchitectureEnabled()) {
     // If new architecture is enabled, we let you build RN from source
     // Otherwise we fallback to a prebuilt .aar bundled in the NPM package.
@@ -329,7 +332,7 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
-
+// apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
 def isNewArchitectureEnabled() {
     // To opt-in for the New Architecture, you can either:
     // - Set `newArchEnabled` to true inside the `gradle.properties` file

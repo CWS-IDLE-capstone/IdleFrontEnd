@@ -24,6 +24,7 @@
     "haversine": "^1.1.1",
     "react": "^17.0.2",
     "react-native": "0.68.2",
+    "react-native-calendars": "^1.1293.0",
     "react-native-config": "^1.4.12",
     "react-native-encrypted-storage": "^4.0.3",
     "react-native-hyperlink": "^0.0.22",

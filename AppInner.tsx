@@ -14,7 +14,7 @@ import Community from './src/pages/Community';
 import MyPage from './src/pages/MyPage';
 import messaging from '@react-native-firebase/messaging';
 import MoreInfo from './src/pages/MoreInfo';
-import ApppA from './src/pages/ApppA';
+import Journal from './src/pages/Journal';
 
 import {UserContextProvider} from './src/components/UserContext';
 import Setting from './src/pages/Setting';
@@ -25,7 +25,7 @@ import IconE from 'react-native-vector-icons/Entypo';
 //   Community: undefined;
 //   MyPage: undefined;
 //   Main: undefined;
-//   ApppA: undefined;
+//   Journal: undefined;
 //   Setting: undefined;
 // };
 // export type RootStackParamList = {
@@ -44,7 +44,7 @@ export type LoggedInParamList = {
   Community: undefined;
   MyPage: undefined;
   Main: undefined;
-  ApppA: undefined;
+  Journal: undefined;
   Setting: undefined;
   Welcome: undefined;
   Start: undefined;
@@ -78,7 +78,7 @@ function MyPageTabs() {
         name="Community"
         component={Community}
         options={{
-          title: '커뮤니티',
+          title: '메시지',
           tabBarIcon: ({color}) => (
             <IconE name="chat" size={35} color={color} />
           ),
@@ -95,10 +95,10 @@ function MyPageTabs() {
         }}
       />
       <Tab.Screen
-        name="ApppA"
-        component={ApppA}
+        name="Journal"
+        component={Journal}
         options={{
-          title: '산책기록',
+          title: '산책일지',
           tabBarIcon: ({color}) => (
             <Icon name="calendar" size={45} color={color} />
           ),

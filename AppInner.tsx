@@ -21,6 +21,10 @@ import Setting from './src/pages/Setting';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import IconAD from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
+import NaverLogin from './src/pages/NaverLogin';
+import AddInfo from './src/pages/AddInfo';
+import Calander from './src/pages/Calander';
+import Walk from './src/pages/Walk';
 // export type LoggedInParamList = {
 //   Community: undefined;
 //   MyPage: undefined;
@@ -53,6 +57,8 @@ export type LoggedInParamList = {
   EmailSignUp: undefined;
   FinishSignUp: undefined;
   MoreInfo: undefined;
+  AddInfo: undefined;
+
 };
 export type RootStackParamList = {
   Welcome: undefined;
@@ -64,6 +70,8 @@ export type RootStackParamList = {
   MoreInfo: undefined;
   Setting: undefined;
   MyPage1: undefined;
+  NaverLogin: undefined;
+
 };
 const Tab = createBottomTabNavigator<LoggedInParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -169,6 +177,11 @@ function AppInner() {
             <Stack.Screen name="EmailSignUp" component={EmailSignUp} />
             <Stack.Screen name="FinishSignUp" component={FinishSignUp} />
             <Stack.Screen name="MoreInfo" component={MoreInfo} />
+            <Stack.Screen name="AddInfo" component={AddInfo} />
+            <Stack.Screen name="Calander" component={Calander} />
+            <Stack.Screen name="Walk" component={Walk} />
+            <Stack.Screen name="NaverLogin" component={NaverLogin} />
+
             {/* <Stack.Screen name="Main" component={Main} /> */}
           </Stack.Navigator>
         )}

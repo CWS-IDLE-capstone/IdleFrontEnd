@@ -56,7 +56,7 @@ function Login() {
                 네이버 로그인
               </Text>
             </TouchableOpacity>
-            <Text style={styles.kakaoLogin}>카카오 로그인</Text>
+            {/* <Text style={styles.kakaoLogin}>카카오 로그인</Text> */}
             <Pressable>
               <Text
                 style={styles.lastline}

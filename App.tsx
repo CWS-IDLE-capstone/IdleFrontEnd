@@ -17,6 +17,8 @@ import MoreInfo from './src/pages/MoreInfo';
 import ApppA from './src/pages/ApppA';
 import NaverLogin from './src/pages/NaverLogin';
 import AddInfo from './src/pages/AddInfo';
+import Calander from './src/pages/Calander';
+import Walk from './src/pages/Walk';
 
 export type LoggedInParamList = {
   Community: undefined;
@@ -62,9 +64,9 @@ function App() {
               options={{title: '마이페이지'}}
             />
             <Tab.Screen
-              name="ApppA"
-              component={ApppA}
-              options={{title: 'aaaa'}}
+              name="산책기록"
+              component={Calander}
+              options={{title: '산책기록'}}
             />
             <Tab.Screen
               name="AddInfo"
@@ -87,6 +89,8 @@ function App() {
             <Stack.Screen name="NaverLogin" component={NaverLogin} />
             <Stack.Screen name="Main" component={Main} />
             <Stack.Screen name="AddInfo" component={AddInfo} />
+            <Stack.Screen name="Calander" component={Calander} />
+            <Stack.Screen name="Walk" component={Walk} />
           </Stack.Navigator>
         )}
       </NavigationContainer>

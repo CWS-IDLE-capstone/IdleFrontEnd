@@ -4,7 +4,7 @@ import messaging from '@react-native-firebase/messaging';
 import CalendarView from '../components/CalendarView';
 // import {useDispatch} from 'react-redux';
 
-function ApppA() {
+function Journal() {
   // const dispatch = useDispatch();
   const getFcmToken = useCallback(async () => {
     const fcmToken = await messaging().getToken();
@@ -14,11 +14,10 @@ function ApppA() {
   }, []);
   return (
     <View>
-      <Text>ApppA</Text>
-      <Button title="get Token!!" onPress={getFcmToken} />
+      <Button title="show My Token" onPress={getFcmToken} />
       <CalendarView />
     </View>
   );
 }
-export default ApppA;
+export default Journal;
 //기기 토큰 생성

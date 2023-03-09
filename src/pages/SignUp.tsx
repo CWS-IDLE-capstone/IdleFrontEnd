@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {RootStackParamList} from '../../App';
+import {RootStackParamList} from '../../AppInner';
 
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'EmailSignUp'>;
 
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     marginBottom: '5%',
   },
   contain2: {
-    flex: 1,
+    flex: 1.3,
   },
   contain3: {
     flex: 1.6,

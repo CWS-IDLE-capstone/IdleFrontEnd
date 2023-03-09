@@ -13,10 +13,13 @@ import {
   Dimensions,
   ImageBackground,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
+  TouchableWithoutFeedback,
+  ScrollView
 } from 'react-native';
-import { RootStackParamList } from '../../App';
+import { RootStackParamList } from '../../AppInner';
 import axios, { AxiosError } from 'axios';
 import Config from 'react-native-config';
 import { useState } from 'react';
@@ -25,6 +28,8 @@ import { launchImageLibrary, launchCamera } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/Ionicons";
 import Material from 'react-native-vector-icons/MaterialIcons'
 import {Picker} from '@react-native-picker/picker';
+
+
 
 
 
@@ -137,10 +142,11 @@ function MoreInfo() {
   //   } finally {
   //     setLoading(false);
   //   }
-  // }, [dogName,dogAge, dogBreed, dogSex, loading])
+  // }, [dogName,dogAge, dogBreed, dogSex, loading]) 
 
   return (
-      <KeyboardAvoidingView style={styles.header}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView style={styles.header} behavior="position"> 
         <ImageBackground source={require("../assets/bg1.jpg")} style={styles.bgImage}>
 
           <View style={{ marginBottom: 15 }}>
@@ -258,6 +264,7 @@ function MoreInfo() {
                             marginBottom: 5,
                             justifyContent: 'center'
                           }} 
+                          keyboardType='number-pad'
                           value={dogAge} 
                           onChangeText={setDogAge} 
                           />
@@ -338,6 +345,7 @@ function MoreInfo() {
           </View>
           :null }
       </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
 
   );
 }

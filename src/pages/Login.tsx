@@ -26,10 +26,7 @@ import {useNavigation} from '@react-navigation/native';
 
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp', 'Main'>;
 
-function Login() {
-  const navigation = useNavigation();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+function Login({navigation, setIsLoggedIn}: any) {
   const toMain = () => {
     setIsLoggedIn(true);
   };

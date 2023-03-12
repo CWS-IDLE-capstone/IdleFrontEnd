@@ -78,10 +78,10 @@ function MyPageTabs() {
         name="Community"
         component={Community}
         options={{
-          title: '커뮤니티',
-          tabBarIcon: ({color}) => (
-            <IconE name="chat" size={35} color={color} />
-          ),
+          title: '메시지',//커뮤니티
+          tabBarIcon: ({color}) => 
+            <IconE name="chat" size={35} color={color} />   
+          ,
         }}
       />
       <Tab.Screen

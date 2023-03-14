@@ -18,6 +18,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { current } from '@reduxjs/toolkit';
 import haversine from 'haversine';
 import useCounter from '../components/useCounter';
+import Feather from 'react-native-vector-icons/Feather';
 
 interface CoordinateLongitudeLatitude {
   latitude: number;
@@ -71,7 +72,7 @@ function Main({navigation}: MainScreenProps) {
         const { latitude, longitude } = position.coords;
         const newCoordinate: CoordinateLongitudeLatitude = { latitude, longitude };
         setMyPosition(newCoordinate);
-        setRouteCoordinates([newCoordinate]);
+        // setRouteCoordinates([newCoordinate]); //처음위치를 무조건 배열에 안넣고 산책시작하면 배열에 넣게 없앴음
         // setPrevLatLng(null);
         console.log('getCurrentPosition 실행')
       },
@@ -145,7 +146,7 @@ function Main({navigation}: MainScreenProps) {
       // eslint-disable-next-line react-native/no-inline-styles
       style={{
         width: WIDTH,
-        height: HEIGHT * 0.85 , //HEIGHT * 0.83
+        height: HEIGHT * 0.90 , //HEIGHT * 0.83
         backgroundColor: 'yellow',
       }}>
       <NaverMapView
@@ -172,23 +173,24 @@ function Main({navigation}: MainScreenProps) {
         )}
          {myPosition?.latitude && (
           startBtn ? 
-            <Polyline
+            <Polyline //일반 폴리라인
               coordinates={routeCoordinates.length <= 2 ? [
                 {latitude: myPosition.latitude, longitude: myPosition.longitude},
                 {latitude: myPosition.latitude, longitude: myPosition.longitude}, 
               ]: routeCoordinates}
-              strokeWidth={5}
+              strokeWidth={15}
+              strokeColor="#1EFF34"
             /> : null
           )}
           {myPosition?.latitude && (
           energyBtn ? 
-            <Polyline
+            <Polyline //에너지 떨어짐 폴리라인
               coordinates={energyCoordinates.length <= 2 ? [
                 routeCoordinates[routeCoordinates.length-1],
                 {latitude: myPosition.latitude, longitude: myPosition.longitude}, 
               ]: energyCoordinates}
-              strokeWidth={5}
-              strokeColor='red'
+              strokeWidth={15}
+              strokeColor='#F19900'
             /> : null
           )}
         
@@ -205,7 +207,7 @@ function Main({navigation}: MainScreenProps) {
         bottom: 10,
 
         }}>
-        {startBtn ? (
+        {startBtn ? ( //산책 시작 버튼 눌렀을때
           <View style={{
             backgroundColor: 'white',
             width: '100%',
@@ -286,11 +288,12 @@ function Main({navigation}: MainScreenProps) {
               <Text style={{ textAlign: 'center'}}>시간</Text>
             </View>
             <View style={{
-              backgroundColor: energyBtn ? 'green' : 'red',
+              // backgroundColor: energyBtn ? 'green' : 'red',
               zIndex: 1,
               position: 'absolute',
-              bottom: 20
+              bottom: 35
             }}>
+            {routeCoordinates.length >= 5 ? //거리배열이 5개 이상일때만 에너지버튼이 활성화 되도록
               <TouchableOpacity onPress={()=> {
                 Alert.alert(
                   "에너지가 떨어지셨나요?", '에너지 떨어짐 확인',
@@ -318,10 +321,19 @@ function Main({navigation}: MainScreenProps) {
                 // setFisrtSeconds(currentSeconds);
                 // setEnergyCoordinates([routeCoordinates[routeCoordinates.length-1]]);
                 }}>
-                <Text>에너지</Text>
-                <Text>떨어짐</Text>
-                <Text>{energyBtn ? 'on' : 'off'}</Text>
+                <FontAwesome 
+                  name='battery' 
+                  style={{
+                    fontSize: 30,
+                    color: energyBtn ? 'red' : 'green'
+                  }}
+                  />
+                {/* <Text>에너지</Text>
+                <Text>떨어짐</Text> */}
+                {/* <Text>{energyBtn ? 'on' : 'off'}</Text> */}
               </TouchableOpacity>
+              : null}
+              
             </View>
           </View>
           ) : (
@@ -352,18 +364,18 @@ function Main({navigation}: MainScreenProps) {
       </View>
       {resultBtn ? (
         <View style={{
-          backgroundColor: 'yellow',
+          backgroundColor: 'white',
           zIndex: 1,
           position: 'absolute',
           width: WIDTH,
-          height: HEIGHT * 0.7,
+          height: HEIGHT * 0.9, //HEIGHT * 0.7
           top: 0
         }}>
           <View style={{
             top: 10,
           }}>
             <Text style={{fontSize: 20, marginHorizontal: 20, marginBottom: 10}}>{year}. {month}. {day} (일)</Text>
-            <Text style={{fontSize: 25, fontWeight: 'bold', marginLeft: 20, marginRight: 70, marginBottom: 10}}>오늘도 열심히 산책해서 멋있어요</Text>
+            <Text style={{fontSize: 25, fontWeight: 'bold', marginLeft: 20, marginRight: 70, marginBottom: 10}}>오늘도 열심히 산책해서 멋있어요!</Text>
             <View style={{
               flexDirection: 'row',
               alignContent: 'space-around',
@@ -389,6 +401,7 @@ function Main({navigation}: MainScreenProps) {
                 marginHorizontal: 20,
                 marginBottom: 10,
               }}>
+                <Text style={{fontSize: 15, fontWeight: 'bold'}}>체력이 떨어진 구간: </Text>
                 <Text style={{fontSize: 12}}>에너지 떨어진 거리 {energyDistance.toFixed(2)} km , </Text>
                 <Text style={{fontSize: 12}}>에너지 떨어진 시간 {energyHours < 10 ? `0${energyHours}`: energyHours}:
                 {energyMinutes < 10 ? `0${energyMinutes}`: energyMinutes}:
@@ -407,22 +420,23 @@ function Main({navigation}: MainScreenProps) {
                   // longitude: myPosition?.longitude,
                 }}>
                 {myPosition?.latitude && (
-                    <Polyline
+                    <Polyline //결과 창 일반 폴리라인
                       coordinates={routeCoordinates.length <= 2 ? [
                         {latitude: myPosition.latitude, longitude: myPosition.longitude},
                         {latitude: myPosition.latitude, longitude: myPosition.longitude}, 
                       ]: routeCoordinates}
                       strokeWidth={5}
+                      strokeColor="#1EFF34"
                     />
                   )}
                   {myPosition?.latitude && (
-                    <Polyline
+                    <Polyline //결과 창 에너지 떨어짐 폴리라인
                       coordinates={energyCoordinates.length <= 2 ? [
                         {latitude: myPosition.latitude, longitude: myPosition.longitude},
                         {latitude: myPosition.latitude, longitude: myPosition.longitude}, 
                       ]: energyCoordinates}
                       strokeWidth={5}
-                      strokeColor='red'
+                      strokeColor='#F19900'
                     />
                   )}
             </NaverMapView>         

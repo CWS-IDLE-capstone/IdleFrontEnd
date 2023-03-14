@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     marginBottom: '5%',
   },
   contain2: {
-    flex: 1,
+    flex: 1.3,
   },
   contain3: {
     flex: 1.6,

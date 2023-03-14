@@ -24,7 +24,6 @@ function MyPage({navigation}: any) {
   });
   return (
     <View>
-      <Text>MyPage</Text>
       <DaonBtn text="정보수정" onPress={onUpdateUser} />
     </View>
   );

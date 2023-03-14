@@ -14,18 +14,22 @@ import Community from './src/pages/Community';
 import MyPage from './src/pages/MyPage';
 import messaging from '@react-native-firebase/messaging';
 import MoreInfo from './src/pages/MoreInfo';
-import ApppA from './src/pages/ApppA';
+import Journal from './src/pages/Journal';
 
 import {UserContextProvider} from './src/components/UserContext';
 import Setting from './src/pages/Setting';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import IconAD from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
+import NaverLogin from './src/pages/NaverLogin';
+import AddInfo from './src/pages/AddInfo';
+import Calander from './src/pages/Calander';
+import Walk from './src/pages/Walk';
 // export type LoggedInParamList = {
 //   Community: undefined;
 //   MyPage: undefined;
 //   Main: undefined;
-//   ApppA: undefined;
+//   Journal: undefined;
 //   Setting: undefined;
 // };
 // export type RootStackParamList = {
@@ -44,7 +48,7 @@ export type LoggedInParamList = {
   Community: undefined;
   MyPage: undefined;
   Main: undefined;
-  ApppA: undefined;
+  Journal: undefined;
   Setting: undefined;
   Welcome: undefined;
   Start: undefined;
@@ -53,6 +57,8 @@ export type LoggedInParamList = {
   EmailSignUp: undefined;
   FinishSignUp: undefined;
   MoreInfo: undefined;
+  AddInfo: undefined;
+
 };
 export type RootStackParamList = {
   Welcome: undefined;
@@ -64,6 +70,8 @@ export type RootStackParamList = {
   MoreInfo: undefined;
   Setting: undefined;
   MyPage1: undefined;
+  NaverLogin: undefined;
+
 };
 const Tab = createBottomTabNavigator<LoggedInParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -78,10 +86,10 @@ function MyPageTabs() {
         name="Community"
         component={Community}
         options={{
-          title: '메시지',//커뮤니티
-          tabBarIcon: ({color}) => 
-            <IconE name="chat" size={35} color={color} />   
-          ,
+          title: '메시지',
+          tabBarIcon: ({color}) => (
+            <IconE name="chat" size={35} color={color} />
+          ),
         }}
       />
       <Tab.Screen
@@ -95,10 +103,10 @@ function MyPageTabs() {
         }}
       />
       <Tab.Screen
-        name="ApppA"
-        component={ApppA}
+        name="Journal"
+        component={Journal}
         options={{
-          title: '산책기록',
+          title: '산책일지',
           tabBarIcon: ({color}) => (
             <Icon name="calendar" size={45} color={color} />
           ),
@@ -169,6 +177,11 @@ function AppInner() {
             <Stack.Screen name="EmailSignUp" component={EmailSignUp} />
             <Stack.Screen name="FinishSignUp" component={FinishSignUp} />
             <Stack.Screen name="MoreInfo" component={MoreInfo} />
+            <Stack.Screen name="AddInfo" component={AddInfo} />
+            <Stack.Screen name="Calander" component={Calander} />
+            <Stack.Screen name="Walk" component={Walk} />
+            <Stack.Screen name="NaverLogin" component={NaverLogin} />
+
             {/* <Stack.Screen name="Main" component={Main} /> */}
           </Stack.Navigator>
         )}

@@ -4,7 +4,7 @@ import React from 'react';
 function Community() {
   return (
     <View>
-      <Text>Community</Text>
+      <Text>Push Message</Text>
     </View>
   );
 }

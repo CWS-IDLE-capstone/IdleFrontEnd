@@ -90,7 +90,7 @@ function Main({navigation}: MainScreenProps) {
           longitude,
         };
         setMyPosition(newCoordinate);
-        setRouteCoordinates([newCoordinate]);
+        // setRouteCoordinates([newCoordinate]);
         // setPrevLatLng(null);
         console.log('getCurrentPosition 실행');
       },
@@ -129,7 +129,7 @@ function Main({navigation}: MainScreenProps) {
       {
         enableHighAccuracy: true,
         timeout: 3000,
-        distanceFilter: 30, //미터임
+        distanceFilter: 10, //미터임
       },
     );
 
@@ -137,7 +137,7 @@ function Main({navigation}: MainScreenProps) {
       Geolocation.clearWatch(watchId);
       console.log('clearWatch 실행');
     };
-  }, []); //prevLatLng TODO 무한렌더링 문제 해결해야함
+  }, [distanceTravelled, prevLatLng]); //prevLatLng TODO 무한렌더링 문제 해결해야함
 
   const calcDistance = (
     prevLatLng: CoordinateLongitudeLatitude,

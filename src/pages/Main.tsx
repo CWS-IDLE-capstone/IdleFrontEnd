@@ -17,32 +17,8 @@ import {LoggedInParamList} from '../../AppInner';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {current} from '@reduxjs/toolkit';
 import haversine from 'haversine';
-
-const useCounter = (initialValue: number, ms: number) => {
-  //커스텀 hook 시간세는 함수
-  const [count, setCount] = useState(initialValue);
-  const intervalRef = useRef(null);
-  const startcnt = useCallback(() => {
-    if (intervalRef.current !== null) {
-      return;
-    }
-    intervalRef.current = setInterval(() => {
-      setCount(c => c + 1);
-    }, ms);
-  }, []);
-  const stop = useCallback(() => {
-    if (intervalRef.current === null) {
-      return;
-    }
-    clearInterval(intervalRef.current);
-    intervalRef.current = null;
-  }, []);
-  const reset = useCallback(() => {
-    setCount(0);
-    stop();
-  }, []);
-  return {count, startcnt, stop, reset};
-};
+import useCounter from '../components/useCounter';
+import Feather from 'react-native-vector-icons/Feather';
 
 interface CoordinateLongitudeLatitude {
   latitude: number;
@@ -61,20 +37,31 @@ function Main({navigation}: MainScreenProps) {
   } | null>(null);
   const [routeCoordinates, setRouteCoordinates] = useState<
     CoordinateLongitudeLatitude[]
-  >([]);
+  >([]); //기본 배열
   const [energyCoordinates, setEnergyCoordinates] = useState<
     CoordinateLongitudeLatitude[]
-  >([]);
-  const [distanceTravelled, setDistanceTravelled] = useState(0);
+  >([]); //에너지 떨어짐 배열
+
+  const [distanceTravelled, setDistanceTravelled] = useState<Number>(0); //거리
+  const [firstDistance, setFirstDistance] = useState<Number>(0); //측정 거리
+  const [energyDistance, setEnergyDistance] = useState<Number>(0); //에너지 떨어짐 거리
+
   const [prevLatLng, setPrevLatLng] =
     useState<CoordinateLongitudeLatitude | null>(null);
-  const [startBtn, setStartBtn] = useState(true); //산책 시작 버튼 state
+
+  const [startBtn, setStartBtn] = useState(false); //산책 시작 버튼 state
   const [resultBtn, setResultBtn] = useState(false); //결과창 실행 버튼 state
   const [energyBtn, setEnergyBtn] = useState(false); //에너지 떨어짐 버튼 state
-  const [polylineColor, setPolylineColor] = useState<string>('#000000'); //폴리라인 컬러
-  const [currentHours, setCurrentHours] = useState<Number>(0);
-  const [currentMinutes, setCurrentMinutes] = useState<Number>(0);
-  const [currentSeconds, setCurrentSeconds] = useState<Number>(0);
+
+  const [currentHours, setCurrentHours] = useState<Number>(0); //시간
+  const [currentMinutes, setCurrentMinutes] = useState<Number>(0); //분
+  const [currentSeconds, setCurrentSeconds] = useState<Number>(0); //초
+  const [firstHours, setFirstHours] = useState<Number>(0); //측정 시간
+  const [firstMinutes, setFirstMinutes] = useState<Number>(0); //측정 분
+  const [firstSeconds, setFisrtSeconds] = useState<Number>(0); //측정 초
+  const [energyHours, setEnergyHours] = useState<Number>(0); //에너지 떨어짐 시간
+  const [energyMinutes, setEnergyMinutes] = useState<Number>(0); //에너지 떨어짐 분
+  const [energySeconds, setEnergySeconds] = useState<Number>(0); //에너지 떨어짐 초
   const {count, startcnt, stop, reset} = useCounter(0, 1000);
   const today = new Date();
   const year = today.getFullYear();
@@ -90,7 +77,7 @@ function Main({navigation}: MainScreenProps) {
           longitude,
         };
         setMyPosition(newCoordinate);
-        // setRouteCoordinates([newCoordinate]);
+        // setRouteCoordinates([newCoordinate]); //처음위치를 무조건 배열에 안넣고 산책시작하면 배열에 넣게 없앴음
         // setPrevLatLng(null);
         console.log('getCurrentPosition 실행');
       },
@@ -112,7 +99,11 @@ function Main({navigation}: MainScreenProps) {
           longitude,
         };
         setMyPosition(newCoordinate);
-        setRouteCoordinates(prev => [...prev, newCoordinate]);
+        startBtn
+          ? energyBtn
+            ? setEnergyCoordinates(prev => [...prev, newCoordinate])
+            : setRouteCoordinates(prev => [...prev, newCoordinate])
+          : null;
 
         if (prevLatLng) {
           setDistanceTravelled(
@@ -129,7 +120,7 @@ function Main({navigation}: MainScreenProps) {
       {
         enableHighAccuracy: true,
         timeout: 3000,
-        distanceFilter: 10, //미터임
+        distanceFilter: 1, //미터임
       },
     );
 
@@ -137,7 +128,7 @@ function Main({navigation}: MainScreenProps) {
       Geolocation.clearWatch(watchId);
       console.log('clearWatch 실행');
     };
-  }, [distanceTravelled, prevLatLng]); //prevLatLng TODO 무한렌더링 문제 해결해야함
+  }, [startBtn, energyBtn]); //prevLatLng TODO 무한렌더링 문제 해결해야함
 
   const calcDistance = (
     prevLatLng: CoordinateLongitudeLatitude,
@@ -161,7 +152,8 @@ function Main({navigation}: MainScreenProps) {
   console.log('거리: ', distanceTravelled.toFixed(2), 'km');
   // console.log('5');
   // console.log(myPosition);
-  console.log(routeCoordinates);
+  console.log('일반 배열: ', routeCoordinates);
+  console.log('에너지 떨어짐 배열: ', energyCoordinates);
   // console.log("routeCoordinatesRef: ", routeCoordinatesRef.current);
 
   return (
@@ -169,7 +161,7 @@ function Main({navigation}: MainScreenProps) {
       // eslint-disable-next-line react-native/no-inline-styles
       style={{
         width: WIDTH,
-        height: HEIGHT * 0.85, //HEIGHT * 0.83
+        height: HEIGHT * 0.9, //HEIGHT * 0.83
         backgroundColor: 'yellow',
       }}>
       <NaverMapView
@@ -194,25 +186,45 @@ function Main({navigation}: MainScreenProps) {
             image={require('../assets/dpic.jpg')}
           />
         )}
-        {myPosition?.latitude && (
-          <Polyline
-            coordinates={
-              routeCoordinates.length <= 2
-                ? [
-                    {
-                      latitude: myPosition.latitude,
-                      longitude: myPosition.longitude,
-                    },
-                    {
-                      latitude: myPosition.latitude,
-                      longitude: myPosition.longitude,
-                    },
-                  ]
-                : routeCoordinates
-            }
-            strokeWidth={5}
-          />
-        )}
+        {myPosition?.latitude &&
+          (startBtn ? (
+            <Polyline //일반 폴리라인
+              coordinates={
+                routeCoordinates.length <= 2
+                  ? [
+                      {
+                        latitude: myPosition.latitude,
+                        longitude: myPosition.longitude,
+                      },
+                      {
+                        latitude: myPosition.latitude,
+                        longitude: myPosition.longitude,
+                      },
+                    ]
+                  : routeCoordinates
+              }
+              strokeWidth={15}
+              strokeColor="#1EFF34"
+            />
+          ) : null)}
+        {myPosition?.latitude &&
+          (energyBtn ? (
+            <Polyline //에너지 떨어짐 폴리라인
+              coordinates={
+                energyCoordinates.length <= 2
+                  ? [
+                      routeCoordinates[routeCoordinates.length - 1],
+                      {
+                        latitude: myPosition.latitude,
+                        longitude: myPosition.longitude,
+                      },
+                    ]
+                  : energyCoordinates
+              }
+              strokeWidth={15}
+              strokeColor="#F19900"
+            />
+          ) : null)}
       </NaverMapView>
       <View
         style={{
@@ -226,35 +238,7 @@ function Main({navigation}: MainScreenProps) {
           alignSelf: 'center',
           bottom: 10,
         }}>
-        {startBtn ? (
-          <TouchableOpacity
-            style={{
-              backgroundColor: '#6A74CF',
-              width: '70%',
-              height: 50,
-              zIndex: 1,
-              alignSelf: 'center',
-              alignContent: 'center',
-              alignItems: 'center',
-              borderRadius: 77,
-            }}
-            onPress={() => {
-              setStartBtn(false);
-              startcnt();
-            }}>
-            <Text
-              style={{
-                color: 'white',
-                textAlign: 'center',
-                textAlignVertical: 'bottom',
-                fontSize: 16,
-                fontWeight: 'bold',
-                height: 35,
-              }}>
-              산책 시작하기
-            </Text>
-          </TouchableOpacity>
-        ) : (
+        {startBtn ? ( //산책 시작 버튼 눌렀을때
           <View
             style={{
               backgroundColor: 'white',
@@ -295,6 +279,12 @@ function Main({navigation}: MainScreenProps) {
               <TouchableOpacity
                 onPress={() => {
                   setResultBtn(prev => !prev);
+                  setEnergyDistance(
+                    distanceTravelled.toFixed(2) - firstDistance.toFixed(2),
+                  );
+                  setEnergyHours(currentHours - firstHours);
+                  setEnergyMinutes(currentMinutes - firstMinutes);
+                  setEnergySeconds(currentSeconds - firstSeconds);
                   stop();
                   // console.log(`거리 : ${distanceTravelled.toFixed(2)} km,
                   // 시간: ${currentHours < 10 ? `0${currentHours}`: currentHours}:
@@ -336,29 +326,95 @@ function Main({navigation}: MainScreenProps) {
             </View>
             <View
               style={{
-                backgroundColor: 'red',
+                // backgroundColor: energyBtn ? 'green' : 'red',
                 zIndex: 1,
                 position: 'absolute',
+                bottom: 35,
               }}>
-              <TouchableOpacity
-                onPress={() => {
-                  setEnergyBtn(prev => !prev);
-                }}>
-                <Text>에너지</Text>
-                <Text>떨어짐</Text>
-              </TouchableOpacity>
+              {routeCoordinates.length >= 5 ? ( //거리배열이 5개 이상일때만 에너지버튼이 활성화 되도록
+                <TouchableOpacity
+                  onPress={() => {
+                    Alert.alert(
+                      '에너지가 떨어지셨나요?',
+                      '에너지 떨어짐 확인',
+                      [
+                        {
+                          text: '확인',
+                          onPress: () => {
+                            setEnergyBtn(true);
+                            setFirstDistance(distanceTravelled);
+                            setFirstHours(currentHours);
+                            setFirstMinutes(currentMinutes);
+                            setFisrtSeconds(currentSeconds);
+                            setEnergyCoordinates([
+                              routeCoordinates[routeCoordinates.length - 1],
+                            ]);
+                          },
+                        },
+                        {
+                          text: '취소',
+                        },
+                      ],
+                    );
+                    // setEnergyBtn(true);
+                    // setFirstDistance(distanceTravelled);
+                    // setFirstHours(currentHours);
+                    // setFirstMinutes(currentMinutes);
+                    // setFisrtSeconds(currentSeconds);
+                    // setEnergyCoordinates([routeCoordinates[routeCoordinates.length-1]]);
+                  }}>
+                  <FontAwesome
+                    name="battery"
+                    style={{
+                      fontSize: 30,
+                      color: energyBtn ? 'red' : 'green',
+                    }}
+                  />
+                  {/* <Text>에너지</Text>
+                <Text>떨어짐</Text> */}
+                  {/* <Text>{energyBtn ? 'on' : 'off'}</Text> */}
+                </TouchableOpacity>
+              ) : null}
             </View>
           </View>
+        ) : (
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#6A74CF',
+              width: '70%',
+              height: 50,
+              zIndex: 1,
+              alignSelf: 'center',
+              alignContent: 'center',
+              alignItems: 'center',
+              borderRadius: 77,
+            }}
+            onPress={() => {
+              setStartBtn(true);
+              startcnt();
+            }}>
+            <Text
+              style={{
+                color: 'white',
+                textAlign: 'center',
+                textAlignVertical: 'bottom',
+                fontSize: 16,
+                fontWeight: 'bold',
+                height: 35,
+              }}>
+              산책 시작하기
+            </Text>
+          </TouchableOpacity>
         )}
       </View>
       {resultBtn ? (
         <View
           style={{
-            backgroundColor: 'yellow',
+            backgroundColor: 'white',
             zIndex: 1,
             position: 'absolute',
             width: WIDTH,
-            height: HEIGHT * 0.7,
+            height: HEIGHT * 0.9, //HEIGHT * 0.7
             top: 0,
           }}>
           <View
@@ -377,7 +433,7 @@ function Main({navigation}: MainScreenProps) {
                 marginRight: 70,
                 marginBottom: 10,
               }}>
-              오늘도 열심히 산책해서 멋있어요
+              오늘도 열심히 산책해서 멋있어요!
             </Text>
             <View
               style={{
@@ -388,16 +444,43 @@ function Main({navigation}: MainScreenProps) {
                 marginHorizontal: 20,
                 marginBottom: 10,
               }}>
-              <Text style={{fontSize: 15, fontWeight: 'bold'}}>산책결과: </Text>
-              <Text style={{fontSize: 15}}>
+              <Text style={{fontSize: 15, fontWeight: 'bold'}}>
+                산책 결과:{' '}
+              </Text>
+              <Text style={{fontSize: 12}}>
                 거리 {distanceTravelled.toFixed(2)} km ,{' '}
               </Text>
-              <Text style={{fontSize: 15}}>
+              {/* <Text style={{fontSize: 12}}>처음거리 {firstDistance.toFixed(2)} km , </Text> */}
+              <Text style={{fontSize: 12}}>
                 시간 {currentHours < 10 ? `0${currentHours}` : currentHours}:
                 {currentMinutes < 10 ? `0${currentMinutes}` : currentMinutes}:
                 {currentSeconds < 10 ? `0${currentSeconds}` : currentSeconds}{' '}
               </Text>
             </View>
+            {energyBtn ? (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignContent: 'space-around',
+                  alignItems: 'center',
+                  // alignSelf: 'center',
+                  marginHorizontal: 20,
+                  marginBottom: 10,
+                }}>
+                <Text style={{fontSize: 15, fontWeight: 'bold'}}>
+                  체력이 떨어진 구간:{' '}
+                </Text>
+                <Text style={{fontSize: 12}}>
+                  에너지 떨어진 거리 {energyDistance.toFixed(2)} km ,{' '}
+                </Text>
+                <Text style={{fontSize: 12}}>
+                  에너지 떨어진 시간{' '}
+                  {energyHours < 10 ? `0${energyHours}` : energyHours}:
+                  {energyMinutes < 10 ? `0${energyMinutes}` : energyMinutes}:
+                  {energySeconds < 10 ? `0${energySeconds}` : energySeconds}{' '}
+                </Text>
+              </View>
+            ) : null}
             <NaverMapView
               style={{
                 width: '90%',
@@ -417,7 +500,7 @@ function Main({navigation}: MainScreenProps) {
                 // longitude: myPosition?.longitude,
               }}>
               {myPosition?.latitude && (
-                <Polyline
+                <Polyline //결과 창 일반 폴리라인
                   coordinates={
                     routeCoordinates.length <= 2
                       ? [
@@ -433,6 +516,27 @@ function Main({navigation}: MainScreenProps) {
                       : routeCoordinates
                   }
                   strokeWidth={5}
+                  strokeColor="#1EFF34"
+                />
+              )}
+              {myPosition?.latitude && (
+                <Polyline //결과 창 에너지 떨어짐 폴리라인
+                  coordinates={
+                    energyCoordinates.length <= 2
+                      ? [
+                          {
+                            latitude: myPosition.latitude,
+                            longitude: myPosition.longitude,
+                          },
+                          {
+                            latitude: myPosition.latitude,
+                            longitude: myPosition.longitude,
+                          },
+                        ]
+                      : energyCoordinates
+                  }
+                  strokeWidth={5}
+                  strokeColor="#F19900"
                 />
               )}
             </NaverMapView>
@@ -453,8 +557,18 @@ function Main({navigation}: MainScreenProps) {
               setStartBtn(prev => !prev); //스타트 버튼 열기
               reset(); //시간초기화
               setRouteCoordinates([]); //폴리라인 배열 초기화
+              setEnergyCoordinates([]); //에너지 떨어짐 배열 초기화
               setDistanceTravelled(0); //측정거리 초기화
               setPrevLatLng(null); //이전거리 초기화
+              setEnergyBtn(false); //에너지 떨어짐 버튼 초기화
+              setFirstDistance(0); //측정 거리 초기화
+              setEnergyDistance(0); //에너지 떨어짐 거리 초기화
+              setFirstHours(0); //측정 시간 초기화
+              setFirstMinutes(0); //측정 분 초기화
+              setFisrtSeconds(0); //측정 초 초기화
+              setEnergyHours(0); //에너지 떨어짐 시간 초기화
+              setEnergyMinutes(0); //에너지 떨어짐 분 초기화
+              setEnergySeconds(0); //에너지 떨어짐 초 초기화
             }}>
             <Text
               style={{

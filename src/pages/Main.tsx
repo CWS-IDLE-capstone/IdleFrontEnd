@@ -169,7 +169,7 @@ function Main({navigation}: MainScreenProps) {
         zoomControl={true}
         // showsMyLocationButton={true}
         center={{
-          zoom: myPosition ? 18 : 5.5,
+          zoom: myPosition ? 16 : 5.5,
           latitude: myPosition?.latitude ? myPosition?.latitude : 37,
           longitude: myPosition?.longitude ? myPosition?.longitude : 127.6,
           // latitude: myPosition?.latitude,
@@ -181,9 +181,9 @@ function Main({navigation}: MainScreenProps) {
               latitude: myPosition?.latitude,
               longitude: myPosition?.longitude,
             }}
-            width={20}
-            height={20}
-            image={require('../assets/dpic.jpg')}
+            width={40}
+            height={45}
+            image={require('../assets/dogIcon2.png')}
           />
         )}
         {myPosition?.latitude &&

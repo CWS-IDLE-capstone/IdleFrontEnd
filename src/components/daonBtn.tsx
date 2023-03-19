@@ -20,14 +20,16 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   text2: {
-    backgroundColor: '#6A74CF',
-    width: WIDTH * 0.7,
+    backgroundColor: '#ff8c00',
+    width: WIDTH * 0.4,
 
     height: 40,
     color: 'white',
     textAlign: 'center',
     textAlignVertical: 'center',
-    borderRadius: 77,
+    fontSize: 15,
+    fontWeight: 'bold',
+    borderRadius: 8,
   },
 });
 export default DaonBtn;

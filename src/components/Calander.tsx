@@ -3,7 +3,7 @@ import {View, Text, StyleSheet} from 'react-native';
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import {useNavigation} from '@react-navigation/native';
 
-const CalendarScreen = () => {
+function CalendarScreen() {
   const navigation = useNavigation();
   const [selectedDate, setSelectedDate] = useState('');
   const [walks, setWalks] = useState([]);
@@ -67,11 +67,11 @@ const CalendarScreen = () => {
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: '#fff',
   },
   banner: {

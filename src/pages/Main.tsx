@@ -345,11 +345,11 @@ function Main({navigation}: MainScreenProps) {
         <TouchableOpacity onPress={() => {
           setMarkerListBtn(true);
         }}>
-          <Text style={styles.MarkerText}>
+          {/* <Text style={styles.MarkerText}>
             마커
-          </Text>
+          </Text> */}
           <Image 
-            source={require('../assets/marker.png')}
+            source={require('../assets/plus.png')}
             style={styles.MarkerImage}
           />     
         </TouchableOpacity>       
@@ -515,7 +515,7 @@ function Main({navigation}: MainScreenProps) {
           zIndex: 1,
           position: 'absolute',
           width: WIDTH,
-          height: HEIGHT * 0.9, //HEIGHT * 0.75
+          height: HEIGHT * 0.9, //HEIGHT * 0.78
           top: 0
         }}>
           <View style={{
@@ -560,12 +560,45 @@ function Main({navigation}: MainScreenProps) {
                 zoomControl={true}
                 // showsMyLocationButton={true}
                 center={{
-                  zoom: myPosition ? 16 : 5.5,
+                  zoom: myPosition ? 17 : 5.5,
                   latitude: myPosition?.latitude ? myPosition?.latitude : 37,
                   longitude: myPosition?.longitude ? myPosition?.longitude : 127.6,
                   // latitude: myPosition?.latitude,
                   // longitude: myPosition?.longitude,
                 }}>
+                {hotplaceCoordinates.map((coordinate, index) => (
+                    <Marker
+                      key={index}
+                      coordinate={{
+                        latitude: coordinate.latitude,
+                        longitude: coordinate.longitude,
+                      }}
+                      image={require('../assets/hotplace.png')}
+                      width={30}
+                      height={30}
+                      onClick={() => {
+                        const newCoordinates = hotplaceCoordinates.filter((c, i) => i !== index);
+                        setHotplaceCoordinates(newCoordinates);
+                      }}
+                    />
+                  ))}
+
+                  {dangerCoordinates.map((coordinate, index) => (
+                      <Marker
+                        key={index}
+                        coordinate={{
+                          latitude: coordinate.latitude,
+                          longitude: coordinate.longitude,
+                        }}
+                        image={require('../assets/danger.png')}
+                        width={30}
+                        height={30}
+                        onClick={() => {
+                          const newCoordinates = dangerCoordinates.filter((c, i) => i !== index);
+                          setDangerCoordinates(newCoordinates);
+                        }}
+                      />
+                  ))} 
                 {myPosition?.latitude && (
                     <Polyline //결과 창 일반 폴리라인
                       coordinates={routeCoordinates.length <= 2 ? [

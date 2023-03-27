@@ -2,13 +2,14 @@ import Geolocation from '@react-native-community/geolocation';
 import {NavigationContainer, useFocusEffect} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useCallback, useEffect, useState, useRef} from 'react';
-import {TouchableOpacity} from 'react-native';
+import {ScrollView, Share, TouchableOpacity} from 'react-native';
 import {
   Pressable,
   Text,
   View,
   Button,
   Alert,
+  Image,
   StyleSheet,
   Dimensions,
 } from 'react-native';
@@ -19,6 +20,14 @@ import {current} from '@reduxjs/toolkit';
 import haversine from 'haversine';
 import useCounter from '../components/useCounter';
 import Feather from 'react-native-vector-icons/Feather';
+import ViewShot, {captureRef} from 'react-native-view-shot';
+import RNFS from 'react-native-fs';
+import Config from 'react-native-config';
+import axios from 'axios';
+import IconRightButton from '../components/IconRightButton';
+import Icon from '../components/IconRightButton';
+import {err} from 'react-native-svg/lib/typescript/xml';
+// import {Image} from 'react-native-svg';
 
 interface CoordinateLongitudeLatitude {
   latitude: number;
@@ -67,7 +76,10 @@ function Main({navigation}: MainScreenProps) {
   const year = today.getFullYear();
   const month = today.getMonth() + 1;
   const day = today.getDate();
+  const viewShotRef = useRef<null | any>(null);
 
+  const [imageCapture, setImageCapture] = useState(null); //이미지 캡쳐 후 화면표시용
+  const [imageCaptureUrl, setImageCaptureUrl] = useState('');
   useEffect(() => {
     Geolocation.getCurrentPosition(
       position => {
@@ -89,7 +101,7 @@ function Main({navigation}: MainScreenProps) {
       },
     );
   }, []);
-
+  console.log(today);
   useEffect(() => {
     const watchId = Geolocation.watchPosition(
       info => {
@@ -154,8 +166,66 @@ function Main({navigation}: MainScreenProps) {
   // console.log(myPosition);
   console.log('일반 배열: ', routeCoordinates);
   console.log('에너지 떨어짐 배열: ', energyCoordinates);
-  // console.log("routeCoordinatesRef: ", routeCoordinatesRef.current);
+  //
+  async function captureImage() {
+    const imageUri = await viewShotRef.current.capture();
+    console.log(imageUri);
+    try {
+      setImageCapture(imageUri);
+      console.log('산책캡쳐완료');
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const shareImage = async () => {
+    try {
+      const uri = await captureRef(viewShotRef, {
+        format: 'jpg',
+        quality: 0.8,
+      });
+      // const base64Data = await RNFetchBlob.fs.readFile(imageCapture, 'base64');
+      const url = `data:image/png;base64,${uri}`;
+      await Share.share({
+        title: 'walk image',
+        message: '',
+        url: `${uploadImageToServer.formData._parts[0].uri}`,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const uploadImageToServer = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('images', {
+        // key: 'images',
+        uri: imageCapture,
+        type: 'image/jpg',
+        name: 'capturedTestaImage.jpg',
+      });
 
+      const response = await axios
+        .post(`${Config.API_URL}/api/image`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then(res => {
+          if (res) {
+            console.log('res저장');
+            console.log(res);
+            setImageCaptureUrl(res.data.imageUrl);
+            console.log(res.data.imageUrl);
+            // console.log(res);
+          }
+        });
+      console.log('response: ');
+      console.log('Image uploaded successfully:', formData._parts[0]);
+      return imageCaptureUrl;
+    } catch (error) {
+      console.error('Failed to upload image:', error);
+    }
+  };
   return (
     <View
       // eslint-disable-next-line react-native/no-inline-styles
@@ -417,14 +487,64 @@ function Main({navigation}: MainScreenProps) {
             height: HEIGHT * 0.9, //HEIGHT * 0.7
             top: 0,
           }}>
+          <TouchableOpacity
+            style={{
+              backgroundColor: 'red',
+              width: 40,
+              height: 40,
+              marginLeft: 50,
+            }}
+            onPress={
+              captureImage
+              // captureAndSave;
+            }>
+            <Text>캡쳐</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: 'orange',
+              width: 40,
+              height: 40,
+              marginLeft: 50,
+            }}
+            onPress={
+              // captureImage
+              // captureAndSave
+              uploadImageToServer
+            }>
+            <Text>사진보내기</Text>
+          </TouchableOpacity>
           <View
             style={{
               top: 10,
             }}>
-            <Text
-              style={{fontSize: 20, marginHorizontal: 20, marginBottom: 10}}>
-              {year}. {month}. {day} (일)
-            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+              }}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  marginHorizontal: 20,
+                  marginBottom: 10,
+                  backgroundColor: 'yellow',
+                  width: '40%',
+                }}>
+                {year}. {month}. {day} (일)
+              </Text>
+              {/* <TouchableOpacity style={styles.share} onPress={captureImage}>
+                <Icon name={'share-google'} color={'black'} size={35} />
+              </TouchableOpacity> */}
+
+              <IconRightButton
+                style={styles.share}
+                name="share-google"
+                size={35}
+                color={'black'}
+                onPress={shareImage}
+              />
+            </View>
             <Text
               style={{
                 fontSize: 25,
@@ -435,32 +555,11 @@ function Main({navigation}: MainScreenProps) {
               }}>
               오늘도 열심히 산책해서 멋있어요!
             </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignContent: 'space-around',
-                alignItems: 'center',
-                // alignSelf: 'center',
-                marginHorizontal: 20,
-                marginBottom: 10,
-              }}>
-              <Text style={{fontSize: 15, fontWeight: 'bold'}}>
-                산책 결과:{' '}
-              </Text>
-              <Text style={{fontSize: 12}}>
-                거리 {distanceTravelled.toFixed(2)} km ,{' '}
-              </Text>
-              {/* <Text style={{fontSize: 12}}>처음거리 {firstDistance.toFixed(2)} km , </Text> */}
-              <Text style={{fontSize: 12}}>
-                시간 {currentHours < 10 ? `0${currentHours}` : currentHours}:
-                {currentMinutes < 10 ? `0${currentMinutes}` : currentMinutes}:
-                {currentSeconds < 10 ? `0${currentSeconds}` : currentSeconds}{' '}
-              </Text>
-            </View>
-            {energyBtn ? (
+            <View style={{flexDirection: 'row'}}>
               <View
                 style={{
-                  flexDirection: 'row',
+                  // flexDirection: 'row',
+                  flexDirection: 'column',
                   alignContent: 'space-around',
                   alignItems: 'center',
                   // alignSelf: 'center',
@@ -468,78 +567,124 @@ function Main({navigation}: MainScreenProps) {
                   marginBottom: 10,
                 }}>
                 <Text style={{fontSize: 15, fontWeight: 'bold'}}>
-                  체력이 떨어진 구간:{' '}
+                  산책 결과:{' '}
                 </Text>
                 <Text style={{fontSize: 12}}>
-                  에너지 떨어진 거리 {energyDistance.toFixed(2)} km ,{' '}
+                  거리 {distanceTravelled.toFixed(2)} km{' '}
                 </Text>
+                {/* <Text style={{fontSize: 12}}>처음거리 {firstDistance.toFixed(2)} km , </Text> */}
                 <Text style={{fontSize: 12}}>
-                  에너지 떨어진 시간{' '}
-                  {energyHours < 10 ? `0${energyHours}` : energyHours}:
-                  {energyMinutes < 10 ? `0${energyMinutes}` : energyMinutes}:
-                  {energySeconds < 10 ? `0${energySeconds}` : energySeconds}{' '}
+                  시간 {currentHours < 10 ? `0${currentHours}` : currentHours}:
+                  {currentMinutes < 10 ? `0${currentMinutes}` : currentMinutes}:
+                  {currentSeconds < 10 ? `0${currentSeconds}` : currentSeconds}{' '}
                 </Text>
               </View>
-            ) : null}
-            <NaverMapView
-              style={{
-                width: '90%',
-                height: '60%',
-                marginHorizontal: 20,
-                marginBottom: 10,
-              }}
-              zoomControl={true}
-              // showsMyLocationButton={true}
-              center={{
-                zoom: myPosition ? 16 : 5.5,
-                latitude: myPosition?.latitude ? myPosition?.latitude : 37,
-                longitude: myPosition?.longitude
-                  ? myPosition?.longitude
-                  : 127.6,
-                // latitude: myPosition?.latitude,
-                // longitude: myPosition?.longitude,
+              {energyBtn ? (
+                <View
+                  style={{
+                    // flexDirection: 'row',
+                    flexDirection: 'column',
+                    alignContent: 'space-around',
+                    alignItems: 'center',
+                    // alignSelf: 'center',
+                    marginHorizontal: 20,
+                    marginBottom: 10,
+                  }}>
+                  <Text style={{fontSize: 15, fontWeight: 'bold'}}>
+                    체력이 떨어진 구간{' '}
+                  </Text>
+                  <Text style={{fontSize: 12}}>
+                    에너지 떨어진 거리 {energyDistance.toFixed(2)} km{' '}
+                  </Text>
+                  <Text style={{fontSize: 12}}>
+                    에너지 떨어진 시간 :{' '}
+                    {energyHours < 10 ? `0${energyHours}` : energyHours}:
+                    {energyMinutes < 10 ? `0${energyMinutes}` : energyMinutes}:
+                    {energySeconds < 10 ? `0${energySeconds}` : energySeconds}{' '}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
+            {/* <ViewShot ref={ref => (this.viewShot = ref)}> */}
+            <ViewShot
+              ref={viewShotRef}
+              options={{
+                format: 'jpg',
+                quality: 1.0,
+                handleGLSurfaceViewOnAndroid: true,
               }}>
-              {myPosition?.latitude && (
-                <Polyline //결과 창 일반 폴리라인
-                  coordinates={
-                    routeCoordinates.length <= 2
-                      ? [
-                          {
-                            latitude: myPosition.latitude,
-                            longitude: myPosition.longitude,
-                          },
-                          {
-                            latitude: myPosition.latitude,
-                            longitude: myPosition.longitude,
-                          },
-                        ]
-                      : routeCoordinates
-                  }
-                  strokeWidth={5}
-                  strokeColor="#1EFF34"
-                />
-              )}
-              {myPosition?.latitude && (
-                <Polyline //결과 창 에너지 떨어짐 폴리라인
-                  coordinates={
-                    energyCoordinates.length <= 2
-                      ? [
-                          {
-                            latitude: myPosition.latitude,
-                            longitude: myPosition.longitude,
-                          },
-                          {
-                            latitude: myPosition.latitude,
-                            longitude: myPosition.longitude,
-                          },
-                        ]
-                      : energyCoordinates
-                  }
-                  strokeWidth={5}
-                  strokeColor="#F19900"
-                />
-              )}
-            </NaverMapView>
+              <View>
+                <NaverMapView
+                  style={{
+                    width: '90%',
+                    height: 300,
+                    marginHorizontal: 20,
+                    marginBottom: 10,
+                  }}
+                  zoomControl={true}
+                  // showsMyLocationButton={true}
+                  center={{
+                    zoom: myPosition ? 14 : 5.5,
+                    //TODO: 산책 종료 후 라인 기록 센터가 현위치에 맞춰져서 라인이 짤릴 수 있음.
+                    // 라인 전체를 볼 수 있도록
+                    latitude: myPosition?.latitude ? myPosition?.latitude : 37,
+                    longitude: myPosition?.longitude
+                      ? myPosition?.longitude
+                      : 127.6,
+                    // latitude: myPosition?.latitude,
+                    // longitude: myPosition?.longitude,
+                  }}>
+                  {myPosition?.latitude && (
+                    <Polyline //결과 창 일반 폴리라인
+                      coordinates={
+                        routeCoordinates.length <= 2
+                          ? [
+                              {
+                                latitude: myPosition.latitude,
+                                longitude: myPosition.longitude,
+                              },
+                              {
+                                latitude: myPosition.latitude,
+                                longitude: myPosition.longitude,
+                              },
+                            ]
+                          : routeCoordinates
+                      }
+                      strokeWidth={5}
+                      strokeColor="#1EFF34"
+                    />
+                  )}
+                  {myPosition?.latitude && (
+                    <Polyline //결과 창 에너지 떨어짐 폴리라인
+                      coordinates={
+                        energyCoordinates.length <= 2
+                          ? [
+                              {
+                                latitude: myPosition.latitude,
+                                longitude: myPosition.longitude,
+                              },
+                              {
+                                latitude: myPosition.latitude,
+                                longitude: myPosition.longitude,
+                              },
+                            ]
+                          : energyCoordinates
+                      }
+                      strokeWidth={5}
+                      strokeColor="#F19900"
+                    />
+                  )}
+                </NaverMapView>
+              </View>
+            </ViewShot>
+            <Image
+              source={
+                imageCapture
+                  ? {uri: imageCapture}
+                  : require('../assets/puppy.jpg')
+              }
+              style={{width: 250, height: 250}}
+            />
           </View>
           <TouchableOpacity
             style={{
@@ -569,6 +714,8 @@ function Main({navigation}: MainScreenProps) {
               setEnergyHours(0); //에너지 떨어짐 시간 초기화
               setEnergyMinutes(0); //에너지 떨어짐 분 초기화
               setEnergySeconds(0); //에너지 떨어짐 초 초기화
+              // captureImage;
+              // uploadImageToServer;
             }}>
             <Text
               style={{
@@ -589,3 +736,12 @@ function Main({navigation}: MainScreenProps) {
 }
 
 export default Main;
+
+const styles = StyleSheet.create({
+  share: {
+    alignItems: 'flex-end',
+    backgroundColor: 'green',
+    borderColor: 'red',
+    borderWidth: 1,
+  },
+});

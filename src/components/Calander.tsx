@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Image} from 'react-native';
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import {useNavigation} from '@react-navigation/native';
 
@@ -28,44 +28,52 @@ function CalendarScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.banner}>
-        <Text style={styles.bannerText}>산책횟수: {totalWalks}</Text>
-        <Text style={styles.bannerText}>산책거리: {totalDistance}</Text>
-        <Text style={styles.bannerText}>총 산책 시간: {totalTime}</Text>
+    <>
+      <View style={styles.container}>
+        <View style={styles.banner}>
+          <Text style={styles.bannerText}>산책횟수: {totalWalks}</Text>
+          <Text style={styles.bannerText}>산책거리: {totalDistance}</Text>
+          <Text style={styles.bannerText}>총 산책 시간: {totalTime}</Text>
+        </View>
+        <Calendar
+          current={selectedDate}
+          onDayPress={handleDayPress}
+          markedDates={{
+            '2023-03-01': {
+              marked: true,
+              dotColor: '#2E66E7',
+            },
+            '2023-03-02': {
+              marked: true,
+              dotColor: '#2E66E7',
+            },
+            '2023-03-04': {
+              marked: true,
+              dotColor: '#2E66E7',
+            },
+            '2023-03-05': {
+              marked: true,
+              dotColor: '#2E66E7',
+            },
+            '2023-03-30': {
+              marked: true,
+              dotColor: '#2E66E7',
+            },
+            [selectedDate]: {
+              selected: true,
+              selectedColor: '#2E66E7',
+            },
+          }}
+          monthFormat={'yyyy년 MM월'}
+        />
       </View>
-      <Calendar
-        current={selectedDate}
-        onDayPress={handleDayPress}
-        markedDates={{
-          '2023-03-01': {
-            marked: true,
-            dotColor: '#2E66E7',
-          },
-          '2023-03-02': {
-            marked: true,
-            dotColor: '#2E66E7',
-          },
-          '2023-03-04': {
-            marked: true,
-            dotColor: '#2E66E7',
-          },
-          '2023-03-05': {
-            marked: true,
-            dotColor: '#2E66E7',
-          },
-          '2023-03-30': {
-            marked: true,
-            dotColor: '#2E66E7',
-          },
-          [selectedDate]: {
-            selected: true,
-            selectedColor: '#2E66E7',
-          },
+      <Image
+        source={{
+          uri: 'https://elasticbeanstalk-ap-northeast-2-910448610935.s3.ap-northeast-2.amazonaws.com/static/2487269a-36db-462a-a448-2d2e680bdd71capturedTestaImage.jpg',
         }}
-        monthFormat={'yyyy년 MM월'}
+        style={{width: 200, height: 200}}
       />
-    </View>
+    </>
   );
 }
 

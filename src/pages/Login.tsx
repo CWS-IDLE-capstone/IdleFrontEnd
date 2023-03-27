@@ -46,6 +46,7 @@ function Login({setIsLoggedIn}: any) {
   }, []);
 
   const onSubmit = useCallback(async () => {
+    // const toMain = useCallback(async () => {
     if (!email || !email.trim()) {
       //trim()은 좌우 공백을 없애줌 만약 한칸 공백일때 입력되는것을 방지하기 위해
       return Alert.alert('알림', '이메일을 입력해주세요.');
@@ -54,7 +55,7 @@ function Login({setIsLoggedIn}: any) {
       return Alert.alert('알림', '비밀번호를 입력해주세요.');
     }
     try {
-      const response = await axios.post(`${Config.API_URL}/api/book`, {
+      const response = await axios.post(`${Config.API_URL}/api/user/login`, {
         email,
         password,
       });
@@ -124,6 +125,12 @@ function Login({setIsLoggedIn}: any) {
             style={styles.gangstyle}
             activeOpacity={0.5}
             onPress={toMain}
+          />
+          <DaonBtn
+            text="LoginUserOnSubmitTest"
+            style={styles.gangstyle}
+            activeOpacity={0.5}
+            onPress={onSubmit}
           />
         </View>
 

@@ -13,6 +13,7 @@ import {
   Alert,
 } from 'react-native';
 import {RootStackParamList} from '../../AppInner';
+import { LoggedInParamList } from '../../AppInner';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import DaonBtn from '../components/daonBtn';
@@ -24,13 +25,12 @@ import userSlice from '../slices/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useNavigation} from '@react-navigation/native';
 
-type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp', 'Main'>;
+type ScreenProps = NativeStackScreenProps<RootStackParamList,'NaverLogin', 'SignUp'>;
 
-function Login({setIsLoggedIn}: any) {
-  const navigation = useNavigation();
-  const toMain = () => {
-    setIsLoggedIn(true);
-  };
+function Login({navigation}: ScreenProps) {
+  // const toMain = () => {
+  //   setIsLoggedIn(true);
+  // };
   const dispatch = useAppDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -65,16 +65,16 @@ function Login({setIsLoggedIn}: any) {
         //리덕스에 넣어주기
         userSlice.actions.setUser({
           //TODO 서버에서 무엇을 데이터로 줄지 알아봐야됨 현재는 name, email, accessToken, refreshToken
-          name: response.data.data.name,
-          email: response.data.data.email,
-          accessToken: response.data.data.accessToken, // 유효기간 10분, 5분, 1시간
+          name: response.data.name,
+          email: response.data.email,
+          accessToken: response.data.accessToken, // 유효기간 10분, 5분, 1시간
         }),
       );
       // await EncryptedStorage.setItem(
       //   'refreshToken',
       //   response.data.data.refreshToken,
       // );
-      navigation.navigate('Main'); //성공했을시 메인으로 이동
+      // navigation.navigate('Main'); //성공했을시 메인으로 이동
     } catch (error) {
       const errorResponse = (error as AxiosError<{message: string}>).response;
       if (errorResponse) {
@@ -124,7 +124,7 @@ function Login({setIsLoggedIn}: any) {
             text="Login"
             style={styles.gangstyle}
             activeOpacity={0.5}
-            onPress={toMain}
+            onPress={onSubmit}
           />
           <DaonBtn
             text="LoginUserOnSubmitTest"

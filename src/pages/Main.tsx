@@ -12,14 +12,17 @@ import {
   Image,
   StyleSheet,
   Dimensions,
+  Image,
+  Platform,
 } from 'react-native';
 import NaverMapView, {Marker, Polyline} from 'react-native-nmap';
 import {LoggedInParamList} from '../../AppInner';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {current} from '@reduxjs/toolkit';
 import haversine from 'haversine';
-import useCounter from '../components/useCounter';
+import {useCounter, EuseCounter} from '../components/useCounter';
 import Feather from 'react-native-vector-icons/Feather';
+import {launchCamera} from 'react-native-image-picker';
 import ViewShot, {captureRef} from 'react-native-view-shot';
 import RNFS from 'react-native-fs';
 import Config from 'react-native-config';
@@ -27,7 +30,6 @@ import axios from 'axios';
 import IconRightButton from '../components/IconRightButton';
 import Icon from '../components/IconRightButton';
 import {err} from 'react-native-svg/lib/typescript/xml';
-// import {Image} from 'react-native-svg';
 
 interface CoordinateLongitudeLatitude {
   latitude: number;
@@ -50,6 +52,12 @@ function Main({navigation}: MainScreenProps) {
   const [energyCoordinates, setEnergyCoordinates] = useState<
     CoordinateLongitudeLatitude[]
   >([]); //에너지 떨어짐 배열
+  const [hotplaceCoordinates, setHotplaceCoordinates] = useState<
+    CoordinateLongitudeLatitude[]
+  >([]); //핫플 마커 배열
+  const [dangerCoordinates, setDangerCoordinates] = useState<
+    CoordinateLongitudeLatitude[]
+  >([]); //주의 마커 배열
 
   const [distanceTravelled, setDistanceTravelled] = useState<Number>(0); //거리
   const [firstDistance, setFirstDistance] = useState<Number>(0); //측정 거리
@@ -61,17 +69,20 @@ function Main({navigation}: MainScreenProps) {
   const [startBtn, setStartBtn] = useState(false); //산책 시작 버튼 state
   const [resultBtn, setResultBtn] = useState(false); //결과창 실행 버튼 state
   const [energyBtn, setEnergyBtn] = useState(false); //에너지 떨어짐 버튼 state
+  const [markerListBtn, setMarkerListBtn] = useState(false); //마커 리스트 버튼 state
+  const [hotMarkerBtn, setHotMarkerBtn] = useState(false); //핫플 마커 버튼 state
+  const [dangerMarkerBtn, setDangerMarkerBtn] = useState(false); //주의 마커 버튼 state
 
   const [currentHours, setCurrentHours] = useState<Number>(0); //시간
   const [currentMinutes, setCurrentMinutes] = useState<Number>(0); //분
   const [currentSeconds, setCurrentSeconds] = useState<Number>(0); //초
-  const [firstHours, setFirstHours] = useState<Number>(0); //측정 시간
-  const [firstMinutes, setFirstMinutes] = useState<Number>(0); //측정 분
-  const [firstSeconds, setFisrtSeconds] = useState<Number>(0); //측정 초
+
   const [energyHours, setEnergyHours] = useState<Number>(0); //에너지 떨어짐 시간
   const [energyMinutes, setEnergyMinutes] = useState<Number>(0); //에너지 떨어짐 분
   const [energySeconds, setEnergySeconds] = useState<Number>(0); //에너지 떨어짐 초
   const {count, startcnt, stop, reset} = useCounter(0, 1000);
+  const {Ecount, Estartcnt, Estop, Ereset} = EuseCounter(0, 1000);
+
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth() + 1;
@@ -159,13 +170,46 @@ function Main({navigation}: MainScreenProps) {
     setCurrentMinutes(minutes);
   };
 
+  const Etimer = () => {
+    const checkMinutes = Math.floor(Ecount / 60);
+    const hours = Math.floor(Ecount / 3600);
+    const minutes = checkMinutes % 60;
+    const seconds = Ecount % 60;
+    setEnergyHours(hours);
+    setEnergySeconds(seconds);
+    setEnergyMinutes(minutes);
+  };
+
+  // 카메라 촬영
+  const onLaunchCamera = () => {
+    launchCamera(
+      {
+        mediaType: 'photo',
+        maxWidth: 512,
+        maxHeight: 512,
+        includeBase64: Platform.OS === 'android',
+      },
+      res => {
+        if (res.didCancel) {
+          //취소했을 경우
+          return;
+        }
+        // setResponse(res); //이미지 보낼때 이거 쓰면 될거같음
+      },
+    );
+  };
+
   useEffect(timer, [count]);
+  useEffect(Etimer, [Ecount]);
 
   console.log('거리: ', distanceTravelled.toFixed(2), 'km');
-  // console.log('5');
-  // console.log(myPosition);
   console.log('일반 배열: ', routeCoordinates);
   console.log('에너지 떨어짐 배열: ', energyCoordinates);
+  console.log(`count: ${count}, Ecount: ${Ecount}`);
+  console.log(
+    `currentSeconds: ${currentSeconds}, energySeconds: ${energySeconds}`,
+  );
+  // console.log("routeCoordinatesRef: ", routeCoordinatesRef.current);
   //
   async function captureImage() {
     const imageUri = await viewShotRef.current.capture();
@@ -244,7 +288,64 @@ function Main({navigation}: MainScreenProps) {
           longitude: myPosition?.longitude ? myPosition?.longitude : 127.6,
           // latitude: myPosition?.latitude,
           // longitude: myPosition?.longitude,
+        }}
+        onMapClick={e => {
+          const {latitude, longitude} = e;
+          const newCoordinate: CoordinateLongitudeLatitude = {
+            latitude,
+            longitude,
+          };
+          // setMarker(newCoordinate)
+          hotMarkerBtn
+            ? setHotplaceCoordinates(prev => [...prev, newCoordinate])
+            : null;
+          dangerMarkerBtn
+            ? setDangerCoordinates(prev => [...prev, newCoordinate])
+            : null;
+          // console.log(hotplaceCoordinates);
+          setMarkerListBtn(false);
+          setDangerMarkerBtn(false);
+          setHotMarkerBtn(false);
+          // console.log(`latitude: ${e.latitude}, longitude: ${e.longitude}`);
         }}>
+        {hotplaceCoordinates.map((coordinate, index) => (
+          <Marker
+            key={index}
+            coordinate={{
+              latitude: coordinate.latitude,
+              longitude: coordinate.longitude,
+            }}
+            image={require('../assets/hotplace.png')}
+            width={30}
+            height={30}
+            onClick={() => {
+              const newCoordinates = hotplaceCoordinates.filter(
+                (c, i) => i !== index,
+              );
+              setHotplaceCoordinates(newCoordinates);
+            }}
+          />
+        ))}
+
+        {dangerCoordinates.map((coordinate, index) => (
+          <Marker
+            key={index}
+            coordinate={{
+              latitude: coordinate.latitude,
+              longitude: coordinate.longitude,
+            }}
+            image={require('../assets/danger.png')}
+            width={30}
+            height={30}
+            onClick={() => {
+              const newCoordinates = dangerCoordinates.filter(
+                (c, i) => i !== index,
+              );
+              setDangerCoordinates(newCoordinates);
+            }}
+          />
+        ))}
+
         {myPosition?.latitude && (
           <Marker
             coordinate={{
@@ -252,7 +353,7 @@ function Main({navigation}: MainScreenProps) {
               longitude: myPosition?.longitude,
             }}
             width={40}
-            height={45}
+            height={42}
             image={require('../assets/dogIcon2.png')}
           />
         )}
@@ -296,6 +397,76 @@ function Main({navigation}: MainScreenProps) {
             />
           ) : null)}
       </NaverMapView>
+      {markerListBtn ? (
+        <View style={styles.MarkerListView}>
+          <TouchableOpacity
+            onPress={() => {
+              setHotMarkerBtn(true);
+              setMarkerListBtn(false);
+            }}>
+            <View>
+              <Image
+                source={require('../assets/hotplace.png')}
+                style={{
+                  width: 40,
+                  height: 40,
+                }}
+              />
+              <Text style={styles.MarkerListText}>핫플레이스</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              setDangerMarkerBtn(true);
+              setMarkerListBtn(false);
+            }}>
+            <View>
+              <Image
+                source={require('../assets/danger.png')}
+                style={{
+                  width: 40,
+                  height: 40,
+                }}
+              />
+              <Text style={styles.MarkerListText}>주의 지역</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              onLaunchCamera();
+              setMarkerListBtn(false);
+            }}>
+            <View>
+              <Image
+                source={require('../assets/camera.png')}
+                style={{
+                  width: 40,
+                  height: 40,
+                }}
+              />
+              <Text style={styles.MarkerListText}>카메라</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.MarkerView}>
+          <TouchableOpacity
+            onPress={() => {
+              setMarkerListBtn(true);
+            }}>
+            {/* <Text style={styles.MarkerText}>
+            마커
+          </Text> */}
+            <Image
+              source={require('../assets/plus.png')}
+              style={styles.MarkerImage}
+            />
+          </TouchableOpacity>
+        </View>
+      )}
+
       <View
         style={{
           // backgroundColor: 'green',
@@ -352,15 +523,8 @@ function Main({navigation}: MainScreenProps) {
                   setEnergyDistance(
                     distanceTravelled.toFixed(2) - firstDistance.toFixed(2),
                   );
-                  setEnergyHours(currentHours - firstHours);
-                  setEnergyMinutes(currentMinutes - firstMinutes);
-                  setEnergySeconds(currentSeconds - firstSeconds);
                   stop();
-                  // console.log(`거리 : ${distanceTravelled.toFixed(2)} km,
-                  // 시간: ${currentHours < 10 ? `0${currentHours}`: currentHours}:
-                  // ${currentMinutes < 10 ? `0${currentMinutes}`: currentMinutes}:
-                  // ${currentSeconds < 10 ? `0${currentSeconds}`: currentSeconds}`
-                  // )
+                  Estop();
                 }}>
                 <FontAwesome
                   name="stop-circle"
@@ -413,9 +577,7 @@ function Main({navigation}: MainScreenProps) {
                           onPress: () => {
                             setEnergyBtn(true);
                             setFirstDistance(distanceTravelled);
-                            setFirstHours(currentHours);
-                            setFirstMinutes(currentMinutes);
-                            setFisrtSeconds(currentSeconds);
+                            Estartcnt();
                             setEnergyCoordinates([
                               routeCoordinates[routeCoordinates.length - 1],
                             ]);
@@ -426,18 +588,13 @@ function Main({navigation}: MainScreenProps) {
                         },
                       ],
                     );
-                    // setEnergyBtn(true);
-                    // setFirstDistance(distanceTravelled);
-                    // setFirstHours(currentHours);
-                    // setFirstMinutes(currentMinutes);
-                    // setFisrtSeconds(currentSeconds);
-                    // setEnergyCoordinates([routeCoordinates[routeCoordinates.length-1]]);
                   }}>
                   <FontAwesome
                     name="battery"
                     style={{
                       fontSize: 30,
                       color: energyBtn ? 'red' : 'green',
+                      left: 5,
                     }}
                   />
                   {/* <Text>에너지</Text>
@@ -533,10 +690,6 @@ function Main({navigation}: MainScreenProps) {
                 }}>
                 {year}. {month}. {day} (일)
               </Text>
-              {/* <TouchableOpacity style={styles.share} onPress={captureImage}>
-                <Icon name={'share-google'} color={'black'} size={35} />
-              </TouchableOpacity> */}
-
               <IconRightButton
                 style={styles.share}
                 name="share-google"
@@ -579,32 +732,32 @@ function Main({navigation}: MainScreenProps) {
                   {currentSeconds < 10 ? `0${currentSeconds}` : currentSeconds}{' '}
                 </Text>
               </View>
-              {energyBtn ? (
-                <View
-                  style={{
-                    // flexDirection: 'row',
-                    flexDirection: 'column',
-                    alignContent: 'space-around',
-                    alignItems: 'center',
-                    // alignSelf: 'center',
-                    marginHorizontal: 20,
-                    marginBottom: 10,
-                  }}>
-                  <Text style={{fontSize: 15, fontWeight: 'bold'}}>
-                    체력이 떨어진 구간{' '}
-                  </Text>
-                  <Text style={{fontSize: 12}}>
-                    에너지 떨어진 거리 {energyDistance.toFixed(2)} km{' '}
-                  </Text>
-                  <Text style={{fontSize: 12}}>
-                    에너지 떨어진 시간 :{' '}
-                    {energyHours < 10 ? `0${energyHours}` : energyHours}:
-                    {energyMinutes < 10 ? `0${energyMinutes}` : energyMinutes}:
-                    {energySeconds < 10 ? `0${energySeconds}` : energySeconds}{' '}
-                  </Text>
-                </View>
-              ) : null}
             </View>
+            {energyBtn ? (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignContent: 'space-around',
+                  alignItems: 'center',
+                  // alignSelf: 'center',
+                  marginHorizontal: 20,
+                  marginBottom: 10,
+                }}>
+                <Text style={{fontSize: 15, fontWeight: 'bold'}}>
+                  체력이 떨어진 구간:{' '}
+                </Text>
+                <Text style={{fontSize: 12}}>
+                  에너지 떨어진 거리 {energyDistance.toFixed(2)} km ,{' '}
+                </Text>
+                <Text style={{fontSize: 12}}>
+                  에너지 떨어진 시간{' '}
+                  {energyHours < 10 ? `0${energyHours}` : energyHours}:
+                  {energyMinutes < 10 ? `0${energyMinutes}` : energyMinutes}:
+                  {energySeconds < 10 ? `0${energySeconds}` : energySeconds}{' '}
+                </Text>
+              </View>
+            ) : null}
+
             {/* <ViewShot ref={ref => (this.viewShot = ref)}> */}
             <ViewShot
               ref={viewShotRef}
@@ -634,6 +787,43 @@ function Main({navigation}: MainScreenProps) {
                     // latitude: myPosition?.latitude,
                     // longitude: myPosition?.longitude,
                   }}>
+                  {hotplaceCoordinates.map((coordinate, index) => (
+                    <Marker
+                      key={index}
+                      coordinate={{
+                        latitude: coordinate.latitude,
+                        longitude: coordinate.longitude,
+                      }}
+                      image={require('../assets/hotplace.png')}
+                      width={30}
+                      height={30}
+                      onClick={() => {
+                        const newCoordinates = hotplaceCoordinates.filter(
+                          (c, i) => i !== index,
+                        );
+                        setHotplaceCoordinates(newCoordinates);
+                      }}
+                    />
+                  ))}
+
+                  {dangerCoordinates.map((coordinate, index) => (
+                    <Marker
+                      key={index}
+                      coordinate={{
+                        latitude: coordinate.latitude,
+                        longitude: coordinate.longitude,
+                      }}
+                      image={require('../assets/danger.png')}
+                      width={30}
+                      height={30}
+                      onClick={() => {
+                        const newCoordinates = dangerCoordinates.filter(
+                          (c, i) => i !== index,
+                        );
+                        setDangerCoordinates(newCoordinates);
+                      }}
+                    />
+                  ))}
                   {myPosition?.latitude && (
                     <Polyline //결과 창 일반 폴리라인
                       coordinates={
@@ -701,6 +891,7 @@ function Main({navigation}: MainScreenProps) {
               setResultBtn(false); //결과 화면 닫기
               setStartBtn(prev => !prev); //스타트 버튼 열기
               reset(); //시간초기화
+              Ereset(); //E시간초기화
               setRouteCoordinates([]); //폴리라인 배열 초기화
               setEnergyCoordinates([]); //에너지 떨어짐 배열 초기화
               setDistanceTravelled(0); //측정거리 초기화
@@ -708,14 +899,6 @@ function Main({navigation}: MainScreenProps) {
               setEnergyBtn(false); //에너지 떨어짐 버튼 초기화
               setFirstDistance(0); //측정 거리 초기화
               setEnergyDistance(0); //에너지 떨어짐 거리 초기화
-              setFirstHours(0); //측정 시간 초기화
-              setFirstMinutes(0); //측정 분 초기화
-              setFisrtSeconds(0); //측정 초 초기화
-              setEnergyHours(0); //에너지 떨어짐 시간 초기화
-              setEnergyMinutes(0); //에너지 떨어짐 분 초기화
-              setEnergySeconds(0); //에너지 떨어짐 초 초기화
-              // captureImage;
-              // uploadImageToServer;
             }}>
             <Text
               style={{
@@ -743,5 +926,48 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     borderColor: 'red',
     borderWidth: 1,
+  },
+  MarkerView: {
+    width: 60,
+    height: 60,
+    // backgroundColor: 'white',
+    zIndex: 1,
+    position: 'absolute',
+    bottom: 100,
+    right: 5,
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  MarkerText: {
+    zIndex: 1,
+    position: 'absolute',
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: 'white',
+    top: 17,
+    left: 9,
+  },
+  MarkerImage: {
+    width: 40,
+    height: 40,
+    top: 10,
+  },
+  MarkerListView: {
+    width: 180,
+    height: 60,
+    backgroundColor: 'white',
+    zIndex: 1,
+    position: 'absolute',
+    bottom: 100,
+    right: 5,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    borderRadius: 10,
+  },
+  MarkerListText: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    alignSelf: 'center',
   },
 });

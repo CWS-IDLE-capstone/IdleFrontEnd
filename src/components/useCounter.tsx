@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState, useRef} from 'react';
 
-const useCounter = (initialValue: number, ms: number) => {
+export const useCounter = (initialValue: number, ms: number) => {
   //커스텀 hook 시간세는 함수
   const [count, setCount] = useState(initialValue);
   const intervalRef = useRef(null);
@@ -26,4 +26,28 @@ const useCounter = (initialValue: number, ms: number) => {
   return {count, startcnt, stop, reset};
 };
 
-export default useCounter;
+export const EuseCounter = (initialValue: number, ms: number) => {
+  //커스텀 hook 시간세는 함수
+  const [Ecount, setEcount] = useState(initialValue);
+  const intervalRef = useRef(null);
+  const Estartcnt = useCallback(() => {
+    if (intervalRef.current !== null) {
+      return;
+    }
+    intervalRef.current = setInterval(() => {
+      setEcount(c => c + 1);
+    }, ms);
+  }, []);
+  const Estop = useCallback(() => {
+    if (intervalRef.current === null) {
+      return;
+    }
+    clearInterval(intervalRef.current);
+    intervalRef.current = null;
+  }, []);
+  const Ereset = useCallback(() => {
+    setEcount(0);
+    Estop();
+  }, []);
+  return {Ecount, Estartcnt, Estop, Ereset};
+};

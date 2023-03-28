@@ -12,7 +12,6 @@ import {
   Image,
   StyleSheet,
   Dimensions,
-  Image,
   Platform,
 } from 'react-native';
 import NaverMapView, {Marker, Polyline} from 'react-native-nmap';

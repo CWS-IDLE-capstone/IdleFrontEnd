@@ -259,7 +259,7 @@ function Main({navigation}: MainScreenProps) {
             console.log(res);
             setImageCaptureUrl(res.data.imageUrl);
             console.log(res.data.imageUrl);
-            // console.log(res);
+            console.log(res);
           }
         });
       console.log('response: ');
@@ -643,33 +643,35 @@ function Main({navigation}: MainScreenProps) {
             height: HEIGHT * 0.9, //HEIGHT * 0.7
             top: 0,
           }}>
-          <TouchableOpacity
-            style={{
-              backgroundColor: 'red',
-              width: 40,
-              height: 40,
-              marginLeft: 50,
-            }}
-            onPress={
-              captureImage
-              // captureAndSave;
-            }>
-            <Text>캡쳐</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              backgroundColor: 'orange',
-              width: 40,
-              height: 40,
-              marginLeft: 50,
-            }}
-            onPress={
-              // captureImage
-              // captureAndSave
-              uploadImageToServer
-            }>
-            <Text>사진보내기</Text>
-          </TouchableOpacity>
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: 'red',
+                width: 40,
+                height: 40,
+                marginLeft: 70,
+              }}
+              onPress={
+                captureImage
+                // captureAndSave;
+              }>
+              <Text>캡쳐</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                backgroundColor: 'orange',
+                width: 40,
+                height: 40,
+                marginLeft: 5,
+              }}
+              onPress={
+                // captureImage
+                // captureAndSave
+                uploadImageToServer
+              }>
+              <Text>사진보내기</Text>
+            </TouchableOpacity>
+          </View>
           <View
             style={{
               top: 10,
@@ -699,6 +701,7 @@ function Main({navigation}: MainScreenProps) {
             </View>
             <Text
               style={{
+                color: 'orange',
                 fontSize: 25,
                 fontWeight: 'bold',
                 marginLeft: 20,
@@ -707,7 +710,8 @@ function Main({navigation}: MainScreenProps) {
               }}>
               오늘도 열심히 산책해서 멋있어요!
             </Text>
-            <View style={{flexDirection: 'row'}}>
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-around'}}>
               <View
                 style={{
                   // flexDirection: 'row',
@@ -726,36 +730,38 @@ function Main({navigation}: MainScreenProps) {
                 </Text>
                 {/* <Text style={{fontSize: 12}}>처음거리 {firstDistance.toFixed(2)} km , </Text> */}
                 <Text style={{fontSize: 12}}>
-                  시간 {currentHours < 10 ? `0${currentHours}` : currentHours}:
+                  총 시간{' '}
+                  {currentHours < 10 ? `0${currentHours}` : currentHours}:
                   {currentMinutes < 10 ? `0${currentMinutes}` : currentMinutes}:
-                  {currentSeconds < 10 ? `0${currentSeconds}` : currentSeconds}{' '}
+                  {currentSeconds < 10 ? `0${currentSeconds}` : currentSeconds}
+                  {'초'}
                 </Text>
               </View>
+              {energyBtn ? (
+                <View
+                  style={{
+                    flexDirection: 'column',
+                    alignContent: 'space-around',
+                    alignItems: 'center',
+                    // alignSelf: 'center',
+                    marginHorizontal: 20,
+                    marginBottom: 10,
+                  }}>
+                  <Text style={{fontSize: 15, fontWeight: 'bold'}}>
+                    체력이 떨어진 구간:{' '}
+                  </Text>
+                  <Text style={{fontSize: 12}}>
+                    에너지 떨어진 거리 {energyDistance.toFixed(2)} km ,{' '}
+                  </Text>
+                  <Text style={{fontSize: 12}}>
+                    에너지 떨어진 시간{' '}
+                    {energyHours < 10 ? `0${energyHours}` : energyHours}:
+                    {energyMinutes < 10 ? `0${energyMinutes}` : energyMinutes}:
+                    {energySeconds < 10 ? `0${energySeconds}` : energySeconds}초
+                  </Text>
+                </View>
+              ) : null}
             </View>
-            {energyBtn ? (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignContent: 'space-around',
-                  alignItems: 'center',
-                  // alignSelf: 'center',
-                  marginHorizontal: 20,
-                  marginBottom: 10,
-                }}>
-                <Text style={{fontSize: 15, fontWeight: 'bold'}}>
-                  체력이 떨어진 구간:{' '}
-                </Text>
-                <Text style={{fontSize: 12}}>
-                  에너지 떨어진 거리 {energyDistance.toFixed(2)} km ,{' '}
-                </Text>
-                <Text style={{fontSize: 12}}>
-                  에너지 떨어진 시간{' '}
-                  {energyHours < 10 ? `0${energyHours}` : energyHours}:
-                  {energyMinutes < 10 ? `0${energyMinutes}` : energyMinutes}:
-                  {energySeconds < 10 ? `0${energySeconds}` : energySeconds}{' '}
-                </Text>
-              </View>
-            ) : null}
 
             {/* <ViewShot ref={ref => (this.viewShot = ref)}> */}
             <ViewShot

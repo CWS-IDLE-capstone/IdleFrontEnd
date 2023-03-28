@@ -13,7 +13,7 @@ import {
   Alert,
 } from 'react-native';
 import {RootStackParamList} from '../../AppInner';
-import { LoggedInParamList } from '../../AppInner';
+import {LoggedInParamList} from '../../AppInner';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import DaonBtn from '../components/daonBtn';
@@ -25,7 +25,11 @@ import userSlice from '../slices/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useNavigation} from '@react-navigation/native';
 
-type ScreenProps = NativeStackScreenProps<RootStackParamList,'NaverLogin', 'SignUp'>;
+type ScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'NaverLogin',
+  'SignUp'
+>;
 
 function Login({navigation}: ScreenProps) {
   // const toMain = () => {
@@ -122,12 +126,6 @@ function Login({navigation}: ScreenProps) {
           />
           <DaonBtn
             text="Login"
-            style={styles.gangstyle}
-            activeOpacity={0.5}
-            onPress={onSubmit}
-          />
-          <DaonBtn
-            text="LoginUserOnSubmitTest"
             style={styles.gangstyle}
             activeOpacity={0.5}
             onPress={onSubmit}

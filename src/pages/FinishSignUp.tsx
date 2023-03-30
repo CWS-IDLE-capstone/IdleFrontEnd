@@ -1,4 +1,5 @@
-import React from 'react';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import React, {useCallback} from 'react';
 import {
   Dimensions,
   StyleSheet,
@@ -6,18 +7,29 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {RootStackParamList} from '../../AppInner';
 
 const {width: WIDTH} = Dimensions.get('window');
+type ScreenProps = NativeStackScreenProps<RootStackParamList, 'MoreInfo'>;
+function FinishSignUp({navigation}: ScreenProps) {
+  const toMoreInfo = useCallback(() => {
+    navigation.navigate('MoreInfo');
+  }, [navigation]);
+  const toLogin = useCallback(() => {
+    navigation.navigate('Login');
+  }, [navigation]);
 
-function FinishSignUp(_params: any) {
   return (
     <>
       <View style={styles.container1}>
         <Text style={styles.finText}>회원가입 완료!</Text>
       </View>
       <View style={styles.container2}>
-        <TouchableOpacity activeOpacity={0.9}>
-          <Text style={styles.nextBtn}>이메일로 시작하기</Text>
+        <TouchableOpacity activeOpacity={0.9} onPress={toMoreInfo}>
+          <Text style={styles.nextBtn}>다음 단계로</Text>
+        </TouchableOpacity>
+        <TouchableOpacity activeOpacity={0.9} onPress={toLogin}>
+          <Text style={styles.nextBtn}>로그인하기</Text>
         </TouchableOpacity>
       </View>
     </>

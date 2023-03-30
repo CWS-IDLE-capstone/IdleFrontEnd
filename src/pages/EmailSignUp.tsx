@@ -9,13 +9,17 @@ import {
   TouchableOpacity,
   Dimensions,
   Alert,
+  KeyboardAvoidingView,
+  ScrollView,
 } from 'react-native';
-import {RootStackParamList} from '../../App';
+import {RootStackParamList} from '../../AppInner';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import SignBtn from '../components/signBtn';
-// import Config from 'react-native-config';
+import SignText from '../components/signText';
+import DismissKeyboardView from '../components/DismissKeyboardView';
+
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'FinishSignUp'>;
 const {width: WIDTH} = Dimensions.get('window');
 
@@ -24,36 +28,76 @@ function EmailSignUp({navigation}: ScreenProps) {
   const [isCheckMan, setIsCheckMan] = useState<String>('0');
   const [sex, setSex] = useState<String>('');
   const [email, setEmail] = useState('');
+  const [verifyNum, setVerifyNum] = useState('');
+  const [verifyUserNum, setVerifyUserNum] = useState('');
+  const [verify, setVerify] = useState(false);
   const [password, setPassword] = useState('');
   const [checkPass, setCheckPass] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [provider, setProvider] = useState('');
+  const [providerId, setProviderId] = useState('');
 
-  const onChangeName = (payload: React.SetStateAction<string>) =>
+  const onChangeName = (payload: React.SetStateAction<string>) => {
     setName(payload);
+    setNickname(payload);
+  };
   const onSubmitName = () => {
-    alert(name);
+    Alert.alert(name);
     console.log(name);
   };
   const onCheckMan = () => {
     setIsCheckMan('1');
-    setSex('man');
+    setSex('MALE');
   };
   const onCheckWoman = () => {
     setIsCheckMan('2');
 
-    setSex('woman');
+    setSex('FEMALE');
   };
   const onChangeEmail = (payload: React.SetStateAction<string>) =>
     setEmail(payload);
-  const onSubmitEmail = () => {
-    alert(email);
-    console.log(name, sex, email);
+  const onSubmitEmail = async () => {
+    console.log(email);
+    try {
+      const send = await axios
+        .post(`${Config.API_URL}/api/login/mailConfirm`, {
+          email,
+        })
+        .then(response1 => {
+          if (response1.status) {
+            Alert.alert('이메일로 인증코드를 보냈습니다.');
+            console.log(send);
+            console.log(response1.data);
+            setVerifyNum(String(response1.data));
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
+    return;
+  };
+  const onVerifyUserNum = useCallback(() => {
+    if (verifyUserNum.length === 8 && verifyUserNum === verifyNum) {
+      console.log('이메일 인증 번호 일치');
+      Alert.alert('인증번호가 일치합니다');
+      setVerify(true);
+      setProvider('NORMAL');
+      setProviderId('');
+    } else {
+      setVerify(false);
+      console.log(verify);
+      Alert.alert('인증번호가 일치하지 않습니다');
+    }
+  }, [verifyUserNum, verifyNum, verify]);
+  const onUserNum = (text: React.SetStateAction<string>) => {
+    setVerifyUserNum(text);
   };
   const onChangePass = (payload: React.SetStateAction<string>) => {
     setPassword(payload);
   };
-  const onCheckPass = (payload: React.SetStateAction<string>) => {
+  const onCheckPass = (payload: React.SetStateAction<string>) =>
     setCheckPass(payload);
-  };
+
   const toFinSignUp = useCallback(async () => {
     if (!password || !checkPass) {
       return Alert.alert('비밀번호를 확인해주세요');
@@ -66,21 +110,27 @@ function EmailSignUp({navigation}: ScreenProps) {
       return Alert.alert('알림', '올바른 이메일 주소가 아닙니다.');
     }
     if (password !== checkPass) {
-      Alert.alert('비밀번호가 다릅니다');
+      return Alert.alert('비밀번호가 다릅니다');
     }
-    if (password === checkPass) {
+    if (verifyUserNum === '') {
+      return Alert.alert('이메일 인증을 완료해주세요');
+    }
+    if (password === checkPass && verify === true && name !== '') {
       console.log(name, sex, email, password);
       console.log(Config.API_URL);
       try {
         const response = await axios
-          .post(`${Config.API_URL}/api/book`, {
+          .post(`${Config.API_URL}/api/user/signup`, {
             name,
-            sex,
             email,
             password,
+            nickname,
+            provider,
+            providerId,
+            sex,
           })
-          .then(response1 => {
-            console.log(response1);
+          .then(() => {
+            console.log(response);
           });
         navigation.navigate('FinishSignUp');
       } catch (error) {
@@ -92,20 +142,33 @@ function EmailSignUp({navigation}: ScreenProps) {
       } finally {
       }
     }
-  }, [checkPass, name, sex, email, password, navigation]);
+  }, [
+    password,
+    checkPass,
+    email,
+    verifyUserNum,
+    verify,
+    name,
+    sex,
+    nickname,
+    provider,
+    providerId,
+    navigation,
+  ]);
   return (
-    <KeyboardAwareScrollView>
+    <DismissKeyboardView style={undefined}>
       <View style={styles.container}>
         <Text style={styles.conText}>이메일회원가입페이지</Text>
       </View>
       <View style={styles.container2}>
         <View style={styles.nameView1}>
-          <Text style={styles.nameText}>이름</Text>
+          <SignText text="이름" />
           <TextInput
             style={styles.nameInput}
             placeholder="이름입력칸"
             onChangeText={onChangeName}
             onSubmitEditing={onSubmitName}
+            keyboardType="default"
           />
           <Text style={styles.sexText}>성별</Text>
           <TouchableOpacity
@@ -127,7 +190,7 @@ function EmailSignUp({navigation}: ScreenProps) {
         </View>
         <View style={styles.emailViewContainer}>
           <View style={styles.emailView}>
-            <Text style={styles.emailText}>이메일</Text>
+            <SignText text="이메일" />
             <SignTextInput
               placeholder="이메일 입력칸"
               onChangeText={onChangeEmail}
@@ -139,11 +202,39 @@ function EmailSignUp({navigation}: ScreenProps) {
             />
           </View>
         </View>
-        <SignBtn text="이메일 확인" onPress={onSubmitEmail} />
+        {/* <SignBtn text="이메일 확인" onPress={onSubmitEmail} /> */}
+        <View style={styles.emailverify}>
+          <TouchableOpacity style={styles.emailRetry} onPress={onSubmitEmail}>
+            <Text style={styles.emailRetryText}>전송</Text>
+          </TouchableOpacity>
+          <Text
+            style={{
+              width: WIDTH * 0.67,
+              marginLeft: 15,
+              textAlignVertical: 'center',
+            }}>
+            이메일을 확인 후 인증코드를 작성해주세요
+          </Text>
+        </View>
+        <View style={styles.emailverify}>
+          <TouchableOpacity style={styles.emailRetry} onPress={onVerifyUserNum}>
+            <Text style={styles.emailRetryText}>확인</Text>
+          </TouchableOpacity>
+          <SignTextInput
+            placeholder="인증번호 입력"
+            // onChangeText={onVerifyUserNum}
+            onChangeText={onUserNum}
+            onSubmitEditing={undefined}
+            keyboardType={undefined}
+            textContentType="oneTimeCode"
+            secureTextEntry
+            value={verifyUserNum}
+          />
+        </View>
       </View>
       <View style={styles.container3}>
         <View style={styles.passView1}>
-          <Text style={styles.passText}>비밀번호</Text>
+          <SignText text="비밀번호" />
           <SignTextInput
             placeholder="비밀번호 입력칸"
             onChangeText={onChangePass}
@@ -155,7 +246,7 @@ function EmailSignUp({navigation}: ScreenProps) {
           />
         </View>
         <View style={styles.passView2}>
-          <Text style={styles.passChkText}>비밀번호 확인</Text>
+          <SignText text="비밀번호   확인" />
           <SignTextInput
             placeholder="비밀번호확인 입력칸"
             onChangeText={onCheckPass}
@@ -170,7 +261,7 @@ function EmailSignUp({navigation}: ScreenProps) {
       <View style={styles.signView}>
         <SignBtn activeOpacity={0.9} onPress={toFinSignUp} text="회원가입" />
       </View>
-    </KeyboardAwareScrollView>
+    </DismissKeyboardView>
   );
 }
 const styles = StyleSheet.create({
@@ -179,7 +270,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#778899',
     borderStyle: 'dashed',
-    justifyemail: 'flex-end',
     paddingBottom: 10,
     marginBottom: 10,
     marginTop: 50,
@@ -188,7 +278,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 20,
     marginRight: 20,
-    marginBottom: 5,
+    marginBottom: 20,
     paddingBottom: 5,
   },
   container3: {
@@ -218,20 +308,15 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
   },
-  nameText: {
-    textAlignVertical: 'center',
-    width: WIDTH * 0.2,
-    textAlign: 'right',
-  },
   nameInput: {
     backgroundColor: 'white',
     width: WIDTH * 0.26,
-    marginLeft: 17,
+    marginLeft: 15,
     borderWidth: 1,
     borderRadius: 3,
   },
   sexText: {
-    marginLeft: 20,
+    marginLeft: 22,
     textAlignVertical: 'center',
   },
   sexManBtn: {
@@ -274,29 +359,35 @@ const styles = StyleSheet.create({
   emailView: {
     flexDirection: 'row',
   },
-  emailText: {
-    width: WIDTH * 0.2,
-    textAlign: 'right',
+  emailverify: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  emailInput: {
+    width: WIDTH * 0.67,
+    borderWidth: 1,
+    borderRadius: 3,
+  },
+  emailRetry: {
+    backgroundColor: 'lightblue',
+    justifyContent: 'center',
+    width: WIDTH * 0.13,
+    height: 40,
+    borderRadius: 15,
+    margin: 4,
+  },
+  emailRetryText: {
+    textAlign: 'center',
     textAlignVertical: 'center',
   },
   //--//
   passView1: {
     flexDirection: 'row',
   },
-  passText: {
-    width: WIDTH * 0.2,
-    textAlign: 'right',
-    textAlignVertical: 'center',
-  },
   //--//
   passView2: {
     flexDirection: 'row',
     marginTop: 20,
-  },
-  passChkText: {
-    width: WIDTH * 0.2,
-    textAlign: 'right',
-    textAlignVertical: 'center',
   },
   //--//
 });

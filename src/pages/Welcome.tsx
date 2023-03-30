@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useCallback } from 'react';
 import { Text, View, StyleSheet, ImageBackground, TouchableOpacity, Dimensions } from 'react-native';
-import { RootStackParamList } from '../../App';
+import { RootStackParamList } from '../../AppInner';
 
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 

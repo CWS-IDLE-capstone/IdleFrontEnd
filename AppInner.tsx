@@ -24,6 +24,8 @@ import IconAD from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
 import NaverLogin from './src/pages/NaverLogin';
 import AddInfo from './src/pages/AddInfo';
+import CalanderScreen from './src/pages/CalanderScreen';
+import CheckWalkScreen from './src/pages/CheckWalkScreen';
 import Calander from './src/components/Calander';
 import Walk from './src/pages/Walk';
 import {RootState} from './src/store/reducer';
@@ -72,6 +74,10 @@ export type RootStackParamList = {
   Setting: undefined;
   MyPage1: undefined;
   NaverLogin: undefined;
+
+  Main: undefined;
+  Calander: undefined;
+  CheckWalkScreen: undefined;
 };
 
 const Tab = createBottomTabNavigator<LoggedInParamList>();
@@ -157,7 +163,9 @@ function AppInner() {
           <Stack.Screen name="Walk" component={Walk} />
           <Stack.Screen name="NaverLogin" component={NaverLogin} />
 
-          {/* <Stack.Screen name="Main" component={Main} /> */}
+          <Stack.Screen name="Main" component={Main} />
+          <Stack.Screen name="CalanderScreen" component={CalanderScreen} />
+          <Stack.Screen name="CheckWalkScreen" component={CheckWalkScreen} />
         </Stack.Navigator>
       )}
     </NavigationContainer>

@@ -65,6 +65,7 @@ function Login({navigation}: ScreenProps) {
       });
       console.log(response.data);
       Alert.alert('알림', '로그인 되었습니다.');
+      console.log('로그인 되었습니다.');
       dispatch(
         //리덕스에 넣어주기
         userSlice.actions.setUser({
@@ -83,6 +84,7 @@ function Login({navigation}: ScreenProps) {
       const errorResponse = (error as AxiosError<{message: string}>).response;
       if (errorResponse) {
         Alert.alert('알림', errorResponse.data.message);
+        console.log('로그인 실패.');
       }
     } finally {
     }

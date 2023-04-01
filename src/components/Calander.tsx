@@ -67,12 +67,12 @@ function CalendarScreen() {
           monthFormat={'yyyy년 MM월'}
         />
       </View>
-      <Image
+      {/* <Image
         source={{
           uri: 'https://elasticbeanstalk-ap-northeast-2-910448610935.s3.ap-northeast-2.amazonaws.com/static/2487269a-36db-462a-a448-2d2e680bdd71capturedTestaImage.jpg',
         }}
         style={{width: 200, height: 200}}
-      />
+      /> */}
     </>
   );
 }

@@ -28,7 +28,6 @@ import Config from 'react-native-config';
 import axios from 'axios';
 import IconRightButton from '../components/IconRightButton';
 import Icon from '../components/IconRightButton';
-import {err} from 'react-native-svg/lib/typescript/xml';
 
 interface CoordinateLongitudeLatitude {
   latitude: number;
@@ -150,7 +149,7 @@ function Main({navigation}: MainScreenProps) {
       Geolocation.clearWatch(watchId);
       console.log('clearWatch 실행');
     };
-  }, [startBtn, energyBtn]); //prevLatLng TODO 무한렌더링 문제 해결해야함
+  }, [startBtn, energyBtn, distanceTravelled]); //prevLatLng TODO 무한렌더링 문제 해결해야함
 
   const calcDistance = (
     prevLatLng: CoordinateLongitudeLatitude,
@@ -159,6 +158,10 @@ function Main({navigation}: MainScreenProps) {
     return haversine(prevLatLng, newLatLng) || 0;
   };
 
+  /*
+  해결해야될것: 마커펼친후 취소위해 다시 닫기 안됨.
+  */
+  //
   const timer = () => {
     const checkMinutes = Math.floor(count / 60);
     const hours = Math.floor(count / 3600);
@@ -208,18 +211,20 @@ function Main({navigation}: MainScreenProps) {
   console.log(
     `currentSeconds: ${currentSeconds}, energySeconds: ${energySeconds}`,
   );
-  // console.log("routeCoordinatesRef: ", routeCoordinatesRef.current);
-  //
-  async function captureImage() {
-    const imageUri = await viewShotRef.current.capture();
-    console.log(imageUri);
-    try {
-      setImageCapture(imageUri);
-      console.log('산책캡쳐완료');
-    } catch (error) {
-      console.log(error);
-    }
+
+  function captureImage() {
+    setTimeout(async () => {
+      const imageUri = await viewShotRef.current.capture();
+      console.log(imageUri);
+      try {
+        setImageCapture(imageUri);
+        console.log('산책캡쳐완료');
+      } catch (error) {
+        console.log(error);
+      }
+    }, 1500);
   }
+
   const shareImage = async () => {
     try {
       const uri = await captureRef(viewShotRef, {
@@ -259,11 +264,9 @@ function Main({navigation}: MainScreenProps) {
             console.log(res);
             setImageCaptureUrl(res.data.imageUrl);
             console.log(res.data.imageUrl);
-            console.log(res);
           }
         });
-      console.log('response: ');
-      console.log('Image uploaded successfully:', formData._parts[0]);
+      console.log('Image uploaded successfully:', imageCaptureUrl);
       return imageCaptureUrl;
     } catch (error) {
       console.error('Failed to upload image:', error);
@@ -373,7 +376,7 @@ function Main({navigation}: MainScreenProps) {
                     ]
                   : routeCoordinates
               }
-              strokeWidth={15}
+              strokeWidth={10}
               strokeColor="#1EFF34"
             />
           ) : null)}
@@ -391,7 +394,7 @@ function Main({navigation}: MainScreenProps) {
                     ]
                   : energyCoordinates
               }
-              strokeWidth={15}
+              strokeWidth={10}
               strokeColor="#F19900"
             />
           ) : null)}
@@ -524,6 +527,7 @@ function Main({navigation}: MainScreenProps) {
                   );
                   stop();
                   Estop();
+                  captureImage();
                 }}>
                 <FontAwesome
                   name="stop-circle"
@@ -643,7 +647,7 @@ function Main({navigation}: MainScreenProps) {
             height: HEIGHT * 0.9, //HEIGHT * 0.7
             top: 0,
           }}>
-          <View style={{flexDirection: 'row'}}>
+          {/* <View style={{flexDirection: 'row'}}>
             <TouchableOpacity
               style={{
                 backgroundColor: 'red',
@@ -654,6 +658,7 @@ function Main({navigation}: MainScreenProps) {
               onPress={
                 captureImage
                 // captureAndSave;
+                // uploadImageToServer
               }>
               <Text>캡쳐</Text>
             </TouchableOpacity>
@@ -671,22 +676,22 @@ function Main({navigation}: MainScreenProps) {
               }>
               <Text>사진보내기</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
           <View
             style={{
               top: 10,
+              flex: 1.2,
             }}>
             <View
               style={{
                 flexDirection: 'row',
-                justifyContent: 'space-around',
+                justifyContent: 'space-between',
               }}>
               <Text
                 style={{
                   fontSize: 20,
                   marginHorizontal: 20,
                   marginBottom: 10,
-                  backgroundColor: 'yellow',
                   width: '40%',
                 }}>
                 {year}. {month}. {day} (일)
@@ -751,7 +756,7 @@ function Main({navigation}: MainScreenProps) {
                     체력이 떨어진 구간:{' '}
                   </Text>
                   <Text style={{fontSize: 12}}>
-                    에너지 떨어진 거리 {energyDistance.toFixed(2)} km ,{' '}
+                    에너지 떨어진 거리 {energyDistance.toFixed(2)} km{' '}
                   </Text>
                   <Text style={{fontSize: 12}}>
                     에너지 떨어진 시간{' '}
@@ -762,161 +767,186 @@ function Main({navigation}: MainScreenProps) {
                 </View>
               ) : null}
             </View>
-
+          </View>
+          <View style={{flex: 2}}>
             {/* <ViewShot ref={ref => (this.viewShot = ref)}> */}
             <ViewShot
               ref={viewShotRef}
+              onCapture={() => resultBtn}
               options={{
                 format: 'jpg',
                 quality: 1.0,
                 handleGLSurfaceViewOnAndroid: true,
               }}>
-              <View>
-                <NaverMapView
-                  style={{
-                    width: '90%',
-                    height: 300,
-                    marginHorizontal: 20,
-                    marginBottom: 10,
-                  }}
-                  zoomControl={true}
-                  // showsMyLocationButton={true}
-                  center={{
-                    zoom: myPosition ? 14 : 5.5,
-                    //TODO: 산책 종료 후 라인 기록 센터가 현위치에 맞춰져서 라인이 짤릴 수 있음.
-                    // 라인 전체를 볼 수 있도록
-                    latitude: myPosition?.latitude ? myPosition?.latitude : 37,
-                    longitude: myPosition?.longitude
-                      ? myPosition?.longitude
-                      : 127.6,
-                    // latitude: myPosition?.latitude,
-                    // longitude: myPosition?.longitude,
-                  }}>
-                  {hotplaceCoordinates.map((coordinate, index) => (
-                    <Marker
-                      key={index}
-                      coordinate={{
-                        latitude: coordinate.latitude,
-                        longitude: coordinate.longitude,
-                      }}
-                      image={require('../assets/hotplace.png')}
-                      width={30}
-                      height={30}
-                      onClick={() => {
-                        const newCoordinates = hotplaceCoordinates.filter(
-                          (c, i) => i !== index,
-                        );
-                        setHotplaceCoordinates(newCoordinates);
-                      }}
-                    />
-                  ))}
+              <NaverMapView
+                style={{
+                  backgroundColor: 'red',
+                  width: '90%',
+                  height: 350,
+                  marginHorizontal: 20,
+                  marginBottom: 10,
+                }}
+                zoomControl={true}
+                // showsMyLocationButton={true}
+                center={{
+                  zoom: myPosition ? 15 : 5.5,
+                  //TODO: 산책 종료 후 라인 기록 센터가 현위치에 맞춰져서 라인이 짤릴 수 있음.
+                  // 라인 전체를 볼 수 있도록
+                  latitude: myPosition?.latitude ? myPosition?.latitude : 37,
+                  longitude: myPosition?.longitude
+                    ? myPosition?.longitude
+                    : 127.6,
+                  // latitude: myPosition?.latitude,
+                  // longitude: myPosition?.longitude,
+                }}>
+                {hotplaceCoordinates.map((coordinate, index) => (
+                  <Marker
+                    key={index}
+                    coordinate={{
+                      latitude: coordinate.latitude,
+                      longitude: coordinate.longitude,
+                    }}
+                    image={require('../assets/hotplace.png')}
+                    width={30}
+                    height={30}
+                    onClick={() => {
+                      const newCoordinates = hotplaceCoordinates.filter(
+                        (c, i) => i !== index,
+                      );
+                      setHotplaceCoordinates(newCoordinates);
+                    }}
+                  />
+                ))}
 
-                  {dangerCoordinates.map((coordinate, index) => (
-                    <Marker
-                      key={index}
-                      coordinate={{
-                        latitude: coordinate.latitude,
-                        longitude: coordinate.longitude,
-                      }}
-                      image={require('../assets/danger.png')}
-                      width={30}
-                      height={30}
-                      onClick={() => {
-                        const newCoordinates = dangerCoordinates.filter(
-                          (c, i) => i !== index,
-                        );
-                        setDangerCoordinates(newCoordinates);
-                      }}
-                    />
-                  ))}
-                  {myPosition?.latitude && (
-                    <Polyline //결과 창 일반 폴리라인
-                      coordinates={
-                        routeCoordinates.length <= 2
-                          ? [
-                              {
-                                latitude: myPosition.latitude,
-                                longitude: myPosition.longitude,
-                              },
-                              {
-                                latitude: myPosition.latitude,
-                                longitude: myPosition.longitude,
-                              },
-                            ]
-                          : routeCoordinates
-                      }
-                      strokeWidth={5}
-                      strokeColor="#1EFF34"
-                    />
-                  )}
-                  {myPosition?.latitude && (
-                    <Polyline //결과 창 에너지 떨어짐 폴리라인
-                      coordinates={
-                        energyCoordinates.length <= 2
-                          ? [
-                              {
-                                latitude: myPosition.latitude,
-                                longitude: myPosition.longitude,
-                              },
-                              {
-                                latitude: myPosition.latitude,
-                                longitude: myPosition.longitude,
-                              },
-                            ]
-                          : energyCoordinates
-                      }
-                      strokeWidth={5}
-                      strokeColor="#F19900"
-                    />
-                  )}
-                </NaverMapView>
-              </View>
+                {dangerCoordinates.map((coordinate, index) => (
+                  <Marker
+                    key={index}
+                    coordinate={{
+                      latitude: coordinate.latitude,
+                      longitude: coordinate.longitude,
+                    }}
+                    image={require('../assets/danger.png')}
+                    width={30}
+                    height={30}
+                    onClick={() => {
+                      const newCoordinates = dangerCoordinates.filter(
+                        (c, i) => i !== index,
+                      );
+                      setDangerCoordinates(newCoordinates);
+                    }}
+                  />
+                ))}
+                {myPosition?.latitude && (
+                  <Polyline //결과 창 일반 폴리라인
+                    coordinates={
+                      routeCoordinates.length <= 2
+                        ? [
+                            {
+                              latitude: myPosition.latitude,
+                              longitude: myPosition.longitude,
+                            },
+                            {
+                              latitude: myPosition.latitude,
+                              longitude: myPosition.longitude,
+                            },
+                          ]
+                        : routeCoordinates
+                    }
+                    strokeWidth={5}
+                    strokeColor="#1EFF34"
+                  />
+                )}
+                {myPosition?.latitude && (
+                  <Polyline //결과 창 에너지 떨어짐 폴리라인
+                    coordinates={
+                      energyCoordinates.length <= 2
+                        ? [
+                            {
+                              latitude: myPosition.latitude,
+                              longitude: myPosition.longitude,
+                            },
+                            {
+                              latitude: myPosition.latitude,
+                              longitude: myPosition.longitude,
+                            },
+                          ]
+                        : energyCoordinates
+                    }
+                    strokeWidth={5}
+                    strokeColor="#F19900"
+                  />
+                )}
+              </NaverMapView>
             </ViewShot>
-            <Image
+            {/* <Image
               source={
                 imageCapture
                   ? {uri: imageCapture}
                   : require('../assets/puppy.jpg')
               }
-              style={{width: 250, height: 250}}
-            />
+              style={{width: 300, height: 150}}
+            /> */}
           </View>
-          <TouchableOpacity
-            style={{
-              backgroundColor: '#6A74CF',
-              width: '70%',
-              height: 50,
-              zIndex: 1,
-              alignSelf: 'center',
-              alignContent: 'center',
-              alignItems: 'center',
-              borderRadius: 77,
-            }}
-            onPress={() => {
-              setResultBtn(false); //결과 화면 닫기
-              setStartBtn(prev => !prev); //스타트 버튼 열기
-              reset(); //시간초기화
-              Ereset(); //E시간초기화
-              setRouteCoordinates([]); //폴리라인 배열 초기화
-              setEnergyCoordinates([]); //에너지 떨어짐 배열 초기화
-              setDistanceTravelled(0); //측정거리 초기화
-              setPrevLatLng(null); //이전거리 초기화
-              setEnergyBtn(false); //에너지 떨어짐 버튼 초기화
-              setFirstDistance(0); //측정 거리 초기화
-              setEnergyDistance(0); //에너지 떨어짐 거리 초기화
-            }}>
-            <Text
+          <View style={{flex: 1}}>
+            <TouchableOpacity
               style={{
-                color: 'white',
-                textAlign: 'center',
-                textAlignVertical: 'bottom',
-                fontSize: 16,
-                fontWeight: 'bold',
-                height: 35,
+                backgroundColor: '#6A74CF',
+                width: '70%',
+                height: 50,
+                zIndex: 1,
+                alignSelf: 'center',
+                alignContent: 'center',
+                alignItems: 'center',
+                borderRadius: 77,
+              }}
+              // onPress={async () => {
+              //   try {
+              //     // await captureImage();
+              //     await uploadImageToServer();
+              //     setTimeout(() => {
+              //       setResultBtn(false); //결과 화면 닫기
+              //       setStartBtn(prev => !prev); //스타트 버튼 열기
+              //       reset(); //시간초기화
+              //       Ereset(); //E시간초기화
+              //       setRouteCoordinates([]); //폴리라인 배열 초기화
+              //       setEnergyCoordinates([]); //에너지 떨어짐 배열 초기화
+              //       setDistanceTravelled(0); //측정거리 초기화
+              //       setPrevLatLng(null); //이전거리 초기화
+              //       setEnergyBtn(false); //에너지 떨어짐 버튼 초기화
+              //       setFirstDistance(0); //측정 거리 초기화
+              //       setEnergyDistance(0); //에너지 떨어짐 거리 초기화
+              //     }, 1500);
+              //   } catch (error) {
+              //     console.error(error);
+              //   }
+              // }}>
+              onPressIn={uploadImageToServer}
+              onPress={() => {
+                setResultBtn(false); //결과 화면 닫기
+                setStartBtn(prev => !prev); //스타트 버튼 열기
+                reset(); //시간초기화
+                Ereset(); //E시간초기화
+                setRouteCoordinates([]); //폴리라인 배열 초기화
+                setEnergyCoordinates([]); //에너지 떨어짐 배열 초기화
+                setDistanceTravelled(0); //측정거리 초기화
+                setPrevLatLng(null); //이전거리 초기화
+                setEnergyBtn(false); //에너지 떨어짐 버튼 초기화
+                setFirstDistance(0); //측정 거리 초기화
+                setEnergyDistance(0); //에너지 떨어짐 거리 초기화
               }}>
-              확인
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  color: 'white',
+                  textAlign: 'center',
+                  textAlignVertical: 'bottom',
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                  height: 35,
+                }}>
+                확인
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       ) : null}
     </View>

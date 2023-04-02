@@ -21,13 +21,15 @@ const styles = StyleSheet.create({
   },
   text2: {
     backgroundColor: '#6A74CF',
-    width: WIDTH * 0.7,
+    width: WIDTH * 0.4,
 
     height: 40,
     color: 'white',
     textAlign: 'center',
     textAlignVertical: 'center',
-    borderRadius: 77,
+    fontSize: 15,
+    fontWeight: 'bold',
+    borderRadius: 8,
   },
 });
 export default DaonBtn;

@@ -25,6 +25,8 @@
 				<category android:name="android.intent.category.BROWSABLE" />
 			</intent-filter>
 		</activity>
+		<meta-data android:name="com.facebook.react.application.fonts" android:resource="@array/custom_fonts"/> 
 	</application>
 </manifest>
 <!-- windowSoftInputMode="adjustNothing" 키보드 간섭 없게 수정 -->
+<!-- android/app/src/main/assets/fonts Blinker폰트 추가함 -->

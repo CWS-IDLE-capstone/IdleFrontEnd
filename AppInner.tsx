@@ -1,4 +1,4 @@
-import { NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
 import {Alert} from 'react-native';
@@ -15,7 +15,7 @@ import MyPage from './src/pages/MyPage';
 import messaging from '@react-native-firebase/messaging';
 import MoreInfo from './src/pages/MoreInfo';
 import Journal from './src/pages/Journal';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
 import {UserContextProvider} from './src/components/UserContext';
 import Setting from './src/pages/Setting';
@@ -24,9 +24,11 @@ import IconAD from 'react-native-vector-icons/AntDesign';
 import IconE from 'react-native-vector-icons/Entypo';
 import NaverLogin from './src/pages/NaverLogin';
 import AddInfo from './src/pages/AddInfo';
-import Calander from './src/pages/Calander';
+import CalanderScreen from './src/pages/CalanderScreen';
+import CheckWalkScreen from './src/pages/CheckWalkScreen';
+import Calander from './src/components/Calander';
 import Walk from './src/pages/Walk';
-import { RootState } from './src/store/reducer';
+import {RootState} from './src/store/reducer';
 // export type LoggedInParamList = {
 //   Community: undefined;
 //   MyPage: undefined;
@@ -60,7 +62,6 @@ export type LoggedInParamList = {
   FinishSignUp: undefined;
   MoreInfo: undefined;
   AddInfo: undefined;
-
 };
 export type RootStackParamList = {
   Welcome: undefined;
@@ -74,6 +75,9 @@ export type RootStackParamList = {
   MyPage1: undefined;
   NaverLogin: undefined;
 
+  Main: undefined;
+  Calander: undefined;
+  CheckWalkScreen: undefined;
 };
 
 const Tab = createBottomTabNavigator<LoggedInParamList>();
@@ -97,9 +101,9 @@ function AppInner() {
   }, []);
 
   return (
-      <NavigationContainer>
-        {isLoggedIn ? (
-          <Tab.Navigator
+    <NavigationContainer>
+      {isLoggedIn ? (
+        <Tab.Navigator
           initialRouteName="Main"
           screenOptions={{
             tabBarActiveTintColor: '#ff8c00',
@@ -145,26 +149,26 @@ function AppInner() {
             }}
           />
         </Tab.Navigator>
-        ) : (
-          <Stack.Navigator>
-            <Stack.Screen name="Welcome" component={Welcome} />
-            <Stack.Screen name="Start" component={Start} />
-            <Stack.Screen name="Login" component={Login}/>
-            <Stack.Screen name="SignUp" component={SignUp} />
-            <Stack.Screen name="EmailSignUp" component={EmailSignUp} />
-            <Stack.Screen name="FinishSignUp" component={FinishSignUp} />
-            <Stack.Screen name="MoreInfo" component={MoreInfo} />
-            <Stack.Screen name="AddInfo" component={AddInfo} />
-            <Stack.Screen name="Calander" component={Calander} />
-            <Stack.Screen name="Walk" component={Walk} />
-            <Stack.Screen name="NaverLogin" component={NaverLogin} />
+      ) : (
+        <Stack.Navigator>
+          <Stack.Screen name="Welcome" component={Welcome} />
+          <Stack.Screen name="Start" component={Start} />
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="SignUp" component={SignUp} />
+          <Stack.Screen name="EmailSignUp" component={EmailSignUp} />
+          <Stack.Screen name="FinishSignUp" component={FinishSignUp} />
+          <Stack.Screen name="MoreInfo" component={MoreInfo} />
+          <Stack.Screen name="AddInfo" component={AddInfo} />
+          {/* <Stack.Screen name="Calander" component={Calander} /> */}
+          <Stack.Screen name="Walk" component={Walk} />
+          <Stack.Screen name="NaverLogin" component={NaverLogin} />
 
-            {/* <Stack.Screen name="Main" component={Main} /> */}
-          </Stack.Navigator>
-        )}
-      </NavigationContainer>
+          <Stack.Screen name="Main" component={Main} />
+          <Stack.Screen name="CalanderScreen" component={CalanderScreen} />
+          <Stack.Screen name="CheckWalkScreen" component={CheckWalkScreen} />
+        </Stack.Navigator>
+      )}
+    </NavigationContainer>
   );
 }
 export default AppInner;
-
-

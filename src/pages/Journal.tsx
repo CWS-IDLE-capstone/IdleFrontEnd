@@ -2,6 +2,7 @@ import {View, Text, Alert, Button} from 'react-native';
 import React, {useCallback, useEffect} from 'react';
 import messaging from '@react-native-firebase/messaging';
 import CalendarView from '../components/CalendarView';
+import CalendarScreen from '../components/Calander';
 // import {useDispatch} from 'react-redux';
 
 function Journal() {
@@ -15,7 +16,8 @@ function Journal() {
   return (
     <View>
       <Button title="show My Token" onPress={getFcmToken} />
-      <CalendarView />
+      {/* <CalendarView /> */}
+      <CalendarScreen />
     </View>
   );
 }

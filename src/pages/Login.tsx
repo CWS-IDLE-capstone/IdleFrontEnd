@@ -13,7 +13,7 @@ import {
   Alert,
 } from 'react-native';
 import {RootStackParamList} from '../../AppInner';
-import { LoggedInParamList } from '../../AppInner';
+import {LoggedInParamList} from '../../AppInner';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import DaonBtn from '../components/daonBtn';
@@ -25,7 +25,11 @@ import userSlice from '../slices/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useNavigation} from '@react-navigation/native';
 
-type ScreenProps = NativeStackScreenProps<RootStackParamList,'NaverLogin', 'SignUp'>;
+type ScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'NaverLogin',
+  'SignUp'
+>;
 
 function Login({navigation}: ScreenProps) {
   // const toMain = () => {
@@ -46,6 +50,7 @@ function Login({navigation}: ScreenProps) {
   }, []);
 
   const onSubmit = useCallback(async () => {
+    // const toMain = useCallback(async () => {
     if (!email || !email.trim()) {
       //trim()은 좌우 공백을 없애줌 만약 한칸 공백일때 입력되는것을 방지하기 위해
       return Alert.alert('알림', '이메일을 입력해주세요.');
@@ -60,6 +65,7 @@ function Login({navigation}: ScreenProps) {
       });
       console.log(response.data);
       Alert.alert('알림', '로그인 되었습니다.');
+      console.log('로그인 되었습니다.');
       dispatch(
         //리덕스에 넣어주기
         userSlice.actions.setUser({
@@ -78,6 +84,7 @@ function Login({navigation}: ScreenProps) {
       const errorResponse = (error as AxiosError<{message: string}>).response;
       if (errorResponse) {
         Alert.alert('알림', errorResponse.data.message);
+        console.log('로그인 실패.');
       }
     } finally {
     }

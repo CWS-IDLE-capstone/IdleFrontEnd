@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <array name="custom_fonts">
+    <item>Blinker-Thin</item>
+    <item>Blinker-Bold</item>
+    <item>Blinker-Black</item>
+    <item>Blinker-ExtraBold</item>
+    <item>Blinker-ExtraLight</item>
+    <item>Blinker-SemiBold</item>
+    <item>Blinker-Light</item>
+    <item>Blinker-Regular</item>
+
+  </array>
+</resources>

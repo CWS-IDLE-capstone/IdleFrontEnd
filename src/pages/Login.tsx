@@ -72,7 +72,7 @@ function Login({navigation}: ScreenProps) {
           //TODO 서버에서 무엇을 데이터로 줄지 알아봐야됨 현재는 name, email, accessToken, refreshToken
           name: response.data.name,
           email: response.data.email,
-          accessToken: response.data.accessToken, // 유효기간 10분, 5분, 1시간
+          accessToken: response.data.token, // 유효기간 10분, 5분, 1시간
         }),
       );
       // await EncryptedStorage.setItem(

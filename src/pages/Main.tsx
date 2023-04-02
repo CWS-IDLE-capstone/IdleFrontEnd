@@ -28,6 +28,8 @@ import Config from 'react-native-config';
 import axios from 'axios';
 import IconRightButton from '../components/IconRightButton';
 import Icon from '../components/IconRightButton';
+import {useSelector} from 'react-redux';
+import {RootState} from '../store/reducer';
 
 interface CoordinateLongitudeLatitude {
   latitude: number;
@@ -40,6 +42,8 @@ const {width: WIDTH} = Dimensions.get('window');
 const {height: HEIGHT} = Dimensions.get('window');
 console.log('------'); //const { count, startcnt, stop, reset} = useCounter(0, 1000);
 function Main({navigation}: MainScreenProps) {
+  const accessToken = useSelector((state: RootState) => state.user.accessToken);
+
   const [myPosition, setMyPosition] = useState<{
     latitude: number;
     longitude: number;
@@ -89,6 +93,14 @@ function Main({navigation}: MainScreenProps) {
 
   const [imageCapture, setImageCapture] = useState(null); //이미지 캡쳐 후 화면표시용
   const [imageCaptureUrl, setImageCaptureUrl] = useState('');
+
+  const [routeImage, setRouteImage] = useState('');
+  const [distance, setDistance] = useState<Number>(0);
+  const [startTime, setStartTime] = useState('');
+  const [finishTime, setFinishTime] = useState('');
+  const [energyFinishTime, setEnergyFinishTime] = useState('');
+  const [energyFinishDistance, setEnergyFinishDistance] = useState<Number>(0);
+
   useEffect(() => {
     Geolocation.getCurrentPosition(
       position => {
@@ -110,7 +122,7 @@ function Main({navigation}: MainScreenProps) {
       },
     );
   }, []);
-  console.log(today);
+  // console.log(`시간: ${typeof(today.getHours().toString())}, 분: ${today.getMinutes()}`);
   useEffect(() => {
     const watchId = Geolocation.watchPosition(
       info => {
@@ -205,20 +217,27 @@ function Main({navigation}: MainScreenProps) {
   useEffect(timer, [count]);
   useEffect(Etimer, [Ecount]);
 
-  console.log('거리: ', distanceTravelled.toFixed(2), 'km');
-  console.log('일반 배열: ', routeCoordinates);
-  console.log('에너지 떨어짐 배열: ', energyCoordinates);
-  console.log(`count: ${count}, Ecount: ${Ecount}`);
-  console.log(
-    `currentSeconds: ${currentSeconds}, energySeconds: ${energySeconds}`,
-  );
+  // console.log('거리: ', distanceTravelled.toFixed(2), 'km');
+  // console.log(`accessToken: ${accessToken}`);
+  console.log(`distance: ${distance}`);
+  console.log(`startTime: ${startTime}`);
+  console.log(`finsihTime: ${finishTime}`);
+  console.log(`energyFinsihTime: ${energyFinishTime}`);
+  console.log(`energyFinishDistance: ${energyFinishDistance}`);
+
+  // console.log('일반 배열: ', routeCoordinates);
+  // console.log('에너지 떨어짐 배열: ', energyCoordinates);
+  // console.log(`count: ${count}, Ecount: ${Ecount}`);
+  // console.log(
+  //   `currentSeconds: ${currentSeconds}, energySeconds: ${energySeconds}`,
+  // );
 
   function captureImage() {
     setTimeout(async () => {
       const imageUri = await viewShotRef.current.capture();
       console.log(imageUri);
       try {
-        setImageCapture(imageUri);
+        setRouteImage(imageUri);
         console.log('산책캡쳐완료');
       } catch (error) {
         console.log(error);
@@ -243,20 +262,34 @@ function Main({navigation}: MainScreenProps) {
       console.error(error);
     }
   };
-  const uploadImageToServer = async () => {
+  const uploadImageToServer = useCallback(async () => {
     try {
-      const formData = new FormData();
-      formData.append('images', {
-        // key: 'images',
-        uri: imageCapture,
-        type: 'image/jpg',
-        name: 'capturedTestaImage.jpg',
-      });
+      // const formData = new FormData();
+      // formData.append( 'routeImage', {
+      //   // key: 'images',
+      //   uri: routeImage,
+      //   type: 'image/jpg',
+      //   name: 'capturedTestaImage.jpg',
+      // });
+      // formData.append('distance', distance);
+      // formData.append('startTime', startTime);
+      // formData.append('finishTime', finishTime);
+      // formData.append('energyFinishTime', energyFinishTime);
+      // formData.append('energyFinishDistance', energyFinishDistance);
 
       const response = await axios
-        .post(`${Config.API_URL}/api/image`, formData, {
+        .post(`${Config.API_URL}/api/walk`, {
+          routeImage,
+          distance,
+          startTime,
+          finishTime,
+          energyFinishTime,
+          energyFinishDistance
+        }, {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${accessToken}`,
+            // 'Content-Type': 'multipart/form-data',
+            
           },
         })
         .then(res => {
@@ -271,14 +304,14 @@ function Main({navigation}: MainScreenProps) {
       return imageCaptureUrl;
     } catch (error) {
       console.error('Failed to upload image:', error);
-    }
-  };
+    } 
+  },[accessToken]);
   return (
     <View
       // eslint-disable-next-line react-native/no-inline-styles
       style={{
         width: WIDTH,
-        height: HEIGHT * 0.9, //HEIGHT * 0.83
+        height: HEIGHT * 0.83, //HEIGHT * 0.9
         backgroundColor: 'yellow',
       }}>
       <NaverMapView
@@ -529,6 +562,9 @@ function Main({navigation}: MainScreenProps) {
                   stop();
                   Estop();
                   captureImage();
+                  setDistance(distanceTravelled.toFixed(2));
+                  setEnergyFinishDistance((distanceTravelled.toFixed(2) - firstDistance.toFixed(2)).toFixed(2));
+                  setFinishTime(`${today.getHours().toString()}:${today.getMinutes().toString()}`);
                 }}>
                 <FontAwesome
                   name="stop-circle"
@@ -585,6 +621,7 @@ function Main({navigation}: MainScreenProps) {
                             setEnergyCoordinates([
                               routeCoordinates[routeCoordinates.length - 1],
                             ]);
+                            setEnergyFinishTime(`${today.getHours().toString()}:${today.getMinutes().toString()}`);
                           },
                         },
                         {
@@ -623,6 +660,7 @@ function Main({navigation}: MainScreenProps) {
             onPress={() => {
               setStartBtn(true);
               startcnt();
+              setStartTime(`${today.getHours().toString()}:${today.getMinutes().toString()}`);
             }}>
             <Text
               style={{
@@ -645,7 +683,7 @@ function Main({navigation}: MainScreenProps) {
             zIndex: 1,
             position: 'absolute',
             width: WIDTH,
-            height: HEIGHT * 0.9, //HEIGHT * 0.7
+            height: HEIGHT * 0.7, //HEIGHT * 0.9
             top: 0,
           }}>
           {/* <View style={{flexDirection: 'row'}}>
@@ -934,6 +972,11 @@ function Main({navigation}: MainScreenProps) {
                 setEnergyBtn(false); //에너지 떨어짐 버튼 초기화
                 setFirstDistance(0); //측정 거리 초기화
                 setEnergyDistance(0); //에너지 떨어짐 거리 초기화
+                setDistance(0);
+                setStartTime('');
+                setFinishTime('');
+                setEnergyFinishTime('');
+                setEnergyFinishDistance(0);
               }}>
               <Text
                 style={{

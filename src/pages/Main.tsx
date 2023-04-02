@@ -158,6 +158,7 @@ function Main({navigation}: MainScreenProps) {
         maxWidth: 512,
         maxHeight: 512,
         includeBase64: Platform.OS === 'android',
+        saveToPhotos: true, //갤러리에 저장 옵션
       }, 
       (res) => {
         if (res.didCancel) {;
@@ -184,7 +185,7 @@ function Main({navigation}: MainScreenProps) {
       // eslint-disable-next-line react-native/no-inline-styles
       style={{
         width: WIDTH,
-        height: HEIGHT * 0.9 , //HEIGHT * 0.85
+        height: HEIGHT * 0.85 , //HEIGHT * 0.9
         backgroundColor: 'yellow',
       }}>
       <NaverMapView
@@ -515,7 +516,7 @@ function Main({navigation}: MainScreenProps) {
           zIndex: 1,
           position: 'absolute',
           width: WIDTH,
-          height: HEIGHT * 0.9, //HEIGHT * 0.78
+          height: HEIGHT * 0.78, //HEIGHT * 0.9
           top: 0
         }}>
           <View style={{

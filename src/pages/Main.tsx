@@ -113,6 +113,7 @@ function Main({navigation}: MainScreenProps) {
         // setRouteCoordinates([newCoordinate]); //처음위치를 무조건 배열에 안넣고 산책시작하면 배열에 넣게 없앴음
         // setPrevLatLng(null);
         console.log('getCurrentPosition 실행');
+        // console.log(typeof(today.toISOString()));
       },
       console.error,
       {
@@ -311,7 +312,7 @@ function Main({navigation}: MainScreenProps) {
       // eslint-disable-next-line react-native/no-inline-styles
       style={{
         width: WIDTH,
-        height: HEIGHT * 0.83, //HEIGHT * 0.9
+        height: HEIGHT * 0.9, //HEIGHT * 0.83
         backgroundColor: 'yellow',
       }}>
       <NaverMapView
@@ -564,7 +565,7 @@ function Main({navigation}: MainScreenProps) {
                   captureImage();
                   setDistance(distanceTravelled.toFixed(2));
                   setEnergyFinishDistance((distanceTravelled.toFixed(2) - firstDistance.toFixed(2)).toFixed(2));
-                  setFinishTime(`${today.getHours().toString()}:${today.getMinutes().toString()}`);
+                  setFinishTime(today.toISOString());
                 }}>
                 <FontAwesome
                   name="stop-circle"
@@ -621,7 +622,7 @@ function Main({navigation}: MainScreenProps) {
                             setEnergyCoordinates([
                               routeCoordinates[routeCoordinates.length - 1],
                             ]);
-                            setEnergyFinishTime(`${today.getHours().toString()}:${today.getMinutes().toString()}`);
+                            setEnergyFinishTime(today.toISOString());
                           },
                         },
                         {
@@ -660,7 +661,7 @@ function Main({navigation}: MainScreenProps) {
             onPress={() => {
               setStartBtn(true);
               startcnt();
-              setStartTime(`${today.getHours().toString()}:${today.getMinutes().toString()}`);
+              setStartTime(today.toISOString());
             }}>
             <Text
               style={{
@@ -683,7 +684,7 @@ function Main({navigation}: MainScreenProps) {
             zIndex: 1,
             position: 'absolute',
             width: WIDTH,
-            height: HEIGHT * 0.7, //HEIGHT * 0.9
+            height: HEIGHT * 0.9, //HEIGHT * 0.7
             top: 0,
           }}>
           {/* <View style={{flexDirection: 'row'}}>

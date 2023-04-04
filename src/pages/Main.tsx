@@ -93,7 +93,6 @@ function Main({navigation}: MainScreenProps) {
 
   // const [imageCapture, setImageCapture] = useState(null); //이미지 캡쳐 후 화면표시용
   const [imageCaptureUrl, setImageCaptureUrl] = useState('');
-
   const [routeImage, setRouteImage] = useState('');
   const [distance, setDistance] = useState<number>(0);
   const [startTime, setStartTime] = useState('');
@@ -114,6 +113,7 @@ function Main({navigation}: MainScreenProps) {
         // setRouteCoordinates([newCoordinate]); //처음위치를 무조건 배열에 안넣고 산책시작하면 배열에 넣게 없앴음
         // setPrevLatLng(null);
         console.log('getCurrentPosition 실행');
+        // console.log(typeof(today.toISOString()));
       },
       console.error,
       {
@@ -123,7 +123,7 @@ function Main({navigation}: MainScreenProps) {
       },
     );
   }, []);
-  console.log(today);
+  // console.log(`시간: ${typeof(today.getHours().toString())}, 분: ${today.getMinutes()}`);
   useEffect(() => {
     const watchId = Geolocation.watchPosition(
       info => {
@@ -205,6 +205,7 @@ function Main({navigation}: MainScreenProps) {
         maxWidth: 512,
         maxHeight: 512,
         includeBase64: Platform.OS === 'android',
+        saveToPhotos: true, //갤러리에 저장 옵션
       },
       res => {
         if (res.didCancel) {
@@ -264,13 +265,13 @@ function Main({navigation}: MainScreenProps) {
       console.error(error);
     }
   };
-
   async function uploadImageToServer() {
     //캡쳐 이미지 전송
     console.log('uploadImageToServer 동작');
     try {
       const formData = new FormData();
       formData.append('images', {
+        // key: 'images',
         uri: imageCaptureUrl,
         type: 'image/jpg',
         name: 'capturedTestaImage.jpg',
@@ -280,24 +281,22 @@ function Main({navigation}: MainScreenProps) {
           'Content-Type': 'multipart/form-data',
         },
       };
-      const response = await axios.post(
-        `${Config.API_URL}/api/image`,
-        formData,
-        config,
-      );
-      if (response) {
-        console.log('res저장');
-        console.log(response);
-        setRouteImage(response.data.imageUrl);
-        console.log(response.data.imageUrl);
-        console.log('image uploaded successfully @');
-        return imageCaptureUrl;
-      }
+      const response = await axios
+        .post(`${Config.API_URL}/api/image`, formData, config)
+        .then(respose => {
+          console.log('res저장');
+          console.log(response);
+          setRouteImage(response.data.imageUrl);
+          console.log(response.data.imageUrl);
+          console.log('image uploaded successfully @');
+          return imageCaptureUrl;
+        });
     } catch (error) {
       console.error('Failed to upload image:', error);
     }
   }
   const WalkDataToServer = async () => {
+    // 이미지 업로드 후 산책 정보 전송
     setTimeout(async () => {
       console.log('WalkDataToServer 동작');
       const data = {
@@ -716,36 +715,6 @@ function Main({navigation}: MainScreenProps) {
             height: HEIGHT * 0.9, //HEIGHT * 0.7
             top: 0,
           }}>
-          {/* <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity
-              style={{
-                backgroundColor: 'red',
-                width: 40,
-                height: 40,
-                marginLeft: 70,
-              }}
-              onPress={
-                captureImage
-                // captureAndSave;
-                // uploadImageToServer
-              }>
-              <Text>캡쳐</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                backgroundColor: 'orange',
-                width: 40,
-                height: 40,
-                marginLeft: 5,
-              }}
-              onPress={
-                // captureImage
-                // captureAndSave
-                uploadImageToServer
-              }>
-              <Text>사진보내기</Text>
-            </TouchableOpacity>
-          </View> */}
           <View
             style={{
               top: 10,
@@ -1005,6 +974,11 @@ function Main({navigation}: MainScreenProps) {
                 setEnergyBtn(false); //에너지 떨어짐 버튼 초기화
                 setFirstDistance(0); //측정 거리 초기화
                 setEnergyDistance(0); //에너지 떨어짐 거리 초기화
+                setDistance(0);
+                setStartTime('');
+                setFinishTime('');
+                setEnergyFinishTime('');
+                setEnergyFinishDistance(0);
               }}>
               <Text
                 style={{

@@ -283,14 +283,14 @@ function Main({navigation}: MainScreenProps) {
       };
       const response = await axios
         .post(`${Config.API_URL}/api/image`, formData, config)
-        .then(respose => {
+        .then(res => {
           console.log('res저장');
-          console.log(response);
-          setRouteImage(response.data.imageUrl);
-          console.log(response.data.imageUrl);
+          console.log(res);
+          setRouteImage(res.data.imageUrl);
+          console.log(res.data.imageUrl);
           console.log('image uploaded successfully @');
-          return imageCaptureUrl;
         });
+      return imageCaptureUrl;
     } catch (error) {
       console.error('Failed to upload image:', error);
     }

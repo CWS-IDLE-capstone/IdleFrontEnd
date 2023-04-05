@@ -312,7 +312,7 @@ function Main({navigation}: MainScreenProps) {
       // eslint-disable-next-line react-native/no-inline-styles
       style={{
         width: WIDTH,
-        height: HEIGHT * 0.9, //HEIGHT * 0.83
+        height: HEIGHT * 0.83, //HEIGHT * 0.9
         backgroundColor: 'yellow',
       }}>
       <NaverMapView
@@ -684,7 +684,7 @@ function Main({navigation}: MainScreenProps) {
             zIndex: 1,
             position: 'absolute',
             width: WIDTH,
-            height: HEIGHT * 0.9, //HEIGHT * 0.7
+            height: HEIGHT * 0.7, //HEIGHT * 0.9
             top: 0,
           }}>
           {/* <View style={{flexDirection: 'row'}}>

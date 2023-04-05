@@ -99,7 +99,9 @@ function Main({navigation}: MainScreenProps) {
   const [finishTime, setFinishTime] = useState('');
   const [energyFinishTime, setEnergyFinishTime] = useState('');
   const [energyFinishDistance, setEnergyFinishDistance] = useState<number>(0);
-  const now = today.toISOString();
+  const offset = today.getTimezoneOffset() * 60000;
+  const nowKr = new Date(today.getTime() - offset);
+  const now = nowKr.toISOString();
 
   useEffect(() => {
     Geolocation.getCurrentPosition(
@@ -321,6 +323,7 @@ function Main({navigation}: MainScreenProps) {
           config,
         );
         console.log('data uploaded successfully #');
+        console.log(data);
       } catch (error) {
         console.error('Failed to upload data:', error);
       }

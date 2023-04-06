@@ -143,9 +143,7 @@ function Main({navigation}: MainScreenProps) {
 
         if (prevLatLng) {
           setDistanceTravelled(
-            parseFloat(
-              distanceTravelled + calcDistance(prevLatLng, newCoordinate),
-            ),
+              distanceTravelled + calcDistance(prevLatLng, newCoordinate)
           );
         }
 
@@ -200,7 +198,7 @@ function Main({navigation}: MainScreenProps) {
   };
 
   // 카메라 촬영
-  const onLaunchCamera = () => {
+  const onLaunchCamera = useCallback(() => {
     launchCamera(
       {
         mediaType: 'photo',
@@ -217,7 +215,7 @@ function Main({navigation}: MainScreenProps) {
         // setResponse(res); //이미지 보낼때 이거 쓰면 될거같음
       },
     );
-  };
+  }, []);
 
   useEffect(timer, [count]);
   useEffect(Etimer, [Ecount]);
@@ -267,7 +265,8 @@ function Main({navigation}: MainScreenProps) {
       console.error(error);
     }
   };
-  async function uploadImageToServer() {
+
+  const uploadImageToServer = async() => {
     //캡쳐 이미지 전송
     console.log('uploadImageToServer 동작');
     try {
@@ -297,6 +296,7 @@ function Main({navigation}: MainScreenProps) {
       console.error('Failed to upload image:', error);
     }
   }
+
   const WalkDataToServer = async () => {
     // 이미지 업로드 후 산책 정보 전송
     setTimeout(async () => {
@@ -330,6 +330,7 @@ function Main({navigation}: MainScreenProps) {
     }, 2000);
   };
   console.log(imageCaptureUrl);
+
   return (
     <View
       // eslint-disable-next-line react-native/no-inline-styles
@@ -581,9 +582,7 @@ function Main({navigation}: MainScreenProps) {
                 onPressIn={() => {
                   setResultBtn(prev => !prev);
                   setEnergyDistance(
-                    parseFloat(
-                      distanceTravelled.toFixed(2) - firstDistance.toFixed(2),
-                    ),
+                    parseFloat(distanceTravelled.toFixed(2)) - parseFloat(firstDistance.toFixed(2))
                   );
                   stop();
                   Estop();
@@ -591,11 +590,7 @@ function Main({navigation}: MainScreenProps) {
                   setDistance(parseFloat(distanceTravelled.toFixed(2)));
                   setFinishTime(now);
                   setEnergyFinishDistance(
-                    parseFloat(
-                      (
-                        distanceTravelled.toFixed(2) - firstDistance.toFixed(2)
-                      ).toFixed(2),
-                    ),
+                    parseFloat(distanceTravelled.toFixed(2)) - parseFloat(firstDistance.toFixed(2))
                   );
                 }}>
                 <FontAwesome

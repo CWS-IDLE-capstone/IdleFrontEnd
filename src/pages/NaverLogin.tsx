@@ -2,20 +2,27 @@ import React, {useCallback, useRef} from 'react';
 import {StyleSheet, Alert} from 'react-native';
 import {WebView, WebViewMessageEvent} from 'react-native-webview';
 
-import {RootStackParamList} from '../../App';
+import {RootStackParamList} from '../../AppInner';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
+type ScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'NaverLogin',
+  'SignUp'
+>;
 
 import {URLWrapper} from '../../url-wrapper';
 import axios, {AxiosError} from 'axios';
+import {useAppDispatch} from '../store';
+import userSlice from '../slices/user';
+import Config from 'react-native-config';
 
-const NaverLogin: React.FC<ScreenProps> = ({navigation}) => {
+function NaverLogin({navigation} : ScreenProps) {
   const webviewRef = useRef<WebView>(null);
-
+  const dispatch = useAppDispatch();
   const prevUrlRef = useRef<string | undefined>();
 
   const handleWebViewNavigationStateChange = useCallback(
-    (newNavState: {url: string}, prevNavState?: {url: string}) => {
+    async (newNavState: {url: string}, prevNavState?: {url: string}) => {
       const {url} = newNavState;
 
       if (!url) return;
@@ -37,25 +44,22 @@ const NaverLogin: React.FC<ScreenProps> = ({navigation}) => {
         console.log('state: ', state);
 
         try {
-          axios
-            .post(
-              `http://awsv4-env.eba-mre2mcnv.ap-northeast-2.elasticbeanstalk.com/api/oauth/naver`,
-              {
-                code: code,
-                state: state,
-              },
-            )
-            .then(response => {
-              const responseData = response.data; // 받은 데이터
-              const token = responseData.accessToken; // JWT 토큰
-              console.log(token);
-
-              navigation.navigate('CalanderScreen'); //일단 달력 개발용
-              // navigation.navigate('AddInfo', {accessToken: token});
-              // AddInfo로 이동하면서 accessToken 전달
-              // 원래는 Main으로 이동하는거다.
-              // 따라서 토큰은 다른데에 저장해두고 그걸 필요할때 꺼내쓰는 방식으로 바꿔야된다.
-            });
+          const response = await axios.post(`${Config.API_URL}/api/oauth/naver`, {
+            code: code,
+            state: state,
+          });
+          console.log(response.data);
+          // Alert.alert('알림', '로그인 되었습니다.');
+          // console.log('로그인 되었습니다.');
+          dispatch(
+            //리덕스에 넣어주기
+            userSlice.actions.setUser({
+              //TODO 서버에서 무엇을 데이터로 줄지 알아봐야됨 현재는 name, email, accessToken, refreshToken
+              // name: response.data.name,
+              // email: response.data.email,
+              accessToken: response.data.accessToken, // 유효기간 10분, 5분, 1시간
+            }),
+          );
         } catch (error) {
           const errorResponse = (error as AxiosError<{message: string}>)
             .response;

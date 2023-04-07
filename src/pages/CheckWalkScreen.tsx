@@ -1,13 +1,66 @@
 import React, {useCallback} from 'react';
 import {View, StyleSheet, ScrollView, Image, Text} from 'react-native';
 
-function CheckWalkScreen() {
+// 개별 산책 데이터 인터페이스
+interface Walk {
+  createdDate: string | null;
+  distance: number;
+  energyFinishDistance: number;
+  energyFinishTime: string;
+  finishTime: string;
+  id: number;
+  routeImage: string;
+  startTime: string;
+  user: object;
+}
+
+// 캘린더에서 선택된 산책기록 가져옴 {walkData}
+type Props = {
+  route: {
+    params: {
+      walkData: Walk;
+    };
+  };
+};
+
+const CheckWalkScreen: React.FC<Props> = ({route}) => {
+  const {walkData} = route.params;
+  const titleMonth = walkData.startTime.slice(6, 7).replace(/^0+/, ''); // 월
+  const titleDate = walkData.startTime.slice(8, 10).replace(/^0+/, ''); // 일
+
+  const date = new Date(walkData.startTime);
+  const finish = new Date(walkData.finishTime);
+  const energyFinishTime = new Date(walkData.energyFinishTime);
+  const diff = new Date(finish - date);
+  const durationMin = Math.floor(diff / (1000 * 60)); // 몇 분
+  const durationSec = diff / 1000 - durationMin * 60; // 몇 초
+
+  const E_diff = new Date(energyFinishTime - date);
+  const E_durationMin = Math.floor(E_diff / (1000 * 60)); // 몇 분
+  const E_durationSec = E_diff / 1000 - E_durationMin * 60; // 몇 초
+
+  const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+  const dayOfWeekName = daysOfWeek[date.getDay()]; // 요일
+
+  const startTime = walkData.startTime.slice(11, 19);
+  const finishTime = walkData.finishTime.slice(11, 19);
+  const distance = walkData.distance;
+  const energyFinishDistance = walkData.energyFinishDistance;
+
+  // 달리기 페이스 계산
+  const seconds = durationSec + durationMin * 60;
+  const pace = seconds / distance;
+  const paceMin = Math.floor(pace / 60);
+  const paceSec = Math.floor(pace % 60);
+
   return (
     <ScrollView contentContainerStyle={styles.scrollcontainer}>
       <View style={styles.container}>
         <View style={styles.titlecontainer}>
-          <Text style={styles.title1}>4월 12일</Text>
-          <Text style={styles.title2}>수요일 산책기록!</Text>
+          <Text style={styles.title1}>
+            {`${titleMonth}`}월 {`${titleDate}`}일
+          </Text>
+          <Text style={styles.title2}>{`${dayOfWeekName}`}요일 산책기록!</Text>
         </View>
 
         <View style={styles.imagecontainer}>
@@ -17,13 +70,15 @@ function CheckWalkScreen() {
           />
         </View>
 
-        <Text style={styles.time}>16:30 ~ 17:10pm</Text>
+        <Text style={styles.time}>
+          {`${startTime}`} ~ {`${finishTime}`}
+        </Text>
         <View style={styles.durationcontainer}>
-          <Text style={styles.duration1}>40분</Text>
-          <Text style={styles.duration2}>28초 동안</Text>
+          <Text style={styles.duration1}>{`${durationMin}`}분</Text>
+          <Text style={styles.duration2}>{`${durationSec}`}초 동안</Text>
         </View>
         <View style={styles.distancecontainer}>
-          <Text style={styles.distance1}>총 3km</Text>
+          <Text style={styles.distance1}>총 {`${distance}`}km</Text>
           <Text style={styles.distance2}>산책했어요!</Text>
           <Image
             style={styles.image2}
@@ -31,6 +86,7 @@ function CheckWalkScreen() {
           />
         </View>
         <Image
+          // eslint-disable-next-line react-native/no-inline-styles
           style={{
             width: 100,
             height: 100,
@@ -44,10 +100,16 @@ function CheckWalkScreen() {
       <View style={styles.container}>
         <View style={styles.firstcontainer}>
           <View style={styles.devide1}>
-            <Text style={styles.summary1}>총 거리: 3.01 km</Text>
-            <Text style={styles.summary1}>시간: 40분 30초</Text>
-            <Text style={styles.summary1}>16:30:05 - 17:10:45</Text>
-            <Text style={styles.summary1}>페이스: 13’30’’</Text>
+            <Text style={styles.summary1}>총 거리: {`${distance}`} km</Text>
+            <Text style={styles.summary1}>
+              시간: {`${durationMin}`}분 {`${durationSec}`}초
+            </Text>
+            <Text style={styles.summary1}>
+              {`${startTime}`} - {`${finishTime}`}
+            </Text>
+            <Text style={styles.summary1}>
+              페이스: {`${paceMin}`}' {`${paceSec}`}''{' '}
+            </Text>
           </View>
           <View style={styles.devide2}>
             <Image
@@ -61,14 +123,16 @@ function CheckWalkScreen() {
           <Text style={styles.energeLow1}>산책을 시작하고 </Text>
 
           <View style={styles.EnergeContainer1}>
-            <Text style={styles.energeLow2_1}>25분</Text>
+            <Text style={styles.energeLow2_1}>{`${E_durationMin}`}분</Text>
             <Text style={styles.energeLow2_2}>
-              14초 후에 체력이 떨어졌어요.
+              {`${E_durationSec}`}초 후에 체력이 떨어졌어요.
             </Text>
           </View>
 
           <View style={styles.EnergeContainer2}>
-            <Text style={styles.energeLow3_1}>2.1 km</Text>
+            <Text style={styles.energeLow3_1}>
+              {`${energyFinishDistance}`}.0 km
+            </Text>
             <Text style={styles.energeLow3_2}>를 기운차게 뛰었어요!</Text>
           </View>
         </View>
@@ -82,7 +146,7 @@ function CheckWalkScreen() {
       </View>
     </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   scrollcontainer: {
@@ -186,7 +250,7 @@ const styles = StyleSheet.create({
   },
   distance1: {
     fontSize: 50,
-    width: 140,
+    width: 180,
     height: 55,
     lineHeight: 50,
     fontFamily: 'Blinker-Bold',
@@ -194,7 +258,7 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     textAlign: 'left',
     color: '#000000',
-    marginLeft: -35,
+    marginLeft: 0,
   },
   distance2: {
     fontSize: 30,
@@ -206,7 +270,7 @@ const styles = StyleSheet.create({
     // fontStyle: 'normal',
     textAlign: 'left',
     color: '#000000',
-    marginLeft: -10,
+    marginLeft: -18,
   },
   image2: {
     width: 50,

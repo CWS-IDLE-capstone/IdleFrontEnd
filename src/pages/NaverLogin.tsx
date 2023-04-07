@@ -8,6 +8,7 @@ type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
 import {URLWrapper} from '../../url-wrapper';
 import axios, {AxiosError} from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NaverLogin: React.FC<ScreenProps> = ({navigation}) => {
   const webviewRef = useRef<WebView>(null);
@@ -50,11 +51,10 @@ const NaverLogin: React.FC<ScreenProps> = ({navigation}) => {
               const token = responseData.accessToken; // JWT 토큰
               console.log(token);
 
-              navigation.navigate('CalanderScreen'); //일단 달력 개발용
-              // navigation.navigate('AddInfo', {accessToken: token});
-              // AddInfo로 이동하면서 accessToken 전달
-              // 원래는 Main으로 이동하는거다.
-              // 따라서 토큰은 다른데에 저장해두고 그걸 필요할때 꺼내쓰는 방식으로 바꿔야된다.
+              AsyncStorage.setItem('accessToken', token); // 토큰을 AsyncStorage에 저장
+
+              // navigation.navigate('Main');
+              navigation.navigate('CalanderScreen'); //일단 달력으로 넘어갑니다. 추후에 메인으로 가도록 변경예정.
             });
         } catch (error) {
           const errorResponse = (error as AxiosError<{message: string}>)

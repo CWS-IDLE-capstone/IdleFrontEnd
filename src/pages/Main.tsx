@@ -62,7 +62,7 @@ function Main({navigation}: MainScreenProps) {
   >([]); //주의 마커 배열
 
   const [distanceTravelled, setDistanceTravelled] = useState<number>(0); //거리
-  const [firstDistance, setFirstDistance] = useState<Number>(0); //측정 거리
+  const [firstDistance, setFirstDistance] = useState<number>(0); //측정 거리
   const [energyDistance, setEnergyDistance] = useState<Number>(0); //에너지 떨어짐 거리
 
   const [prevLatLng, setPrevLatLng] =
@@ -99,7 +99,10 @@ function Main({navigation}: MainScreenProps) {
   const [finishTime, setFinishTime] = useState('');
   const [energyFinishTime, setEnergyFinishTime] = useState('');
   const [energyFinishDistance, setEnergyFinishDistance] = useState<number>(0);
-  const now = today.toISOString();
+  const offset = today.getTimezoneOffset() * 60000;
+  const nowKr = new Date(today.getTime() - offset); //한국 시간 적용
+  const now = nowKr.toISOString();
+  const [captureCheck, setCaptureCheck] = useState(false);
 
   useEffect(() => {
     Geolocation.getCurrentPosition(
@@ -141,9 +144,7 @@ function Main({navigation}: MainScreenProps) {
 
         if (prevLatLng) {
           setDistanceTravelled(
-            parseFloat(
               distanceTravelled + calcDistance(prevLatLng, newCoordinate),
-            ),
           );
         }
 
@@ -198,7 +199,7 @@ function Main({navigation}: MainScreenProps) {
   };
 
   // 카메라 촬영
-  const onLaunchCamera = () => {
+  const onLaunchCamera = useCallback(() => {
     launchCamera(
       {
         mediaType: 'photo',
@@ -215,7 +216,7 @@ function Main({navigation}: MainScreenProps) {
         // setResponse(res); //이미지 보낼때 이거 쓰면 될거같음
       },
     );
-  };
+  }, []);
 
   useEffect(timer, [count]);
   useEffect(Etimer, [Ecount]);
@@ -235,36 +236,37 @@ function Main({navigation}: MainScreenProps) {
   //   `currentSeconds: ${currentSeconds}, energySeconds: ${energySeconds}`,
   // );
 
-  function captureImage() {
-    setTimeout(async () => {
+function captureImage() {
+     setTimeout(async () => {
       const imageUri = await viewShotRef.current.capture();
       console.log(imageUri);
       try {
         setImageCaptureUrl(imageUri); //imageCaptureUrl에 저장 후 이미지 업로드
         console.log('산책캡쳐완료');
+        setCaptureCheck(true);
       } catch (error) {
         console.log(error);
       }
-    }, 1000);
+     }, 1500);
   }
 
-  const shareImage = async () => {
-    try {
-      const uri = await captureRef(viewShotRef, {
-        format: 'jpg',
-        quality: 0.8,
-      });
-      // const base64Data = await RNFetchBlob.fs.readFile(imageCapture, 'base64');
-      const url = `data:image/png;base64,${uri}`;
-      await Share.share({
-        title: 'walk image',
-        message: '',
-        url: `${uploadImageToServer.formData._parts[0].uri}`,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const shareImage = async () => {
+  //   try {
+  //     const uri = await captureRef(viewShotRef, {
+  //       format: 'jpg',
+  //       quality: 0.8,
+  //     });
+  //     // const base64Data = await RNFetchBlob.fs.readFile(imageCapture, 'base64');
+  //     const url = `data:image/png;base64,${uri}`;
+  //     await Share.share({
+  //       title: 'walk image',
+  //       message: '',
+  //       url: `${uploadImageToServer.formData._parts[0].uri}`,
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
   async function uploadImageToServer() {
     //캡쳐 이미지 전송
     console.log('uploadImageToServer 동작');
@@ -284,55 +286,59 @@ function Main({navigation}: MainScreenProps) {
       const response = await axios
         .post(`${Config.API_URL}/api/image`, formData, config)
         .then(res => {
-          console.log('res저장');
+          console.log('res저장 : ');
           console.log(res);
-          setRouteImage(res.data.imageUrl);
-          console.log(res.data.imageUrl);
           console.log('image uploaded successfully @');
+          return res.data.imageUrl;
         });
-      return imageCaptureUrl;
+      return response; //이미지 반환
     } catch (error) {
       console.error('Failed to upload image:', error);
     }
   }
-  const WalkDataToServer = async () => {
+  async function WalkDataToServer(getImageUrl: string) {
     // 이미지 업로드 후 산책 정보 전송
-    setTimeout(async () => {
-      console.log('WalkDataToServer 동작');
-      const data = {
-        routeImage: routeImage,
-        distance: distance,
-        startTime: startTime,
-        finishTime: finishTime,
-        energyFinishTime: energyFinishTime,
-        energyFinishDistance: energyFinishDistance,
-      };
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      };
-      try {
-        const response = await axios.post(
-          `${Config.API_URL}/api/walk`,
-          data,
-          config,
-        );
-        console.log('data uploaded successfully #');
-      } catch (error) {
-        console.error('Failed to upload data:', error);
-      }
-    }, 2000);
-  };
-  console.log(imageCaptureUrl);
+    console.log('WalkDataToServer 동작');
+    const data = {
+      routeImage: getImageUrl,
+      distance: distance,
+      startTime: startTime,
+      finishTime: finishTime,
+      energyFinishTime: energyFinishTime,
+      energyFinishDistance: energyFinishDistance,
+    };
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    try {
+      const response = await axios.post(
+        `${Config.API_URL}/api/walk`,
+        data,
+        config,
+      );
+      console.log('data uploaded successfully #');
+      console.log(data);
+    } catch (error) {
+      console.error('Failed to upload data:', error);
+    }
+  }
+  async function getImageAndSendData() {
+    try {
+      const getImageUrl = uploadImageToServer();
+      WalkDataToServer(await getImageUrl);
+    } catch (error) {
+      console.error('Failed to upload image:', error);
+    }
+  }
   return (
     <View
       // eslint-disable-next-line react-native/no-inline-styles
       style={{
         width: WIDTH,
-        height: HEIGHT * 0.9, //HEIGHT * 0.83
+        height: HEIGHT * 0.83, //HEIGHT * 0.9
         backgroundColor: 'yellow',
       }}>
       <NaverMapView
@@ -578,23 +584,27 @@ function Main({navigation}: MainScreenProps) {
                 onPressIn={() => {
                   setResultBtn(prev => !prev);
                   setEnergyDistance(
-                    parseFloat(
-                      distanceTravelled.toFixed(2) - firstDistance.toFixed(2),
-                    ),
+                    parseFloat(distanceTravelled.toFixed(2)) -
+                      parseFloat(firstDistance.toFixed(2)),
                   );
                   stop();
                   Estop();
-                  captureImage();
+                  // captureImage();
                   setDistance(parseFloat(distanceTravelled.toFixed(2)));
                   setFinishTime(now);
                   setEnergyFinishDistance(
                     parseFloat(
                       (
-                        distanceTravelled.toFixed(2) - firstDistance.toFixed(2)
+                        parseFloat(distanceTravelled.toFixed(2)) -
+                        parseFloat(firstDistance.toFixed(2))
                       ).toFixed(2),
                     ),
                   );
-                }}>
+                }}
+                onPressOut={() => {
+                  captureImage();
+                }
+                }>
                 <FontAwesome
                   name="stop-circle"
                   style={{
@@ -712,7 +722,7 @@ function Main({navigation}: MainScreenProps) {
             zIndex: 1,
             position: 'absolute',
             width: WIDTH,
-            height: HEIGHT * 0.9, //HEIGHT * 0.7
+            height: HEIGHT * 0.7, //HEIGHT * 0.9
             top: 0,
           }}>
           <View
@@ -739,7 +749,7 @@ function Main({navigation}: MainScreenProps) {
                 name="share-google"
                 size={35}
                 color={'black'}
-                onPress={shareImage}
+                // onPress={shareImage}
               />
             </View>
             <Text
@@ -926,7 +936,8 @@ function Main({navigation}: MainScreenProps) {
             /> */}
           </View>
           <View style={{flex: 1}}>
-            <TouchableOpacity
+            {captureCheck? (
+              <TouchableOpacity
               style={{
                 backgroundColor: '#6A74CF',
                 width: '70%',
@@ -937,30 +948,8 @@ function Main({navigation}: MainScreenProps) {
                 alignItems: 'center',
                 borderRadius: 77,
               }}
-              // onPress={async () => {
-              //   try {
-              //     // await captureImage();
-              //     await uploadImageToServer();
-              //     setTimeout(() => {
-              //       setResultBtn(false); //결과 화면 닫기
-              //       setStartBtn(prev => !prev); //스타트 버튼 열기
-              //       reset(); //시간초기화
-              //       Ereset(); //E시간초기화
-              //       setRouteCoordinates([]); //폴리라인 배열 초기화
-              //       setEnergyCoordinates([]); //에너지 떨어짐 배열 초기화
-              //       setDistanceTravelled(0); //측정거리 초기화
-              //       setPrevLatLng(null); //이전거리 초기화
-              //       setEnergyBtn(false); //에너지 떨어짐 버튼 초기화
-              //       setFirstDistance(0); //측정 거리 초기화
-              //       setEnergyDistance(0); //에너지 떨어짐 거리 초기화
-              //     }, 1500);
-              //   } catch (error) {
-              //     console.error(error);
-              //   }
-              // }}>
-              onPressIn={() => {
-                uploadImageToServer();
-                WalkDataToServer();
+              onPressIn={async () => {
+                await getImageAndSendData();
               }}
               onPress={() => {
                 setResultBtn(false); //결과 화면 닫기
@@ -979,6 +968,7 @@ function Main({navigation}: MainScreenProps) {
                 setFinishTime('');
                 setEnergyFinishTime('');
                 setEnergyFinishDistance(0);
+                setCaptureCheck(false);
               }}>
               <Text
                 style={{
@@ -992,6 +982,7 @@ function Main({navigation}: MainScreenProps) {
                 확인
               </Text>
             </TouchableOpacity>
+            ) : null}
           </View>
         </View>
       ) : null}

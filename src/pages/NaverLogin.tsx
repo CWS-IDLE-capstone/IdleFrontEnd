@@ -2,21 +2,27 @@ import React, {useCallback, useRef} from 'react';
 import {StyleSheet, Alert} from 'react-native';
 import {WebView, WebViewMessageEvent} from 'react-native-webview';
 
-import {RootStackParamList} from '../../App';
+import {RootStackParamList} from '../../AppInner';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
+type ScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'NaverLogin',
+  'SignUp'
+>;
 
 import {URLWrapper} from '../../url-wrapper';
 import axios, {AxiosError} from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useAppDispatch} from '../store';
+import userSlice from '../slices/user';
+import Config from 'react-native-config';
 
-const NaverLogin: React.FC<ScreenProps> = ({navigation}) => {
+function NaverLogin({navigation}: ScreenProps) {
   const webviewRef = useRef<WebView>(null);
-
+  const dispatch = useAppDispatch();
   const prevUrlRef = useRef<string | undefined>();
 
   const handleWebViewNavigationStateChange = useCallback(
-    (newNavState: {url: string}, prevNavState?: {url: string}) => {
+    async (newNavState: {url: string}, prevNavState?: {url: string}) => {
       const {url} = newNavState;
 
       if (!url) return;
@@ -38,24 +44,25 @@ const NaverLogin: React.FC<ScreenProps> = ({navigation}) => {
         console.log('state: ', state);
 
         try {
-          axios
-            .post(
-              `http://awsv4-env.eba-mre2mcnv.ap-northeast-2.elasticbeanstalk.com/api/oauth/naver`,
-              {
-                code: code,
-                state: state,
-              },
-            )
-            .then(response => {
-              const responseData = response.data; // 받은 데이터
-              const token = responseData.accessToken; // JWT 토큰
-              console.log(token);
-
-              AsyncStorage.setItem('accessToken', token); // 토큰을 AsyncStorage에 저장
-
-              // navigation.navigate('Main');
-              navigation.navigate('CalanderScreen'); //일단 달력으로 넘어갑니다. 추후에 메인으로 가도록 변경예정.
-            });
+          const response = await axios.post(
+            `${Config.API_URL}/api/oauth/naver`,
+            {
+              code: code,
+              state: state,
+            },
+          );
+          console.log(response.data);
+          // Alert.alert('알림', '로그인 되었습니다.');
+          // console.log('로그인 되었습니다.');
+          dispatch(
+            //리덕스에 넣어주기
+            userSlice.actions.setUser({
+              //TODO 서버에서 무엇을 데이터로 줄지 알아봐야됨 현재는 name, email, accessToken, refreshToken
+              // name: response.data.name,
+              // email: response.data.email,
+              accessToken: response.data.accessToken, // 유효기간 10분, 5분, 1시간
+            }),
+          );
         } catch (error) {
           const errorResponse = (error as AxiosError<{message: string}>)
             .response;
@@ -81,7 +88,7 @@ const NaverLogin: React.FC<ScreenProps> = ({navigation}) => {
       // onMessage={handleWebViewMessage}
     />
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {

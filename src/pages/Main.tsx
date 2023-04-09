@@ -144,7 +144,7 @@ function Main({navigation}: MainScreenProps) {
 
         if (prevLatLng) {
           setDistanceTravelled(
-              distanceTravelled + calcDistance(prevLatLng, newCoordinate),
+            distanceTravelled + calcDistance(prevLatLng, newCoordinate),
           );
         }
 
@@ -236,8 +236,8 @@ function Main({navigation}: MainScreenProps) {
   //   `currentSeconds: ${currentSeconds}, energySeconds: ${energySeconds}`,
   // );
 
-function captureImage() {
-     setTimeout(async () => {
+  function captureImage() {
+    setTimeout(async () => {
       const imageUri = await viewShotRef.current.capture();
       console.log(imageUri);
       try {
@@ -247,7 +247,7 @@ function captureImage() {
       } catch (error) {
         console.log(error);
       }
-     }, 1500);
+    }, 1500);
   }
 
   // const shareImage = async () => {
@@ -603,8 +603,7 @@ function captureImage() {
                 }}
                 onPressOut={() => {
                   captureImage();
-                }
-                }>
+                }}>
                 <FontAwesome
                   name="stop-circle"
                   style={{
@@ -936,52 +935,52 @@ function captureImage() {
             /> */}
           </View>
           <View style={{flex: 1}}>
-            {captureCheck? (
+            {captureCheck ? (
               <TouchableOpacity
-              style={{
-                backgroundColor: '#6A74CF',
-                width: '70%',
-                height: 50,
-                zIndex: 1,
-                alignSelf: 'center',
-                alignContent: 'center',
-                alignItems: 'center',
-                borderRadius: 77,
-              }}
-              onPressIn={async () => {
-                await getImageAndSendData();
-              }}
-              onPress={() => {
-                setResultBtn(false); //결과 화면 닫기
-                setStartBtn(prev => !prev); //스타트 버튼 열기
-                reset(); //시간초기화
-                Ereset(); //E시간초기화
-                setRouteCoordinates([]); //폴리라인 배열 초기화
-                setEnergyCoordinates([]); //에너지 떨어짐 배열 초기화
-                setDistanceTravelled(0); //측정거리 초기화
-                setPrevLatLng(null); //이전거리 초기화
-                setEnergyBtn(false); //에너지 떨어짐 버튼 초기화
-                setFirstDistance(0); //측정 거리 초기화
-                setEnergyDistance(0); //에너지 떨어짐 거리 초기화
-                setDistance(0);
-                setStartTime('');
-                setFinishTime('');
-                setEnergyFinishTime('');
-                setEnergyFinishDistance(0);
-                setCaptureCheck(false);
-              }}>
-              <Text
                 style={{
-                  color: 'white',
-                  textAlign: 'center',
-                  textAlignVertical: 'bottom',
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  height: 35,
+                  backgroundColor: '#6A74CF',
+                  width: '70%',
+                  height: 50,
+                  zIndex: 1,
+                  alignSelf: 'center',
+                  alignContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 77,
+                }}
+                onPressIn={async () => {
+                  await getImageAndSendData();
+                }}
+                onPress={() => {
+                  setResultBtn(false); //결과 화면 닫기
+                  setStartBtn(prev => !prev); //스타트 버튼 열기
+                  reset(); //시간초기화
+                  Ereset(); //E시간초기화
+                  setRouteCoordinates([]); //폴리라인 배열 초기화
+                  setEnergyCoordinates([]); //에너지 떨어짐 배열 초기화
+                  setDistanceTravelled(0); //측정거리 초기화
+                  setPrevLatLng(null); //이전거리 초기화
+                  setEnergyBtn(false); //에너지 떨어짐 버튼 초기화
+                  setFirstDistance(0); //측정 거리 초기화
+                  setEnergyDistance(0); //에너지 떨어짐 거리 초기화
+                  setDistance(0);
+                  setStartTime('');
+                  setFinishTime('');
+                  setEnergyFinishTime('');
+                  setEnergyFinishDistance(0);
+                  setCaptureCheck(false);
                 }}>
-                확인
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                    textAlignVertical: 'bottom',
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    height: 35,
+                  }}>
+                  확인
+                </Text>
+              </TouchableOpacity>
             ) : null}
           </View>
         </View>

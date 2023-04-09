@@ -16,7 +16,7 @@ import {useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import Config from 'react-native-config';
 
-function NaverLogin({navigation} : ScreenProps) {
+function NaverLogin({navigation}: ScreenProps) {
   const webviewRef = useRef<WebView>(null);
   const dispatch = useAppDispatch();
   const prevUrlRef = useRef<string | undefined>();
@@ -44,10 +44,13 @@ function NaverLogin({navigation} : ScreenProps) {
         console.log('state: ', state);
 
         try {
-          const response = await axios.post(`${Config.API_URL}/api/oauth/naver`, {
-            code: code,
-            state: state,
-          });
+          const response = await axios.post(
+            `${Config.API_URL}/api/oauth/naver`,
+            {
+              code: code,
+              state: state,
+            },
+          );
           console.log(response.data);
           // Alert.alert('알림', '로그인 되었습니다.');
           // console.log('로그인 되었습니다.');
@@ -85,7 +88,7 @@ function NaverLogin({navigation} : ScreenProps) {
       // onMessage={handleWebViewMessage}
     />
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {

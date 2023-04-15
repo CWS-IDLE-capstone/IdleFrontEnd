@@ -93,7 +93,6 @@ function Main({navigation}: MainScreenProps) {
 
   // const [imageCapture, setImageCapture] = useState(null); //이미지 캡쳐 후 화면표시용
   const [imageCaptureUrl, setImageCaptureUrl] = useState('');
-  const [routeImage, setRouteImage] = useState('');
   const [distance, setDistance] = useState<number>(0);
   const [startTime, setStartTime] = useState('');
   const [finishTime, setFinishTime] = useState('');
@@ -746,7 +745,6 @@ function Main({navigation}: MainScreenProps) {
                 name="share-google"
                 size={35}
                 color={'black'}
-                onPress={shareImage}
               />
             </View>
             <Text

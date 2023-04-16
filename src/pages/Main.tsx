@@ -14,7 +14,7 @@ import {
   Dimensions,
   Platform,
 } from 'react-native';
-import NaverMapView, {Marker, Polyline} from 'react-native-nmap';
+import NaverMapView, {Marker, Polyline, Path} from 'react-native-nmap';
 import {LoggedInParamList} from '../../AppInner';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {current} from '@reduxjs/toolkit';
@@ -422,7 +422,7 @@ function Main({navigation}: MainScreenProps) {
         )}
         {myPosition?.latitude &&
           (startBtn ? (
-            <Polyline //일반 폴리라인
+            <Path //일반 path
               coordinates={
                 routeCoordinates.length <= 2
                   ? [
@@ -437,13 +437,17 @@ function Main({navigation}: MainScreenProps) {
                     ]
                   : routeCoordinates
               }
-              strokeWidth={10}
-              strokeColor="#1EFF34"
+              width={15}
+              color="#8AA2F8"
+              outlineColor="white"
+              // outlineWidth={3}
+              pattern={require('../assets/Rectangle207.png')}
+              patternInterval={17}
             />
           ) : null)}
         {myPosition?.latitude &&
           (energyBtn ? (
-            <Polyline //에너지 떨어짐 폴리라인
+            <Path //에너지 떨어짐 path
               coordinates={
                 energyCoordinates.length <= 2
                   ? [
@@ -455,8 +459,12 @@ function Main({navigation}: MainScreenProps) {
                     ]
                   : energyCoordinates
               }
-              strokeWidth={10}
-              strokeColor="#F19900"
+              width={15}
+              color="#F8C2C2"
+              outlineColor="white"
+              // outlineWidth={3}
+              pattern={require('../assets/Rectangle207.png')}
+              patternInterval={17}
             />
           ) : null)}
       </NaverMapView>
@@ -609,7 +617,7 @@ function Main({navigation}: MainScreenProps) {
                   style={{
                     fontSize: 60,
                     top: 8,
-                    color: '#6A74CF',
+                    color: '#8AA2F8',
                   }}
                 />
               </TouchableOpacity>
@@ -686,14 +694,14 @@ function Main({navigation}: MainScreenProps) {
         ) : (
           <TouchableOpacity
             style={{
-              backgroundColor: '#6A74CF',
+              backgroundColor: '#8AA2F8',
               width: '70%',
               height: 50,
               zIndex: 1,
               alignSelf: 'center',
               alignContent: 'center',
               alignItems: 'center',
-              borderRadius: 77,
+              borderRadius: 10,
             }}
             onPress={() => {
               setStartBtn(true);
@@ -884,7 +892,7 @@ function Main({navigation}: MainScreenProps) {
                   />
                 ))}
                 {myPosition?.latitude && (
-                  <Polyline //결과 창 일반 폴리라인
+                  <Path //결과창 일반 path
                     coordinates={
                       routeCoordinates.length <= 2
                         ? [
@@ -899,19 +907,20 @@ function Main({navigation}: MainScreenProps) {
                           ]
                         : routeCoordinates
                     }
-                    strokeWidth={5}
-                    strokeColor="#1EFF34"
+                    width={15}
+                    color="#8AA2F8"
+                    outlineColor="white"
+                    // outlineWidth={3}
+                    pattern={require('../assets/Rectangle207.png')}
+                    patternInterval={17}
                   />
                 )}
                 {myPosition?.latitude && (
-                  <Polyline //결과 창 에너지 떨어짐 폴리라인
+                  <Path //결과창 에너지 떨어짐 path
                     coordinates={
                       energyCoordinates.length <= 2
                         ? [
-                            {
-                              latitude: myPosition.latitude,
-                              longitude: myPosition.longitude,
-                            },
+                            routeCoordinates[routeCoordinates.length - 1],
                             {
                               latitude: myPosition.latitude,
                               longitude: myPosition.longitude,
@@ -919,8 +928,12 @@ function Main({navigation}: MainScreenProps) {
                           ]
                         : energyCoordinates
                     }
-                    strokeWidth={5}
-                    strokeColor="#F19900"
+                    width={15}
+                    color="#F8C2C2"
+                    outlineColor="white"
+                    // outlineWidth={3}
+                    pattern={require('../assets/Rectangle207.png')}
+                    patternInterval={17}
                   />
                 )}
               </NaverMapView>
@@ -938,14 +951,14 @@ function Main({navigation}: MainScreenProps) {
             {captureCheck ? (
               <TouchableOpacity
                 style={{
-                  backgroundColor: '#6A74CF',
+                  backgroundColor: '#8AA2F8',
                   width: '70%',
                   height: 50,
                   zIndex: 1,
                   alignSelf: 'center',
                   alignContent: 'center',
                   alignItems: 'center',
-                  borderRadius: 77,
+                  borderRadius: 10,
                 }}
                 onPressIn={async () => {
                   await getImageAndSendData();

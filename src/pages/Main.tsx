@@ -14,7 +14,7 @@ import {
   Dimensions,
   Platform,
 } from 'react-native';
-import NaverMapView, {Marker, Polyline} from 'react-native-nmap';
+import NaverMapView, {Marker, Polyline, Path} from 'react-native-nmap';
 import {LoggedInParamList} from '../../AppInner';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {current} from '@reduxjs/toolkit';
@@ -101,6 +101,7 @@ function Main({navigation}: MainScreenProps) {
   const offset = today.getTimezoneOffset() * 60000;
   const nowKr = new Date(today.getTime() - offset); //한국 시간 적용
   const now = nowKr.toISOString();
+  const [captureCheck, setCaptureCheck] = useState(false);
 
   useEffect(() => {
     Geolocation.getCurrentPosition(
@@ -142,9 +143,7 @@ function Main({navigation}: MainScreenProps) {
 
         if (prevLatLng) {
           setDistanceTravelled(
-            // parseFloat(
             distanceTravelled + calcDistance(prevLatLng, newCoordinate),
-            // ),
           );
         }
 
@@ -199,7 +198,7 @@ function Main({navigation}: MainScreenProps) {
   };
 
   // 카메라 촬영
-  const onLaunchCamera = () => {
+  const onLaunchCamera = useCallback(() => {
     launchCamera(
       {
         mediaType: 'photo',
@@ -216,7 +215,7 @@ function Main({navigation}: MainScreenProps) {
         // setResponse(res); //이미지 보낼때 이거 쓰면 될거같음
       },
     );
-  };
+  }, []);
 
   useEffect(timer, [count]);
   useEffect(Etimer, [Ecount]);
@@ -243,10 +242,11 @@ function Main({navigation}: MainScreenProps) {
       try {
         setImageCaptureUrl(imageUri); //imageCaptureUrl에 저장 후 이미지 업로드
         console.log('산책캡쳐완료');
+        setCaptureCheck(true);
       } catch (error) {
         console.log(error);
       }
-    }, 1000);
+    }, 1500);
   }
 
   // const shareImage = async () => {
@@ -295,7 +295,6 @@ function Main({navigation}: MainScreenProps) {
       console.error('Failed to upload image:', error);
     }
   }
-
   async function WalkDataToServer(getImageUrl: string) {
     // 이미지 업로드 후 산책 정보 전송
     console.log('WalkDataToServer 동작');
@@ -338,7 +337,7 @@ function Main({navigation}: MainScreenProps) {
       // eslint-disable-next-line react-native/no-inline-styles
       style={{
         width: WIDTH,
-        height: HEIGHT * 0.9, //HEIGHT * 0.83
+        height: HEIGHT * 0.83, //HEIGHT * 0.9
         backgroundColor: 'yellow',
       }}>
       <NaverMapView
@@ -422,7 +421,7 @@ function Main({navigation}: MainScreenProps) {
         )}
         {myPosition?.latitude &&
           (startBtn ? (
-            <Polyline //일반 폴리라인
+            <Path //일반 path
               coordinates={
                 routeCoordinates.length <= 2
                   ? [
@@ -437,13 +436,17 @@ function Main({navigation}: MainScreenProps) {
                     ]
                   : routeCoordinates
               }
-              strokeWidth={10}
-              strokeColor="#1EFF34"
+              width={15}
+              color="#8AA2F8"
+              outlineColor="white"
+              // outlineWidth={3}
+              pattern={require('../assets/Rectangle207.png')}
+              patternInterval={17}
             />
           ) : null)}
         {myPosition?.latitude &&
           (energyBtn ? (
-            <Polyline //에너지 떨어짐 폴리라인
+            <Path //에너지 떨어짐 path
               coordinates={
                 energyCoordinates.length <= 2
                   ? [
@@ -455,8 +458,12 @@ function Main({navigation}: MainScreenProps) {
                     ]
                   : energyCoordinates
               }
-              strokeWidth={10}
-              strokeColor="#F19900"
+              width={15}
+              color="#F8C2C2"
+              outlineColor="white"
+              // outlineWidth={3}
+              pattern={require('../assets/Rectangle207.png')}
+              patternInterval={17}
             />
           ) : null)}
       </NaverMapView>
@@ -589,7 +596,7 @@ function Main({navigation}: MainScreenProps) {
                   );
                   stop();
                   Estop();
-                  captureImage();
+                  // captureImage();
                   setDistance(parseFloat(distanceTravelled.toFixed(2)));
                   setFinishTime(now);
                   setEnergyFinishDistance(
@@ -600,13 +607,16 @@ function Main({navigation}: MainScreenProps) {
                       ).toFixed(2),
                     ),
                   );
+                }}
+                onPressOut={() => {
+                  captureImage();
                 }}>
                 <FontAwesome
                   name="stop-circle"
                   style={{
                     fontSize: 60,
                     top: 8,
-                    color: '#6A74CF',
+                    color: '#8AA2F8',
                   }}
                 />
               </TouchableOpacity>
@@ -683,14 +693,14 @@ function Main({navigation}: MainScreenProps) {
         ) : (
           <TouchableOpacity
             style={{
-              backgroundColor: '#6A74CF',
+              backgroundColor: '#8AA2F8',
               width: '70%',
               height: 50,
               zIndex: 1,
               alignSelf: 'center',
               alignContent: 'center',
               alignItems: 'center',
-              borderRadius: 77,
+              borderRadius: 10,
             }}
             onPress={() => {
               setStartBtn(true);
@@ -718,7 +728,7 @@ function Main({navigation}: MainScreenProps) {
             zIndex: 1,
             position: 'absolute',
             width: WIDTH,
-            height: HEIGHT * 0.9, //HEIGHT * 0.7
+            height: HEIGHT * 0.7, //HEIGHT * 0.9
             top: 0,
           }}>
           <View
@@ -880,7 +890,7 @@ function Main({navigation}: MainScreenProps) {
                   />
                 ))}
                 {myPosition?.latitude && (
-                  <Polyline //결과 창 일반 폴리라인
+                  <Path //결과창 일반 path
                     coordinates={
                       routeCoordinates.length <= 2
                         ? [
@@ -895,19 +905,20 @@ function Main({navigation}: MainScreenProps) {
                           ]
                         : routeCoordinates
                     }
-                    strokeWidth={5}
-                    strokeColor="#1EFF34"
+                    width={15}
+                    color="#8AA2F8"
+                    outlineColor="white"
+                    // outlineWidth={3}
+                    pattern={require('../assets/Rectangle207.png')}
+                    patternInterval={17}
                   />
                 )}
                 {myPosition?.latitude && (
-                  <Polyline //결과 창 에너지 떨어짐 폴리라인
+                  <Path //결과창 에너지 떨어짐 path
                     coordinates={
                       energyCoordinates.length <= 2
                         ? [
-                            {
-                              latitude: myPosition.latitude,
-                              longitude: myPosition.longitude,
-                            },
+                            routeCoordinates[routeCoordinates.length - 1],
                             {
                               latitude: myPosition.latitude,
                               longitude: myPosition.longitude,
@@ -915,8 +926,12 @@ function Main({navigation}: MainScreenProps) {
                           ]
                         : energyCoordinates
                     }
-                    strokeWidth={5}
-                    strokeColor="#F19900"
+                    width={15}
+                    color="#F8C2C2"
+                    outlineColor="white"
+                    // outlineWidth={3}
+                    pattern={require('../assets/Rectangle207.png')}
+                    patternInterval={17}
                   />
                 )}
               </NaverMapView>
@@ -931,50 +946,53 @@ function Main({navigation}: MainScreenProps) {
             /> */}
           </View>
           <View style={{flex: 1}}>
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#6A74CF',
-                width: '70%',
-                height: 50,
-                zIndex: 1,
-                alignSelf: 'center',
-                alignContent: 'center',
-                alignItems: 'center',
-                borderRadius: 77,
-              }}
-              onPressIn={async () => {
-                await getImageAndSendData();
-              }}
-              onPress={() => {
-                setResultBtn(false); //결과 화면 닫기
-                setStartBtn(prev => !prev); //스타트 버튼 열기
-                reset(); //시간초기화
-                Ereset(); //E시간초기화
-                setRouteCoordinates([]); //폴리라인 배열 초기화
-                setEnergyCoordinates([]); //에너지 떨어짐 배열 초기화
-                setDistanceTravelled(10); //측정거리 초기화
-                setPrevLatLng(null); //이전거리 초기화
-                setEnergyBtn(false); //에너지 떨어짐 버튼 초기화
-                setFirstDistance(0); //측정 거리 초기화
-                setEnergyDistance(0); //에너지 떨어짐 거리 초기화
-                setDistance(0);
-                setStartTime('');
-                setFinishTime('');
-                setEnergyFinishTime('');
-                setEnergyFinishDistance(0);
-              }}>
-              <Text
+            {captureCheck ? (
+              <TouchableOpacity
                 style={{
-                  color: 'white',
-                  textAlign: 'center',
-                  textAlignVertical: 'bottom',
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  height: 35,
+                  backgroundColor: '#8AA2F8',
+                  width: '70%',
+                  height: 50,
+                  zIndex: 1,
+                  alignSelf: 'center',
+                  alignContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 10,
+                }}
+                onPressIn={async () => {
+                  await getImageAndSendData();
+                }}
+                onPress={() => {
+                  setResultBtn(false); //결과 화면 닫기
+                  setStartBtn(prev => !prev); //스타트 버튼 열기
+                  reset(); //시간초기화
+                  Ereset(); //E시간초기화
+                  setRouteCoordinates([]); //폴리라인 배열 초기화
+                  setEnergyCoordinates([]); //에너지 떨어짐 배열 초기화
+                  setDistanceTravelled(0); //측정거리 초기화
+                  setPrevLatLng(null); //이전거리 초기화
+                  setEnergyBtn(false); //에너지 떨어짐 버튼 초기화
+                  setFirstDistance(0); //측정 거리 초기화
+                  setEnergyDistance(0); //에너지 떨어짐 거리 초기화
+                  setDistance(0);
+                  setStartTime('');
+                  setFinishTime('');
+                  setEnergyFinishTime('');
+                  setEnergyFinishDistance(0);
+                  setCaptureCheck(false);
                 }}>
-                확인
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                    textAlignVertical: 'bottom',
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    height: 35,
+                  }}>
+                  확인
+                </Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
         </View>
       ) : null}

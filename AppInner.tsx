@@ -84,7 +84,7 @@ const Tab = createBottomTabNavigator<LoggedInParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppInner() {
-  const isLoggedIn = useSelector((state: RootState) => !!state.user.email); //리덕스에서 가져오기
+  const isLoggedIn = useSelector((state: RootState) => !!state.user.accessToken); //리덕스에서 가져오기
   // TODO: isLoggedIn = useSelector 이용하여 상태관리
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
 

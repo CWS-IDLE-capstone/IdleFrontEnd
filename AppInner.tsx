@@ -150,7 +150,7 @@ function AppInner() {
             name="Journal"
             component={CalanderScreen}
             options={{
-              title: '산책일지',
+              title: '산책달력',
               tabBarIcon: ({focused}) => (
                 <Image
                   source={

@@ -1,7 +1,7 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
-import {Alert} from 'react-native';
+import {Alert, Image} from 'react-native';
 import EmailSignUp from './src/pages/EmailSignUp';
 import FinishSignUp from './src/pages/FinishSignUp';
 import SignUp from './src/pages/SignUp';
@@ -19,9 +19,6 @@ import {useSelector} from 'react-redux';
 
 import {UserContextProvider} from './src/components/UserContext';
 import Setting from './src/pages/Setting';
-import Icon from 'react-native-vector-icons/EvilIcons';
-import IconAD from 'react-native-vector-icons/AntDesign';
-import IconE from 'react-native-vector-icons/Entypo';
 import NaverLogin from './src/pages/NaverLogin';
 import AddInfo from './src/pages/AddInfo';
 import CalanderScreen from './src/pages/CalanderScreen';
@@ -84,7 +81,9 @@ const Tab = createBottomTabNavigator<LoggedInParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppInner() {
-  const isLoggedIn = useSelector((state: RootState) => !!state.user.accessToken); //리덕스에서 가져오기
+  const isLoggedIn = useSelector(
+    (state: RootState) => !!state.user.accessToken,
+  ); //리덕스에서 가져오기
   // TODO: isLoggedIn = useSelector 이용하여 상태관리
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -106,15 +105,27 @@ function AppInner() {
         <Tab.Navigator
           initialRouteName="Main"
           screenOptions={{
-            tabBarActiveTintColor: '#ff8c00',
+            tabBarStyle: {
+              height: '9%',
+              paddingTop: '3%',
+              paddingBottom: '3%',
+            },
           }}>
           <Tab.Screen
             name="Community"
             component={Community}
             options={{
-              title: '메시지',
-              tabBarIcon: ({color}) => (
-                <IconE name="chat" size={35} color={color} />
+              title: '게시판',
+              tabBarIcon: ({focused}) => (
+                // <IconE name="chat" size={35} color={color} />
+                <Image
+                  source={
+                    focused
+                      ? require('./src/assets/selectChat.png')
+                      : require('./src/assets/chat.png')
+                  }
+                  style={{width: 35, height: 35}}
+                />
               ),
             }}
           />
@@ -122,19 +133,33 @@ function AppInner() {
             name="Main"
             component={Main}
             options={{
-              title: '산책가자',
-              tabBarIcon: ({color}) => (
-                <IconE name="baidu" size={35} color={color} />
+              title: '산책',
+              tabBarIcon: ({focused}) => (
+                <Image
+                  source={
+                    focused
+                      ? require('./src/assets/free-icon-dog-walking-3330957.png')
+                      : require('./src/assets/free-icon-dog-walking-3330956.png')
+                  }
+                  style={{width: 35, height: 35}}
+                />
               ),
             }}
           />
           <Tab.Screen
             name="Journal"
-            component={Journal}
+            component={CalanderScreen}
             options={{
               title: '산책일지',
-              tabBarIcon: ({color}) => (
-                <Icon name="calendar" size={45} color={color} />
+              tabBarIcon: ({focused}) => (
+                <Image
+                  source={
+                    focused
+                      ? require('./src/assets/selectCalendar.png')
+                      : require('./src/assets/calendar.png')
+                  }
+                  style={{width: 35, height: 35}}
+                />
               ),
             }}
           />
@@ -143,8 +168,15 @@ function AppInner() {
             component={MyPage}
             options={{
               title: '마이페이지',
-              tabBarIcon: ({color}) => (
-                <IconAD name="user" size={40} color={color} />
+              tabBarIcon: ({focused}) => (
+                <Image
+                  source={
+                    focused
+                      ? require('./src/assets/selectUser.png')
+                      : require('./src/assets/user.png')
+                  }
+                  style={{width: 35, height: 35}}
+                />
               ),
             }}
           />

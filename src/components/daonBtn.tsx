@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   text2: {
-    backgroundColor: '#6A74CF',
+    backgroundColor: '#8AA2F8',
     width: WIDTH * 0.4,
 
     height: 40,

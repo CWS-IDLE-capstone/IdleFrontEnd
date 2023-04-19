@@ -37,11 +37,11 @@ interface CoordinateLongitudeLatitude {
 }
 
 // type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
-type MainScreenProps = NativeStackScreenProps<LoggedInParamList, 'Community'>;
+// type MainScreenProps = NativeStackScreenProps<LoggedInParamList, 'Community'>;
 const {width: WIDTH} = Dimensions.get('window');
 const {height: HEIGHT} = Dimensions.get('window');
 console.log('------'); //const { count, startcnt, stop, reset} = useCounter(0, 1000);
-function Main({navigation}: MainScreenProps) {
+function Main({setIsTabVisible}: any) {
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
 
   const [myPosition, setMyPosition] = useState<{
@@ -103,6 +103,10 @@ function Main({navigation}: MainScreenProps) {
   const now = nowKr.toISOString();
   const [captureCheck, setCaptureCheck] = useState(false);
 
+  const setTabVisible = (tF: boolean) => {
+    //하단 탭 true,false설정
+    setIsTabVisible(tF);
+  };
   useEffect(() => {
     Geolocation.getCurrentPosition(
       position => {
@@ -333,13 +337,7 @@ function Main({navigation}: MainScreenProps) {
     }
   }
   return (
-    <View
-      // eslint-disable-next-line react-native/no-inline-styles
-      style={{
-        width: WIDTH,
-        height: HEIGHT * 0.83, //HEIGHT * 0.9
-        backgroundColor: 'yellow',
-      }}>
+    <View style={styles.naverMap}>
       <NaverMapView
         style={{width: '100%', height: '100%'}}
         zoomControl={true}
@@ -706,6 +704,7 @@ function Main({navigation}: MainScreenProps) {
               setStartBtn(true);
               startcnt();
               setStartTime(now);
+              setTabVisible(false);
             }}>
             <Text
               style={{
@@ -979,6 +978,7 @@ function Main({navigation}: MainScreenProps) {
                   setEnergyFinishTime('');
                   setEnergyFinishDistance(0);
                   setCaptureCheck(false);
+                  setTabVisible(true);
                 }}>
                 <Text
                   style={{
@@ -1003,6 +1003,9 @@ function Main({navigation}: MainScreenProps) {
 export default Main;
 
 const styles = StyleSheet.create({
+  naverMap: {
+    flex: 1,
+  },
   share: {
     alignItems: 'flex-end',
     backgroundColor: 'green',

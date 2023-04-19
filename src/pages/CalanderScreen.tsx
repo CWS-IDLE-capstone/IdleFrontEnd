@@ -154,7 +154,7 @@ const CalanderScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Banner />
+      {/* <Banner /> */}
       <Calendar
         markedDates={markedSelectedDates}
         enableSwipeMonths={true}

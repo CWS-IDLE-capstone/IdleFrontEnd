@@ -1,7 +1,7 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
-import {Alert, Image} from 'react-native';
+import {Alert, Image, StyleSheet} from 'react-native';
 import EmailSignUp from './src/pages/EmailSignUp';
 import FinishSignUp from './src/pages/FinishSignUp';
 import SignUp from './src/pages/SignUp';
@@ -86,7 +86,7 @@ function AppInner() {
   ); //리덕스에서 가져오기
   // TODO: isLoggedIn = useSelector 이용하여 상태관리
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const [isTabVisible, setIsTabVisible] = useState(true);
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
@@ -105,10 +105,12 @@ function AppInner() {
         <Tab.Navigator
           initialRouteName="Main"
           screenOptions={{
+            headerStyle: styles.headerStyle,
+            headerTintColor: '#8AA2F8',
+            headerTitleStyle: {fontSize: 23, fontWeight: 'bold'},
             tabBarStyle: {
-              height: '9%',
-              paddingTop: '3%',
-              paddingBottom: '3%',
+              ...styles.tabStyle,
+              display: isTabVisible ? 'flex' : 'none',
             },
           }}>
           <Tab.Screen
@@ -116,6 +118,7 @@ function AppInner() {
             component={Community}
             options={{
               title: '게시판',
+              tabBarActiveTintColor: '#8AA2F8',
               tabBarIcon: ({focused}) => (
                 // <IconE name="chat" size={35} color={color} />
                 <Image
@@ -131,9 +134,12 @@ function AppInner() {
           />
           <Tab.Screen
             name="Main"
-            component={Main}
+            // component={Main}
+            children={() => <Main setIsTabVisible={setIsTabVisible} />}
             options={{
               title: '산책',
+              tabBarActiveTintColor: '#8AA2F8',
+              tabBarLabelStyle: {marginRight: 8},
               tabBarIcon: ({focused}) => (
                 <Image
                   source={
@@ -151,6 +157,7 @@ function AppInner() {
             component={CalanderScreen}
             options={{
               title: '산책달력',
+              tabBarActiveTintColor: '#8AA2F8',
               tabBarIcon: ({focused}) => (
                 <Image
                   source={
@@ -168,6 +175,7 @@ function AppInner() {
             component={MyPage}
             options={{
               title: '마이페이지',
+              tabBarActiveTintColor: '#8AA2F8',
               tabBarIcon: ({focused}) => (
                 <Image
                   source={
@@ -204,3 +212,17 @@ function AppInner() {
   );
 }
 export default AppInner;
+
+const styles = StyleSheet.create({
+  headerStyle: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#AAAAAA',
+  },
+  tabStyle: {
+    height: '10%',
+    paddingTop: '2%',
+    paddingBottom: '2%',
+    borderTopWidth: 1,
+    borderColor: '#AAAAAA',
+  },
+});

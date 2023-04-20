@@ -1,7 +1,7 @@
 import React, {useCallback, useRef} from 'react';
 import {StyleSheet, Alert} from 'react-native';
 import {WebView, WebViewMessageEvent} from 'react-native-webview';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {RootStackParamList} from '../../AppInner';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 type ScreenProps = NativeStackScreenProps<
@@ -45,15 +45,14 @@ function NaverLogin({navigation}: ScreenProps) {
 
         try {
           const response = await axios.post(
-            `${Config.API_URL}/api/oauth/naver`,
+            `http://awsv4-env.eba-mre2mcnv.ap-northeast-2.elasticbeanstalk.com/api/oauth/naver`,
             {
               code: code,
               state: state,
             },
           );
-          console.log(response.data);
-          // Alert.alert('알림', '로그인 되었습니다.');
-          // console.log('로그인 되었습니다.');
+          console.log(response.data.accessToken);
+          AsyncStorage.setItem('accessToken', response.data.accessToken); // 토큰도 AsyncStorage에 저장ㅎㅎ
           dispatch(
             //리덕스에 넣어주기
             userSlice.actions.setUser({

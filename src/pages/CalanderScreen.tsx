@@ -13,7 +13,7 @@ const Banner = () => {
   return (
     <View style={styles.banner}>
       <Text style={styles.bannerText}>산책일지</Text>
-      <Image source={require('../assets/dog.png')} style={styles.bannerImage} />
+      {/* <Image source={require('../assets/dog.png')} style={styles.bannerImage} /> */}
     </View>
   );
 };
@@ -52,47 +52,36 @@ const CalanderScreen = () => {
   // const [data, setData] = useState<WalkData>({walkList: []});
   const [data, setData] = useState<WalkData | null>({walkList: []}); // 데이터를 받아오기전 null값
 
-  // accessToken
-  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const accessToken = useSelector((state: RootState) => state.user.accessToken);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // AsyncStorage에서 로그인할때 받았던 토큰을 가져와서 accessToken에 저장
-    AsyncStorage.getItem('accessToken')
-      .then(token => {
-        setAccessToken(token);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }, []);
-
-  useEffect(() => {
-    // 위에서 저장한 토큰으로 API에 GET요청해서 산책 목록 data에 저장하기
-    if (accessToken) {
-      console.log('\n Month changed:', walkMonth);
-      axios
-        .get(
-          `http://awsv4-env.eba-mre2mcnv.ap-northeast-2.elasticbeanstalk.com/api/walk/${walkMonth}/list`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const token = await AsyncStorage.getItem('accessToken');
+        if (token !== null) {
+          const response = await axios.get(
+            'http://awsv4-env.eba-mre2mcnv.ap-northeast-2.elasticbeanstalk.com/api/walk/list',
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
             },
-          },
-        )
-        .then(response => {
-          // Handle the API response
+          );
           setData(response.data);
-        })
-        .catch(error => {
-          // Handle the API error
-          console.log(error);
-        });
-    }
-  }, [walkMonth, accessToken]);
+        } else {
+          console.log('Token not found');
+        }
+      } catch (error) {
+        console.log('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  useEffect(() => {
-    console.log('\n data changed:', data);
-  }, [data]);
+    fetchData();
+  }, [accessToken]);
 
   // 산책한 날짜 리스트
   const startTimeList = data.walkList.map(walk =>
@@ -101,10 +90,15 @@ const CalanderScreen = () => {
 
   // 1.산책한 날짜들 표시
   const walkedDates: {
-    [date: string]: {selected: boolean; selectedColor: string};
+    [date: string]: {marked: boolean; dotColor: string};
   } = {};
   startTimeList.forEach(date => {
-    walkedDates[date] = {selected: true, selectedColor: '#0ED678'};
+    walkedDates[date] = {
+      marked: true,
+      dotColor: '#8AA2F8',
+      // selected: true,
+      // selectedColor: '#0ED678',
+    };
   });
 
   // 2.클릭한 날짜들 표시
@@ -152,25 +146,46 @@ const CalanderScreen = () => {
     );
   };
 
+  // 산책 데이터가 없는 경우
+  const NoWalkData = () => {
+    return (
+      <View style={styles.noDataContainer}>
+        <Image source={require('../assets/흰둥이.png')} style={styles.흰둥이} />
+        <Text style={styles.noDataText}>
+          이 날은 산책한 기록이 없어요.{'\n'}지금 반려견과 산책을 시작해보세요!
+        </Text>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Banner />
-      <Calendar
-        markedDates={markedSelectedDates}
-        enableSwipeMonths={true}
-        onDayPress={day => setSelectedDate(day.dateString)}
-        current={moment().format('YYYY-MM-DD')}
-      />
-      <View style={styles.listcontainer1}>
-        <View style={styles.listcontainer2}>
-          <FlatList
-            style={styles.flatlist}
-            data={filteredData}
-            keyExtractor={item => item.id.toString()}
-            renderItem={renderEvent}
-          />
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>로딩중...</Text>
         </View>
-      </View>
+      ) : (
+        <>
+          <Calendar
+            markedDates={markedSelectedDates}
+            enableSwipeMonths={true}
+            onDayPress={day => setSelectedDate(day.dateString)}
+            current={moment().format('YYYY-MM-DD')}
+          />
+          <View style={styles.listcontainer1}>
+            <View style={styles.listcontainer2}>
+              <FlatList
+                style={styles.flatlist}
+                data={filteredData}
+                keyExtractor={item => item.id.toString()}
+                renderItem={renderEvent}
+                ListEmptyComponent={NoWalkData}
+              />
+            </View>
+          </View>
+        </>
+      )}
     </View>
   );
 };
@@ -194,7 +209,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: '900',
     textAlign: 'center',
-    color: '#000000',
+    color: '#8AA2F8',
   },
   bannerImage: {
     width: '14%',
@@ -203,7 +218,7 @@ const styles = StyleSheet.create({
   },
   listcontainer1: {
     flex: 0.8,
-    backgroundColor: '#FF8B0060',
+    backgroundColor: '#FFFFFF',
     borderRadius: 30,
     width: '95%',
     height: 80,
@@ -212,7 +227,7 @@ const styles = StyleSheet.create({
   },
   listcontainer2: {
     flex: 0.95,
-    backgroundColor: '#FFFFFFEB',
+    backgroundColor: '#8AA2F840',
     borderRadius: 25,
     width: '93%',
     height: '90%',
@@ -231,15 +246,39 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 57,
     borderRadius: 40,
-    backgroundColor: '#EEEEEE',
-    elevation: 5,
+    backgroundColor: '#6A74CF80',
+    // elevation: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   eventText: {
     fontSize: 20,
-    color: 'black',
+    color: 'white',
     fontFamily: 'Blinker-SemiBold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  noDataContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  noDataText: {
+    fontSize: 18,
+    textAlign: 'center',
+    lineHeight: 30,
+  },
+  흰둥이: {
+    width: 150,
+    height: 90,
+    marginTop: -20,
   },
 });
 

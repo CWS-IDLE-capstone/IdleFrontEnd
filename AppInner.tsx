@@ -119,8 +119,8 @@ function AppInner() {
             options={{
               title: '게시판',
               tabBarActiveTintColor: '#8AA2F8',
+              headerTintColor: '#000000',
               tabBarIcon: ({focused}) => (
-                // <IconE name="chat" size={35} color={color} />
                 <Image
                   source={
                     focused
@@ -195,7 +195,14 @@ function AppInner() {
           <Stack.Screen name="Start" component={Start} />
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="SignUp" component={SignUp} />
-          <Stack.Screen name="EmailSignUp" component={EmailSignUp} />
+          <Stack.Screen
+            name="EmailSignUp"
+            component={EmailSignUp}
+            options={{
+              headerTitle: '회원가입',
+              headerTitleStyle: {fontSize: 24},
+            }}
+          />
           <Stack.Screen name="FinishSignUp" component={FinishSignUp} />
           <Stack.Screen name="MoreInfo" component={MoreInfo} />
           <Stack.Screen name="AddInfo" component={AddInfo} />

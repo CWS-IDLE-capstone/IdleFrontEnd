@@ -161,242 +161,307 @@ function EmailSignUp({navigation}: ScreenProps) {
       <View style={styles.container}>
         <Text style={styles.conText}>회원님의 정보를</Text>
         <Text style={styles.conText}>입력해 주세요</Text>
-      </View>
-      <View style={styles.container2}>
-        <View style={styles.nameView1}>
-          <SignText text="이름" />
-          <TextInput
-            style={styles.nameInput}
-            placeholder="이름입력칸"
-            onChangeText={onChangeName}
-            onSubmitEditing={onSubmitName}
-            keyboardType="default"
-          />
-          <Text style={styles.sexText}>성별</Text>
-          <TouchableOpacity
-            style={[
-              styles.sexManBtn,
-              {
-                backgroundColor: isCheckMan === '1' ? 'lightskyblue' : 'white',
-              },
-            ]}
-            onPress={onCheckMan}>
-            <Text style={styles.sexManText}>남</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.sexFemBtn,
-              {
-                backgroundColor: isCheckMan === '2' ? 'lightskyblue' : 'white',
-              },
-            ]}
-            onPress={onCheckWoman}>
-            <Text style={styles.sexFemText}>여</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.emailViewContainer}>
-          <View style={styles.emailView}>
-            <SignText text="이메일" />
+
+        <View style={styles.container2}>
+          <View style={styles.nameView1}>
+            <View style={styles.nameText1}>
+              <SignText text="이름" />
+              <TextInput
+                style={[
+                  styles.nameInput,
+                  {
+                    borderColor: name !== '' ? '#8AA2F8' : '#C4C4C4',
+                  },
+                ]}
+                placeholder="이름입력칸"
+                onChangeText={onChangeName}
+                onSubmitEditing={onSubmitName}
+                keyboardType="default"
+              />
+            </View>
+            <View style={styles.sexView1}>
+              <SignText text="성별" />
+              <View style={styles.sexBtnView1}>
+                <TouchableOpacity
+                  style={[
+                    styles.sexManBtn,
+                    {
+                      borderColor: isCheckMan === '1' ? '#8AA2F8' : '#C4C4C4',
+                    },
+                  ]}
+                  onPress={onCheckMan}>
+                  <Text
+                    style={[
+                      styles.sexFemText,
+                      {color: isCheckMan === '1' ? '#8AA2F8' : 'black'},
+                    ]}>
+                    남
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.sexFemBtn,
+                    {
+                      borderColor: isCheckMan === '2' ? '#8AA2F8' : '#C4C4C4',
+                    },
+                  ]}
+                  onPress={onCheckWoman}>
+                  <Text
+                    style={[
+                      styles.sexFemText,
+                      {color: isCheckMan === '2' ? '#8AA2F8' : 'black'},
+                    ]}>
+                    여
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+          <View style={styles.emailViewContainer}>
+            <View style={styles.emailView}>
+              <SignText text="이메일" />
+              <View style={styles.emailView2}>
+                <SignTextInput
+                  placeholder={undefined}
+                  onChangeText={onChangeEmail}
+                  onSubmitEditing={undefined}
+                  keyboardType="email-address"
+                  textContentType="emailAddress"
+                  secureTextEntry
+                  value={email}
+                  style={[
+                    styles.emailInput,
+                    {
+                      borderColor: email !== '' ? '#8AA2F8' : '#C4C4C4',
+                    },
+                  ]}
+                />
+                <TouchableOpacity
+                  style={styles.emailSend}
+                  onPress={onSubmitEmail}>
+                  <Text style={styles.emailSendText}>인증</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+          <View>
+            <Text style={styles.emailverifyText}>
+              입력하신 이메일로 인증메일을 보내드려요
+            </Text>
+          </View>
+          <View style={styles.emailverify}>
+            <SignText text="인증번호" />
+            <View style={styles.emailverifyView}>
+              <SignTextInput
+                placeholder="숫자를 입력해 주세요"
+                // onChangeText={onVerifyUserNum}
+                onChangeText={onUserNum}
+                onSubmitEditing={undefined}
+                keyboardType={undefined}
+                textContentType="oneTimeCode"
+                secureTextEntry
+                value={verifyUserNum}
+                style={[
+                  styles.emailVerifyInput,
+                  {
+                    borderColor: verify === true ? '#8AA2F8' : '#C4C4C4',
+                  },
+                ]}
+              />
+              <TouchableOpacity
+                style={styles.emailSend}
+                onPress={onVerifyUserNum}>
+                <Text style={styles.emailSendText}>확인</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.passView1}>
+            <SignText text="비밀번호" />
             <SignTextInput
-              placeholder="이메일 입력칸"
-              onChangeText={onChangeEmail}
+              placeholder={undefined}
+              onChangeText={onChangePass}
               onSubmitEditing={undefined}
-              keyboardType="email-address"
-              textContentType="emailAddress"
+              keyboardType={undefined}
+              textContentType="password"
               secureTextEntry
-              value={email}
+              value={password}
+              style={[
+                undefined,
+                {
+                  borderColor: password !== '' ? '#8AA2F8' : '#C4C4C4',
+                },
+              ]}
+            />
+          </View>
+          <View style={styles.passView2}>
+            <SignText text="비밀번호 확인" />
+            <SignTextInput
+              placeholder={undefined}
+              onChangeText={onCheckPass}
+              onSubmitEditing={undefined}
+              keyboardType={undefined}
+              textContentType="password"
+              secureTextEntry
+              value={undefined}
+              style={[
+                undefined,
+                // eslint-disable-next-line react-native/no-inline-styles
+                {
+                  borderColor:
+                    //기본색은 '#C4C4C4'
+                    checkPass !== ''
+                      ? //입력시 'red'
+                        //비밀번호 일치시 '#8AA2F8'
+                        password === checkPass
+                        ? '#8AA2F8'
+                        : '#ff0000'
+                      : '#C4C4C4',
+                },
+              ]}
             />
           </View>
         </View>
-        {/* <SignBtn text="이메일 확인" onPress={onSubmitEmail} /> */}
-        <View style={styles.emailverify}>
-          <TouchableOpacity style={styles.emailRetry} onPress={onSubmitEmail}>
-            <Text style={styles.emailRetryText}>전송</Text>
-          </TouchableOpacity>
-          <Text
-            style={{
-              width: WIDTH * 0.67,
-              marginLeft: 15,
-              textAlignVertical: 'center',
-            }}>
-            이메일을 확인 후 인증코드를 작성해주세요
-          </Text>
-        </View>
-        <View style={styles.emailverify}>
-          <TouchableOpacity style={styles.emailRetry} onPress={onVerifyUserNum}>
-            <Text style={styles.emailRetryText}>확인</Text>
-          </TouchableOpacity>
-          <SignTextInput
-            placeholder="인증번호 입력"
-            // onChangeText={onVerifyUserNum}
-            onChangeText={onUserNum}
-            onSubmitEditing={undefined}
-            keyboardType={undefined}
-            textContentType="oneTimeCode"
-            secureTextEntry
-            value={verifyUserNum}
-          />
-        </View>
-      </View>
-      <View style={styles.container3}>
-        <View style={styles.passView1}>
-          <SignText text="비밀번호" />
-          <SignTextInput
-            placeholder="비밀번호 입력칸"
-            onChangeText={onChangePass}
-            onSubmitEditing={undefined}
-            keyboardType={undefined}
-            textContentType="password"
-            secureTextEntry
-            value={password}
-          />
-        </View>
-        <View style={styles.passView2}>
-          <SignText text="비밀번호   확인" />
-          <SignTextInput
-            placeholder="비밀번호확인 입력칸"
-            onChangeText={onCheckPass}
-            onSubmitEditing={undefined}
-            keyboardType={undefined}
-            textContentType="password"
-            secureTextEntry
-            value={undefined}
-          />
-        </View>
       </View>
       <View style={styles.signView}>
-        <SignBtn activeOpacity={0.9} onPress={toFinSignUp} text="회원가입" />
+        <SignBtn
+          activeOpacity={0.9}
+          onPress={toFinSignUp}
+          text="회원 가입 완료"
+        />
       </View>
     </DismissKeyboardView>
   );
 }
 const styles = StyleSheet.create({
   mainView: {
-    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'white',
   },
   container: {
-    flex: 0.3,
-    paddingBottom: 10,
-    marginLeft: 20,
-    marginBottom: 10,
-    paddingTop: 50,
+    flex: 1,
+    marginLeft: '5%',
+    marginRight: '5%',
+    paddingTop: 30,
   },
   container2: {
-    flex: 1,
-    marginLeft: 20,
-    marginRight: 20,
-    marginBottom: 20,
-    paddingBottom: 5,
-  },
-  container3: {
-    flex: 1,
-    paddingTop: 15,
-    marginLeft: 20,
-    marginRight: 20,
+    flex: 0.8,
   },
   signView: {
-    // flex: 1,
-    marginLeft: 20,
-    marginRight: 20,
+    flex: 0.15,
+    flexDirection: 'column-reverse',
     alignItems: 'center',
   },
   //--//
   conText: {
     color: 'black',
-    fontSize: 25,
-    fontWeight: '500',
+    fontSize: 24,
+    fontWeight: '700',
     alignSelf: 'baseline',
   },
   //--//
   nameView1: {
-    flex: 1,
     flexDirection: 'row',
-    marginTop: 20,
-    marginBottom: 20,
+    justifyContent: 'space-between',
+    marginTop: 50,
+  },
+  nameText1: {
+    flexDirection: 'column',
   },
   nameInput: {
-    backgroundColor: 'white',
-    width: WIDTH * 0.26,
-    marginLeft: 15,
-    borderWidth: 1,
-    borderRadius: 3,
-  },
-  sexText: {
     color: 'black',
-    fontWeight: '500',
-    marginLeft: 22,
-    textAlignVertical: 'center',
+    width: WIDTH * 0.45,
+    paddingLeft: 15,
+    borderColor: '#C4C4C4',
+    borderWidth: 2,
+    borderRadius: 15,
+  },
+  sexView1: {
+    flexDirection: 'column',
+    width: WIDTH * 0.3,
+  },
+  sexBtnView1: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   sexManBtn: {
-    backgroundColor: 'white',
     width: WIDTH * 0.13,
-    justifyemail: 'center',
-    marginLeft: 10,
-    borderColor: 'black',
-    borderWidth: 1,
-    borderTopLeftRadius: 3,
-    borderBottomLeftRadius: 3,
+    borderWidth: 2,
+    borderRadius: 15,
   },
   sexManText: {
     color: 'black',
     fontWeight: '500',
     fontSize: 16,
     textAlign: 'center',
-    height: 50.7,
     textAlignVertical: 'center',
   },
   sexFemBtn: {
-    backgroundColor: 'white',
     width: WIDTH * 0.13,
-    justifyemail: 'center',
-    borderColor: 'black',
-    borderTopWidth: 1,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderTopRightRadius: 3,
-    borderBottomRightRadius: 3,
+    borderWidth: 2,
+    borderRadius: 15,
   },
   sexFemText: {
     color: 'black',
     fontWeight: '500',
     fontSize: 16,
-    textAlign: 'center',
     height: 50.7,
+    textAlign: 'center',
     textAlignVertical: 'center',
   },
-  emailViewContainer: {},
+  emailViewContainer: {
+    flexDirection: 'column',
+    marginTop: 20,
+  },
   //--//
   emailView: {
-    flexDirection: 'row',
+    flexDirection: 'column',
   },
-  emailverify: {
+  emailView2: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
   },
   emailInput: {
-    width: WIDTH * 0.67,
-    borderWidth: 1,
-    borderRadius: 3,
+    flex: 1,
   },
-  emailRetry: {
-    backgroundColor: 'lightblue',
+  emailverifyText: {
+    color: 'black',
+    opacity: 0.5,
+    marginLeft: 15,
+    fontSize: 12,
+  },
+  emailverify: {
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    marginTop: 20,
+  },
+  emailverifyView: {
+    flexDirection: 'row',
+  },
+  emailVerifyInput: {
+    flex: 1,
+  },
+  emailSend: {
+    backgroundColor: '#8AA2F8',
     justifyContent: 'center',
     width: WIDTH * 0.13,
-    height: 40,
     borderRadius: 15,
-    margin: 4,
+    marginLeft: 15,
+    height: 50.7,
   },
-  emailRetryText: {
+  emailSendText: {
+    color: 'white',
+    fontWeight: '500',
+    fontSize: 16,
     textAlign: 'center',
     textAlignVertical: 'center',
   },
   //--//
   passView1: {
-    flexDirection: 'row',
+    marginTop: 20,
   },
   //--//
   passView2: {
-    flexDirection: 'row',
+    textAlign: 'center',
+    textAlignVertical: 'center',
     marginTop: 20,
   },
   //--//

@@ -11,6 +11,7 @@ type props = {
   textContentType: any;
   secureTextEntry: any;
   value: any;
+  style: any;
 };
 function SignTextInput({
   onChangeText,
@@ -20,10 +21,11 @@ function SignTextInput({
   textContentType,
   secureTextEntry,
   value,
+  style,
 }: props) {
   return (
     <TextInput
-      style={styles.textInput}
+      style={[styles.textInput, style]}
       onChangeText={onChangeText}
       placeholder={placeholder}
       placeholderTextColor={'#C4C4C4'}
@@ -38,8 +40,10 @@ function SignTextInput({
 const styles = StyleSheet.create({
   textInput: {
     // backgroundColor: 'white',
-    marginLeft: 15,
-    width: WIDTH * 0.67,
+    // marginLeft: 15,
+    // width: WIDTH * 0.67,
+    paddingLeft: 15,
+    color: 'black',
     borderColor: '#C4C4C4',
     borderWidth: 2,
     borderRadius: 15,

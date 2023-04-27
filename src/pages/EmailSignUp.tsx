@@ -328,6 +328,8 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   sexText: {
+    color: 'black',
+    fontWeight: '500',
     marginLeft: 22,
     textAlignVertical: 'center',
   },
@@ -342,8 +344,9 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 3,
   },
   sexManText: {
+    color: 'black',
+    fontWeight: '500',
     fontSize: 16,
-    fontWeight: 'bold',
     textAlign: 'center',
     height: 50.7,
     textAlignVertical: 'center',
@@ -360,8 +363,9 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 3,
   },
   sexFemText: {
+    color: 'black',
+    fontWeight: '500',
     fontSize: 16,
-    fontWeight: 'bold',
     textAlign: 'center',
     height: 50.7,
     textAlignVertical: 'center',

@@ -26,6 +26,7 @@ function SignTextInput({
       style={styles.textInput}
       onChangeText={onChangeText}
       placeholder={placeholder}
+      placeholderTextColor={'#C4C4C4'}
       onSubmitEditing={onSubmitEditing}
       keyboardType={keyboardType}
       textContentType={textContentType}
@@ -36,11 +37,12 @@ function SignTextInput({
 }
 const styles = StyleSheet.create({
   textInput: {
-    backgroundColor: 'white',
+    // backgroundColor: 'white',
     marginLeft: 15,
     width: WIDTH * 0.67,
-    borderWidth: 1,
-    borderRadius: 3,
+    borderColor: '#C4C4C4',
+    borderWidth: 2,
+    borderRadius: 15,
   },
 });
 // SignTextInput.propTypes = {

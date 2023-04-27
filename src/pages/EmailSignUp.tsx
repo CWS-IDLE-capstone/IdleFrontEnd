@@ -22,6 +22,7 @@ import DismissKeyboardView from '../components/DismissKeyboardView';
 
 type ScreenProps = NativeStackScreenProps<RootStackParamList, 'FinishSignUp'>;
 const {width: WIDTH} = Dimensions.get('window');
+const {height: HEIGHT} = Dimensions.get('window');
 
 function EmailSignUp({navigation}: ScreenProps) {
   const [name, setName] = useState('');
@@ -156,9 +157,10 @@ function EmailSignUp({navigation}: ScreenProps) {
     navigation,
   ]);
   return (
-    <DismissKeyboardView style={undefined}>
+    <DismissKeyboardView style={styles.mainView}>
       <View style={styles.container}>
-        <Text style={styles.conText}>이메일회원가입페이지</Text>
+        <Text style={styles.conText}>회원님의 정보를</Text>
+        <Text style={styles.conText}>입력해 주세요</Text>
       </View>
       <View style={styles.container2}>
         <View style={styles.nameView1}>
@@ -174,7 +176,9 @@ function EmailSignUp({navigation}: ScreenProps) {
           <TouchableOpacity
             style={[
               styles.sexManBtn,
-              {backgroundColor: isCheckMan === '1' ? 'lightskyblue' : 'white'},
+              {
+                backgroundColor: isCheckMan === '1' ? 'lightskyblue' : 'white',
+              },
             ]}
             onPress={onCheckMan}>
             <Text style={styles.sexManText}>남</Text>
@@ -182,7 +186,9 @@ function EmailSignUp({navigation}: ScreenProps) {
           <TouchableOpacity
             style={[
               styles.sexFemBtn,
-              {backgroundColor: isCheckMan === '2' ? 'lightskyblue' : 'white'},
+              {
+                backgroundColor: isCheckMan === '2' ? 'lightskyblue' : 'white',
+              },
             ]}
             onPress={onCheckWoman}>
             <Text style={styles.sexFemText}>여</Text>
@@ -265,14 +271,18 @@ function EmailSignUp({navigation}: ScreenProps) {
   );
 }
 const styles = StyleSheet.create({
+  mainView: {
+    flex: 1,
+  },
   container: {
-    flex: 0.7,
+    flex: 0.3,
     borderBottomWidth: 1,
     borderBottomColor: '#778899',
     borderStyle: 'dashed',
     paddingBottom: 10,
+    marginLeft: 20,
     marginBottom: 10,
-    marginTop: 50,
+    paddingTop: 50,
   },
   container2: {
     flex: 1,
@@ -282,7 +292,7 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
   },
   container3: {
-    flex: 0.8,
+    flex: 1,
     paddingTop: 15,
     marginLeft: 20,
     marginRight: 20,
@@ -291,15 +301,17 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
   },
   signView: {
-    flex: 1,
+    // flex: 1,
     marginLeft: 20,
     marginRight: 20,
     alignItems: 'center',
   },
   //--//
   conText: {
-    fontSize: 30,
-    alignSelf: 'center',
+    color: 'black',
+    fontSize: 25,
+    fontWeight: '500',
+    alignSelf: 'baseline',
   },
   //--//
   nameView1: {

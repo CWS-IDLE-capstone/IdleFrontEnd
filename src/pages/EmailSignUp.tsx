@@ -276,9 +276,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 0.3,
-    borderBottomWidth: 1,
-    borderBottomColor: '#778899',
-    borderStyle: 'dashed',
     paddingBottom: 10,
     marginLeft: 20,
     marginBottom: 10,
@@ -296,9 +293,6 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     marginLeft: 20,
     marginRight: 20,
-    borderTopColor: '#778899',
-    borderTopWidth: 1,
-    borderStyle: 'dashed',
   },
   signView: {
     // flex: 1,

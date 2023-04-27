@@ -8,6 +8,8 @@ function SignText({text}: any) {
 }
 const styles = StyleSheet.create({
   text1: {
+    color: '#000',
+    fontWeight: '500',
     width: WIDTH * 0.2,
     textAlignVertical: 'center',
     textAlign: 'right',

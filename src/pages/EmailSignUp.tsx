@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
     flex: 0.8,
   },
   signView: {
-    flex: 0.15,
+    flex: 0.1,
     flexDirection: 'column-reverse',
     alignItems: 'center',
   },

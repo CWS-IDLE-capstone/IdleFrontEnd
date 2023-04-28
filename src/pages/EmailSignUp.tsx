@@ -339,8 +339,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginLeft: '5%',
-    marginRight: '5%',
+    marginLeft: '8%',
+    marginRight: '8%',
     paddingTop: 30,
   },
   container2: {

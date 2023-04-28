@@ -278,7 +278,6 @@ const styles = StyleSheet.create({
   흰둥이: {
     width: 150,
     height: 90,
-    marginTop: -20,
   },
 });
 

@@ -198,6 +198,7 @@ function Login({navigation}: ScreenProps) {
 const styles = StyleSheet.create({
   keyboardView: {
     flex: 1,
+    backgroundColor: 'white',
   },
   container: {
     flex: 1,

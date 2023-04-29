@@ -193,7 +193,11 @@ function AppInner() {
         <Stack.Navigator>
           <Stack.Screen name="Welcome" component={Welcome} />
           <Stack.Screen name="Start" component={Start} />
-          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{headerShown: false}}
+          />
           <Stack.Screen name="SignUp" component={SignUp} />
           <Stack.Screen
             name="EmailSignUp"

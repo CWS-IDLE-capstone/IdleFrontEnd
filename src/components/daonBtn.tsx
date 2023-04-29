@@ -9,27 +9,22 @@ function DaonBtn({activeOpacity, onPress, text, style}: any) {
       style={styles.text1}
       activeOpacity={activeOpacity}
       onPress={onPress}>
-      <Text style={styles.text2}>{text}</Text>
+      <Text style={[styles.text2, style]}>{text}</Text>
     </TouchableOpacity>
   );
 }
 const styles = StyleSheet.create({
-  text1: {
-    alignSelf: 'center',
-    marginTop: 30,
-    marginBottom: 5,
-  },
+  text1: {},
   text2: {
     backgroundColor: '#8AA2F8',
-    width: WIDTH * 0.4,
-
-    height: 40,
+    // width: WIDTH * 0.4,
+    // height: 40,
     color: 'white',
     textAlign: 'center',
     textAlignVertical: 'center',
     fontSize: 15,
     fontWeight: 'bold',
-    borderRadius: 8,
+    // borderRadius: 8,
   },
 });
 export default DaonBtn;

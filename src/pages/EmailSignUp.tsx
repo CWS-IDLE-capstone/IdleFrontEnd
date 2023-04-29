@@ -278,7 +278,7 @@ function EmailSignUp({navigation}: ScreenProps) {
           <View style={styles.passView1}>
             <SignText text="비밀번호" />
             <SignTextInput
-              placeholder={undefined}
+              placeholder={''}
               onChangeText={onChangePass}
               onSubmitEditing={undefined}
               keyboardType={undefined}

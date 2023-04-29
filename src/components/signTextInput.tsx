@@ -4,7 +4,7 @@ import {Dimensions, StyleSheet, TextInput} from 'react-native';
 const {width: WIDTH} = Dimensions.get('window');
 
 type props = {
-  placeholder: any;
+  placeholder: string;
   onChangeText: any;
   onSubmitEditing: any;
   keyboardType: any;
@@ -28,8 +28,8 @@ function SignTextInput({
       style={[styles.textInput, style]}
       onChangeText={onChangeText}
       placeholder={placeholder}
-      placeholderTextColor={'#C4C4C4'}
-      onSubmitEditing={onSubmitEditing}
+      placeholderTextColor={'#949494'}
+      onSubmitEditing={() => onSubmitEditing}
       keyboardType={keyboardType}
       textContentType={textContentType}
       secureTextEntry={secureTextEntry}

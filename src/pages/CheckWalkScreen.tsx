@@ -7,6 +7,7 @@ import {
   Text,
   Dimensions,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import axios from 'axios';
 const {width: WIDTH} = Dimensions.get('window');
@@ -36,32 +37,78 @@ type Props = {
 
 // 산책 기록을 삭제하는 함수
 const deleteWalkData = async (id: number) => {
-  try {
-    const token = await AsyncStorage.getItem('accessToken');
-    if (token !== null) {
-      const response = await axios.delete(
-        `http://awsv4-env.eba-mre2mcnv.ap-northeast-2.elasticbeanstalk.com/api/walk/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+  Alert.alert(
+    '산책 기록 삭제',
+    '해당 산책 기록이 삭제되는 것에 동의하십니까?',
+    [
+      {
+        text: '취소',
+        onPress: () => console.log('삭제 취소됨'),
+        style: 'cancel',
+      },
+      {
+        text: '확인',
+        onPress: async () => {
+          try {
+            const token = await AsyncStorage.getItem('accessToken');
+            if (token !== null) {
+              const response = await axios.delete(
+                `http://awsv4-env.eba-mre2mcnv.ap-northeast-2.elasticbeanstalk.com/api/walk/${id}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                },
+              );
 
-      if (response.status === 200) {
-        console.log('Walk data deleted successfully');
-        // 산책 데이터 삭제 후, 리스트를 업데이트하기 위해 API 요청을 다시 실행합니다.
-        // fetchData();
-      } else {
-        console.log('Failed to delete walk data');
-      }
-    } else {
-      console.log('Token not found');
-    }
-  } catch (error) {
-    console.log('Error deleting walk data:', error);
-  }
+              if (response.status === 200) {
+                console.log('Walk data deleted successfully');
+                // 산책 데이터 삭제 후, 리스트를 업데이트하기 위해 API 요청을 다시 실행합니다.
+                // fetchData();
+              } else {
+                console.log('Failed to delete walk data');
+              }
+            } else {
+              console.log('Token not found');
+            }
+          } catch (error) {
+            console.log('Error deleting walk data:', error);
+          }
+        },
+      },
+    ],
+    {cancelable: false},
+  );
 };
+
+// // 산책 기록을 삭제하는 함수
+// const deleteWalkData = async (id: number) => {
+//   try {
+//     const token = await AsyncStorage.getItem('accessToken');
+//     if (token !== null) {
+//       const response = await axios.delete(
+//         `http://awsv4-env.eba-mre2mcnv.ap-northeast-2.elasticbeanstalk.com/api/walk/${id}`,
+//         {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//           },
+//         },
+//       );
+
+//       if (response.status === 200) {
+//         console.log('Walk data deleted successfully');
+//         // 산책 데이터 삭제 후, 리스트를 업데이트하기 위해 API 요청을 다시 실행합니다.
+//         // fetchData();
+//       } else {
+//         console.log('Failed to delete walk data');
+//       }
+//     } else {
+//       console.log('Token not found');
+//     }
+//   } catch (error) {
+//     console.log('Error deleting walk data:', error);
+//   }
+// };
 
 const CheckWalkScreen: React.FC<Props> = ({route}) => {
   const {walkData} = route.params;

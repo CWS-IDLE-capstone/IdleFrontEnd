@@ -1,16 +1,16 @@
-import React, {useCallback, useRef} from 'react';
+import React, {useRef} from 'react';
 import {
   View,
   StyleSheet,
   ScrollView,
   Image,
   Text,
-  Button,
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
 const {width: WIDTH} = Dimensions.get('window');
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 개별 산책 데이터 인터페이스
 interface Walk {
@@ -32,6 +32,35 @@ type Props = {
       walkData: Walk;
     };
   };
+};
+
+// 산책 기록을 삭제하는 함수
+const deleteWalkData = async (id: number) => {
+  try {
+    const token = await AsyncStorage.getItem('accessToken');
+    if (token !== null) {
+      const response = await axios.delete(
+        `http://awsv4-env.eba-mre2mcnv.ap-northeast-2.elasticbeanstalk.com/api/walk/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        console.log('Walk data deleted successfully');
+        // 산책 데이터 삭제 후, 리스트를 업데이트하기 위해 API 요청을 다시 실행합니다.
+        // fetchData();
+      } else {
+        console.log('Failed to delete walk data');
+      }
+    } else {
+      console.log('Token not found');
+    }
+  } catch (error) {
+    console.log('Error deleting walk data:', error);
+  }
 };
 
 const CheckWalkScreen: React.FC<Props> = ({route}) => {
@@ -163,6 +192,11 @@ const CheckWalkScreen: React.FC<Props> = ({route}) => {
               });
             }}>
             <Text style={styles.buttonText2}>위로</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button3}
+            onPress={() => deleteWalkData(walkData.id)}>
+            <Text style={styles.buttonText3}>기록삭제</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -448,6 +482,24 @@ const styles = StyleSheet.create({
   },
   buttonText2: {
     backgroundColor: '#8AA2F8',
+    width: WIDTH * 0.2,
+
+    height: 40,
+    color: 'white',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontFamily: 'Blinker-Bold',
+    fontSize: 17,
+    fontWeight: 'bold',
+    borderRadius: 77,
+  },
+  button3: {
+    alignSelf: 'center',
+    marginTop: 30,
+    marginBottom: 80,
+  },
+  buttonText3: {
+    backgroundColor: '#FF4848',
     width: WIDTH * 0.2,
 
     height: 40,

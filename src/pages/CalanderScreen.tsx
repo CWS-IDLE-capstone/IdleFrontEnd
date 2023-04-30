@@ -82,9 +82,8 @@ const CalanderScreen = () => {
       };
 
       fetchData();
-    }, [accessToken]),
+    }, []),
   );
-
   // 산책한 날짜 리스트
   const startTimeList = data.walkList.map(walk =>
     new Date(walk.startTime).toISOString().slice(0, 10),

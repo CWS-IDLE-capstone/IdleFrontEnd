@@ -14,20 +14,15 @@ function SignBtn({activeOpacity, onPress, text}: any) {
   );
 }
 const styles = StyleSheet.create({
-  text1: {
-    alignSelf: 'center',
-    marginTop: 30,
-    marginBottom: 5,
-  },
+  text1: {},
   text2: {
-    backgroundColor: 'lightblue',
-    width: WIDTH * 0.7,
-
-    height: 40,
+    backgroundColor: '#8AA2F8',
+    width: WIDTH,
+    flex: 1,
+    fontSize: 20,
     color: 'white',
     textAlign: 'center',
     textAlignVertical: 'center',
-    borderRadius: 15,
   },
 });
 export default SignBtn;

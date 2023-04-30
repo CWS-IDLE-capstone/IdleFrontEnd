@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import moment from 'moment';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {FlatList} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -55,33 +55,35 @@ const CalanderScreen = () => {
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const token = await AsyncStorage.getItem('accessToken');
-        if (token !== null) {
-          const response = await axios.get(
-            'http://awsv4-env.eba-mre2mcnv.ap-northeast-2.elasticbeanstalk.com/api/walk/list',
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        try {
+          setLoading(true);
+          const token = await AsyncStorage.getItem('accessToken');
+          if (token !== null) {
+            const response = await axios.get(
+              'http://awsv4-env.eba-mre2mcnv.ap-northeast-2.elasticbeanstalk.com/api/walk/list',
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
               },
-            },
-          );
-          setData(response.data);
-        } else {
-          console.log('Token not found');
+            );
+            setData(response.data);
+          } else {
+            console.log('Token not found');
+          }
+        } catch (error) {
+          console.log('Error fetching data:', error);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.log('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
-    fetchData();
-  }, [accessToken]);
+      fetchData();
+    }, [accessToken]),
+  );
 
   // 산책한 날짜 리스트
   const startTimeList = data.walkList.map(walk =>

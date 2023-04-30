@@ -64,27 +64,25 @@ export type RootStackParamList = {
 const Tab = createBottomTabNavigator<LoggedInParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-export function LoggedInStack() {
+function LoggedInStack() {
   // 캘린더에서 상세정보페이지로 데이터 전달이 안되어 함수로 묶었습니다
   // 스택 네비게이터 고수님의 보호관찰이 필요합니다.
   const [isTabVisible, setIsTabVisible] = useState(true);
 
   return (
-    <>
-      <AppInner isTabVisible={isTabVisible} />
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Main"
-          children={() => <Main setIsTabVisible={setIsTabVisible} />}
-        />
-        {/* <Stack.Screen name="CalanderScreen" component={CalanderScreen} /> */}
-        <Stack.Screen
-          name="CheckWalkScreen"
-          component={CheckWalkScreen}
-          options={{headerShown: false}}
-        />
-      </Stack.Navigator>
-    </>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Main"
+        children={() => <Main setIsTabVisible={setIsTabVisible} />}
+        options={{headerShown: false}}
+      />
+      {/* <Stack.Screen name="CalanderScreen" component={CalanderScreen} /> */}
+      <Stack.Screen
+        name="CheckWalkScreen"
+        component={CheckWalkScreen}
+        options={{headerShown: false}}
+      />
+    </Stack.Navigator>
   );
 }
 
@@ -140,8 +138,8 @@ function AppInner({isTabVisible}: any) {
             }}
           />
           <Tab.Screen
-            name="Main"
-            component={Main}
+            name="Main1"
+            component={LoggedInStack}
             options={{
               title: '산책',
               tabBarActiveTintColor: '#8AA2F8',

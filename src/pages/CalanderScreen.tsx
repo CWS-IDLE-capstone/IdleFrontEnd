@@ -54,13 +54,13 @@ const CalanderScreen = () => {
 
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
   const [loading, setLoading] = useState(true);
-
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
         try {
           setLoading(true);
           const token = await AsyncStorage.getItem('accessToken');
+          // const token = accessToken;
           if (token !== null) {
             const response = await axios.get(
               'http://awsv4-env.eba-mre2mcnv.ap-northeast-2.elasticbeanstalk.com/api/walk/list',

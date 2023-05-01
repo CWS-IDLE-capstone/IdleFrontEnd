@@ -253,23 +253,6 @@ function Main({setIsTabVisible}: any) {
     }, 1500);
   }
 
-  // const shareImage = async () => {
-  //   try {
-  //     const uri = await captureRef(viewShotRef, {
-  //       format: 'jpg',
-  //       quality: 0.8,
-  //     });
-  //     // const base64Data = await RNFetchBlob.fs.readFile(imageCapture, 'base64');
-  //     const url = `data:image/png;base64,${uri}`;
-  //     await Share.share({
-  //       title: 'walk image',
-  //       message: '',
-  //       url: `${uploadImageToServer.formData._parts[0].uri}`,
-  //     });
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
   async function uploadImageToServer() {
     //캡쳐 이미지 전송
     console.log('uploadImageToServer 동작');

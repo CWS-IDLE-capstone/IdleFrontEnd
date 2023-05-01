@@ -211,9 +211,14 @@ const CheckWalkScreen: React.FC<Props> = ({route}) => {
           <Text style={styles.energeLow1}>산책을 시작하고 </Text>
 
           <View style={styles.EnergeContainer1}>
-            <Text style={styles.energeLow2_1}>{`${E_durationMin}`}분</Text>
+            {/* <Text style={styles.energeLow2_1}>{`${E_durationMin}`}분</Text> */}
+            <Text style={styles.energeLow2_1}>
+              {isNaN(E_durationMin) ? ' *^^*' : `${E_durationMin}분`}
+            </Text>
             <Text style={styles.energeLow2_2}>
-              {`${E_durationSec}`}초 후에 체력이 떨어졌어요.
+              {isNaN(E_durationSec)
+                ? '끝까지 기운이 넘쳤어요!!'
+                : `${E_durationSec}초 후에 체력이 떨어졌어요.`}
             </Text>
           </View>
 

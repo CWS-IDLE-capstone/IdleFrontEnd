@@ -4,13 +4,14 @@ import {Dimensions, StyleSheet, TextInput} from 'react-native';
 const {width: WIDTH} = Dimensions.get('window');
 
 type props = {
-  placeholder: any;
+  placeholder: string;
   onChangeText: any;
   onSubmitEditing: any;
   keyboardType: any;
   textContentType: any;
   secureTextEntry: any;
   value: any;
+  style: any;
 };
 function SignTextInput({
   onChangeText,
@@ -20,13 +21,15 @@ function SignTextInput({
   textContentType,
   secureTextEntry,
   value,
+  style,
 }: props) {
   return (
     <TextInput
-      style={styles.textInput}
+      style={[styles.textInput, style]}
       onChangeText={onChangeText}
       placeholder={placeholder}
-      onSubmitEditing={onSubmitEditing}
+      placeholderTextColor={'#949494'}
+      onSubmitEditing={() => onSubmitEditing}
       keyboardType={keyboardType}
       textContentType={textContentType}
       secureTextEntry={secureTextEntry}
@@ -36,11 +39,14 @@ function SignTextInput({
 }
 const styles = StyleSheet.create({
   textInput: {
-    backgroundColor: 'white',
-    marginLeft: 15,
-    width: WIDTH * 0.67,
-    borderWidth: 1,
-    borderRadius: 3,
+    // backgroundColor: 'white',
+    // marginLeft: 15,
+    // width: WIDTH * 0.67,
+    paddingLeft: 15,
+    color: 'black',
+    borderColor: '#C4C4C4',
+    borderWidth: 2,
+    borderRadius: 15,
   },
 });
 // SignTextInput.propTypes = {

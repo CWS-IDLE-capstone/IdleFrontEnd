@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     // borderBottomColor: '#AAAAAA',
   },
   tabStyle: {
-    height: '10%',
+    height: '8.5%',
     paddingTop: '2%',
     paddingBottom: '2%',
     borderTopWidth: 1,

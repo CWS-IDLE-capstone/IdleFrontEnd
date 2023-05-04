@@ -32,8 +32,8 @@ function Login({navigation}: ScreenProps) {
   //   setIsLoggedIn(true);
   // };
   const dispatch = useAppDispatch();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('WalkiPet_Idle@inu.ac.kr');
+  const [password, setPassword] = useState('1234');
   // const emailRef = useRef<TextInput | null>(null); //generic
   // const passwordRef = useRef<TextInput | null>(null);
 

@@ -75,7 +75,7 @@ function LoggedInStack() {
         headerShown: false,
         tabBarStyle: {
           ...styles.tabStyle,
-          display: isTabVisible ? 'flex' : 'none',
+          // display: isTabVisible ? 'flex' : 'none', //산책시 하단탭 사라질지
         },
       }}>
       <Tab.Screen

@@ -24,6 +24,7 @@ type ScreenProps = NativeStackScreenProps<
   'NaverLogin',
   'SignUp'
 >;
+const {width: WIDTH} = Dimensions.get('window');
 const {height: HEIGHT} = Dimensions.get('window');
 
 function Login({navigation}: ScreenProps) {
@@ -175,8 +176,13 @@ function Login({navigation}: ScreenProps) {
               <Image source={require('../assets/KakaoComponent.png')} />
               //소셜로그인 추가시
             </TouchableOpacity> */}
-            <TouchableOpacity onPress={() => navigation.navigate('NaverLogin')}>
-              <Image source={require('../assets/NaverComponent.png')} />
+            <TouchableOpacity
+              style={styles.naverLogin}
+              onPress={() => navigation.navigate('NaverLogin')}>
+              <Image
+                style={styles.naverLoginImg}
+                source={require('../assets/NaverComponent.png')}
+              />
             </TouchableOpacity>
           </View>
           <View style={styles.btmTextView}>
@@ -254,6 +260,14 @@ const styles = StyleSheet.create({
     // justifyContent: 'space-evenly', //로그인이추가될경우
     justifyContent: 'center',
     // alignSelf: 'center',
+  },
+  naverLogin: {
+    borderRadius: 80,
+  },
+  naverLoginImg: {
+    width: WIDTH * 0.18,
+    height: HEIGHT * 0.07,
+    resizeMode: 'contain',
   },
   btmTextView: {
     marginTop: 20,

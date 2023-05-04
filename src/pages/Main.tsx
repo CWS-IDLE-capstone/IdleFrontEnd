@@ -142,6 +142,7 @@ function Main({setIsTabVisible}: any) {
           longitude,
         };
         setMyPosition(newCoordinate);
+        setRouteCoordinates(prev => [...prev, newCoordinate]);
         camMarkerBtn
           ? setCamCoordinates(prev => [...prev, newCoordinate])
           : null;
@@ -284,8 +285,8 @@ function Main({setIsTabVisible}: any) {
   // console.log(`finsihTime: ${finishTime}`);
   // console.log(`energyFinsihTime: ${energyFinishTime}`);
   // console.log(`energyFinishDistance: ${energyFinishDistance}`);
-  console.log('카메라 마커 배열', camCoordinates);
-  // console.log('일반 배열: ', routeCoordinates);
+  // console.log('카메라 마커 배열', camCoordinates);
+  console.log('일반 배열: ', routeCoordinates);
   // console.log('에너지 떨어짐 배열: ', energyCoordinates);
   // console.log(`count: ${count}, Ecount: ${Ecount}`);
   // console.log(
@@ -392,9 +393,9 @@ function Main({setIsTabVisible}: any) {
   return (
     <View style={styles.naverMap}>
       <NaverMapView
-        style={{width: '100%', height: '100%'}}
+        style={{width: '100%', height: '100%', paddingBottom: 100}}
         zoomControl={true}
-        // showsMyLocationButton={true}
+        showsMyLocationButton={true}
         center={{
           zoom: myPosition ? 16 : 5.5,
           latitude: myPosition?.latitude ? myPosition?.latitude : 37,

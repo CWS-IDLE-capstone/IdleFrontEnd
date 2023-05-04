@@ -83,6 +83,7 @@ function Main({setIsTabVisible}: any) {
 
   const [camResponse, setCamResponse] = useState(null);
   const [camdogBtn, setCamdogBtn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [distanceTravelled, setDistanceTravelled] = useState<number>(0); //거리
   const [firstDistance, setFirstDistance] = useState<number>(0); //측정 거리
@@ -472,7 +473,32 @@ function Main({setIsTabVisible}: any) {
                 alignSelf: 'center',
                 alignItems: 'center',
               }}>
-              <Image
+              {!camcoordinate.isLarge && (
+                <Image
+                  source={require('../assets/camera.png')}
+                  style={{
+                    width: 30,
+                    height: 30,
+                    alignContent: 'center',
+                    alignSelf: 'center',
+                    alignItems: 'center',
+                  }}
+                />
+              )}
+              {camcoordinate.isLarge && (
+                <Image
+                  source={{uri: camcoordinate.uri}}
+                  style={{width: 180, height: 180, top: 10, borderRadius: 30}}
+                  onLoad={prev => setIsLoading(!prev)}
+                />
+              )}
+              {/* <Image
+                source={{uri: camcoordinate.uri}}
+                style={{width: 180, height: 180, top: 10, borderRadius: 30}}
+                onLoad={() => setIsLoading(false)}
+              /> */}
+
+              {/* <Image
                 source={
                   camcoordinate.isLarge
                     ? {uri: camcoordinate.uri}
@@ -483,8 +509,9 @@ function Main({setIsTabVisible}: any) {
                   width: camcoordinate.isLarge ? 180 : 30,
                   height: camcoordinate.isLarge ? 180 : 30,
                   borderRadius: camcoordinate.isLarge ? 30 : null,
+                  resizeMode: 'stretch',
                 }}
-              />
+              /> */}
               {camDeleteBtn ? (
                 <TouchableOpacity
                   style={{
@@ -1151,7 +1178,7 @@ function Main({setIsTabVisible}: any) {
                   borderRadius: 10,
                 }}
                 onPressIn={async () => {
-                  // await getImageAndSendData();
+                  await getImageAndSendData();
                 }}
                 onPress={() => {
                   setResultBtn(false); //결과 화면 닫기
@@ -1172,7 +1199,7 @@ function Main({setIsTabVisible}: any) {
                   setEnergyFinishDistance(0);
                   setCaptureCheck(false);
                   setTabVisible(true);
-                  setCamCoordinates([]); //카메라 마커 배열 초기화
+                  // setCamCoordinates([]); //카메라 마커 배열 초기화
                 }}>
                 <Text
                   style={{
@@ -1248,5 +1275,6 @@ const styles = StyleSheet.create({
     fontSize: 8,
     fontWeight: 'bold',
     alignSelf: 'center',
+    color: 'grey',
   },
 });

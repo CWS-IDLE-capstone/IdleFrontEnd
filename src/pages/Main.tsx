@@ -46,6 +46,13 @@ interface CoordinateLongitudeLatitude {
   longitude: number;
 }
 
+interface CoordinateCamMarker {
+  latitude: number;
+  longitude: number;
+  uri: string;
+  isLarge: boolean;
+}
+
 // type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 // type MainScreenProps = NativeStackScreenProps<LoggedInParamList, 'Community'>;
 const {width: WIDTH} = Dimensions.get('window');
@@ -58,18 +65,35 @@ function Main({setIsTabVisible}: any) {
     latitude: number;
     longitude: number;
   } | null>(null);
+  const [myCamPosition, setMyCamPosition] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
   const [routeCoordinates, setRouteCoordinates] = useState<
     CoordinateLongitudeLatitude[]
   >([]); //기본 배열
   const [energyCoordinates, setEnergyCoordinates] = useState<
     CoordinateLongitudeLatitude[]
   >([]); //에너지 떨어짐 배열
+  const [allCoordinates, setAllCoordinates] = useState<
+    CoordinateLongitudeLatitude[]
+  >([]); //합친 배열
   const [hotplaceCoordinates, setHotplaceCoordinates] = useState<
     CoordinateLongitudeLatitude[]
   >([]); //핫플 마커 배열
   const [dangerCoordinates, setDangerCoordinates] = useState<
     CoordinateLongitudeLatitude[]
   >([]); //주의 마커 배열
+  const [camCoordinates, setCamCoordinates] = useState<
+    CoordinateLongitudeLatitude[] | CoordinateCamMarker[]
+  >([]); //카메라 마커 배열
+
+  const [camResponse, setCamResponse] = useState(null);
+  const [camdogBtn, setCamdogBtn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isMediumLoading, setIsMediumLoading] = useState(false);
+  const [mediumLatitude, setMediumLatitude] = useState<number>(0);
+  const [mediumLongitude, setMediumLongitude] = useState<number>(0);
 
   const [distanceTravelled, setDistanceTravelled] = useState<number>(0); //거리
   const [firstDistance, setFirstDistance] = useState<number>(0); //측정 거리
@@ -84,6 +108,9 @@ function Main({setIsTabVisible}: any) {
   const [markerListBtn, setMarkerListBtn] = useState(false); //마커 리스트 버튼 state
   const [hotMarkerBtn, setHotMarkerBtn] = useState(false); //핫플 마커 버튼 state
   const [dangerMarkerBtn, setDangerMarkerBtn] = useState(false); //주의 마커 버튼 state
+  const [camMarkerBtn, setCamMarkerBtn] = useState(false); //카메라 마커 버튼 state
+  const [camBackBtn, setCamBackBtn] = useState(false); //카메라 마커 뒤로가기 버튼 state
+  const [camDeleteBtn, setCamDeleteBtn] = useState(false); //카메라 사진 삭제 버튼 state
 
   const [currentHours, setCurrentHours] = useState<Number>(0); //시간
   const [currentMinutes, setCurrentMinutes] = useState<Number>(0); //분
@@ -126,6 +153,10 @@ function Main({setIsTabVisible}: any) {
           longitude,
         };
         setMyPosition(newCoordinate);
+        // setRouteCoordinates(prev => [...prev, newCoordinate]);
+        camMarkerBtn
+          ? setCamCoordinates(prev => [...prev, newCoordinate])
+          : null;
         // setRouteCoordinates([newCoordinate]); //처음위치를 무조건 배열에 안넣고 산책시작하면 배열에 넣게 없앴음
         // setPrevLatLng(null);
         console.log('getCurrentPosition 실행');
@@ -138,7 +169,7 @@ function Main({setIsTabVisible}: any) {
         distanceFilter: 50,
       },
     );
-  }, []);
+  }, [camMarkerBtn]);
   // console.log(`시간: ${typeof(today.getHours().toString())}, 분: ${today.getMinutes()}`);
   useEffect(() => {
     const watchId = Geolocation.watchPosition(
@@ -154,7 +185,11 @@ function Main({setIsTabVisible}: any) {
             ? setEnergyCoordinates(prev => [...prev, newCoordinate])
             : setRouteCoordinates(prev => [...prev, newCoordinate])
           : null;
-
+        // startBtn
+        //   ? energyBtn
+        //     ? setAllCoordinates([...routeCoordinates, ...energyCoordinates])
+        //     : setAllCoordinates([...routeCoordinates])
+        //   : null;
         if (prevLatLng) {
           setDistanceTravelled(
             distanceTravelled + calcDistance(prevLatLng, newCoordinate),
@@ -226,9 +261,49 @@ function Main({setIsTabVisible}: any) {
           //취소했을 경우
           return;
         }
-        // setResponse(res); //이미지 보낼때 이거 쓰면 될거같음
+        setCamCoordinates(prevCoordinates =>
+          prevCoordinates.map((coordinate, index) =>
+            index === prevCoordinates.length - 1
+              ? {...coordinate, isLarge: false}
+              : coordinate,
+          ),
+        );
+        setCamCoordinates(prevCoordinates =>
+          prevCoordinates.map((coordinate, index) =>
+            index === prevCoordinates.length - 1
+              ? {...coordinate, uri: res.assets[0].uri}
+              : coordinate,
+          ),
+        );
+        setCamMarkerBtn(false);
+        // // const uri = res.assets[0].uri;
+        // camCoordinates.forEach((coordinate, index) => {
+        //   // const response = res;
+        //   const uri = res.assets[0].uri;
+        //   Object.assign(coordinate, {uri});
+        //   // setCamCoordinates(Object);
+        // });
+        // setCamMarkerBtn(false);
+        // // setCamResponse(res); //이미지 보낼때 이거 쓰면 될거같음
+        // // console.log(`res: ${res.assets[0].uri}`);
       },
     );
+  }, []);
+
+  const mediumLatitudefunc = useCallback(allCoordinates => {
+    const routelatitudes = allCoordinates.map(coord => coord.latitude);
+    const allMaxLatitude = Math.max(...routelatitudes);
+    const allMinxLatitude = Math.min(...routelatitudes);
+    const result = (allMaxLatitude + allMinxLatitude) / 2;
+    return result;
+  }, []);
+
+  const mediumLongitudefunc = useCallback(allCoordinates => {
+    const routelongitudes = allCoordinates.map(coord => coord.longitude);
+    const allMaxLongitude = Math.max(...routelongitudes);
+    const allMinxLongitude = Math.min(...routelongitudes);
+    const result = (allMaxLongitude + allMinxLongitude) / 2;
+    return result;
   }, []);
 
   useEffect(timer, [count]);
@@ -236,13 +311,15 @@ function Main({setIsTabVisible}: any) {
 
   // console.log('거리: ', distanceTravelled.toFixed(2), 'km');
   // console.log(`accessToken: ${accessToken}`);
-  console.log(`distance: ${distance}`);
-  console.log(`startTime: ${startTime}`);
-  console.log(`finsihTime: ${finishTime}`);
-  console.log(`energyFinsihTime: ${energyFinishTime}`);
-  console.log(`energyFinishDistance: ${energyFinishDistance}`);
-
-  // console.log('일반 배열: ', routeCoordinates);
+  // console.log(`distance: ${distance}`);
+  // console.log(`startTime: ${startTime}`);
+  // console.log(`finsihTime: ${finishTime}`);
+  // console.log(`energyFinsihTime: ${energyFinishTime}`);
+  // console.log(`energyFinishDistance: ${energyFinishDistance}`);
+  // console.log('카메라 마커 배열', camCoordinates);
+  console.log('일반 배열: ', routeCoordinates);
+  console.log('allcoordinates: ', allCoordinates);
+  console.log('medium: ', mediumLatitude, mediumLongitude);
   // console.log('에너지 떨어짐 배열: ', energyCoordinates);
   // console.log(`count: ${count}, Ecount: ${Ecount}`);
   // console.log(
@@ -349,9 +426,9 @@ function Main({setIsTabVisible}: any) {
   return (
     <View style={styles.naverMap}>
       <NaverMapView
-        style={{width: '100%', height: '100%'}}
+        style={{width: '100%', height: '100%', paddingBottom: 100}}
         zoomControl={true}
-        // showsMyLocationButton={true}
+        showsMyLocationButton={true}
         center={{
           zoom: myPosition ? 16 : 5.5,
           latitude: myPosition?.latitude ? myPosition?.latitude : 37,
@@ -365,6 +442,7 @@ function Main({setIsTabVisible}: any) {
             latitude,
             longitude,
           };
+          console.log(newCoordinate);
           // setMarker(newCoordinate)
           hotMarkerBtn
             ? setHotplaceCoordinates(prev => [...prev, newCoordinate])
@@ -378,6 +456,143 @@ function Main({setIsTabVisible}: any) {
           setHotMarkerBtn(false);
           // console.log(`latitude: ${e.latitude}, longitude: ${e.longitude}`);
         }}>
+        {camCoordinates.map(
+          (camcoordinate, index) =>
+            camcoordinate.uri && (
+              <Marker
+                key={index}
+                coordinate={{
+                  latitude: camcoordinate.latitude,
+                  longitude: camcoordinate.longitude,
+                }}
+                // image={
+                //   camcoordinate.isLarge
+                //     ? {uri: camcoordinate.uri}
+                //     : require('../assets/camera.png')
+                // }
+                width={camcoordinate.isLarge ? 200 : 30}
+                height={camcoordinate.isLarge ? 200 : 30}
+                // width={50}
+                // height={50}
+                // TODO 마커 리스트에 사진 삭제 버튼 하나 추가해서 사진 삭제 버튼 누르고(사진 삭제 state 활성화) 사진 마커를 클릭할시 삭제하게끔
+                onClick={() => {
+                  if (camDeleteBtn) {
+                    Alert.alert(
+                      '마커를 삭제하시겠습니까?',
+                      '마커 삭제 확인 확인',
+                      [
+                        {
+                          text: '확인',
+                          onPress: () => {
+                            const newCoordinates = camCoordinates.filter(
+                              (c, i) => i !== index,
+                            );
+                            setCamCoordinates(newCoordinates);
+                            setCamDeleteBtn(false);
+                          },
+                        },
+                        {
+                          text: '취소',
+                        },
+                      ],
+                    );
+                  } else {
+                    setCamCoordinates(prev => {
+                      const newCoordinates = [...prev];
+                      newCoordinates[index].isLarge = !camcoordinate.isLarge;
+                      return newCoordinates;
+                    });
+                  }
+                }}
+                // onClick={() => {
+                //   // !camcoordinate.isLarge &&
+                //   setCamCoordinates(prev => {
+                //     const newCoordinates = [...prev];
+                //     newCoordinates[index].isLarge = !camcoordinate.isLarge;
+                //     return newCoordinates;
+                //   });
+                // }}
+              >
+                <View
+                  style={{
+                    width: camcoordinate.isLarge ? 200 : 30,
+                    height: camcoordinate.isLarge ? 200 : 30,
+                    backgroundColor: camcoordinate.isLarge ? 'skyblue' : null,
+                    borderRadius: 30,
+                    alignContent: 'center',
+                    alignSelf: 'center',
+                    alignItems: 'center',
+                  }}>
+                  {!camcoordinate.isLarge && (
+                    <Image
+                      source={require('../assets/camera.png')}
+                      style={{
+                        width: 30,
+                        height: 30,
+                        alignContent: 'center',
+                        alignSelf: 'center',
+                        alignItems: 'center',
+                      }}
+                    />
+                  )}
+                  {camcoordinate.isLarge && (
+                    <Image
+                      source={{uri: camcoordinate.uri}}
+                      style={{
+                        width: 180,
+                        height: 180,
+                        top: 10,
+                        borderRadius: 30,
+                      }}
+                      onLoad={prev => setIsLoading(!prev)}
+                    />
+                  )}
+                  {/* <Image
+                source={{uri: camcoordinate.uri}}
+                style={{width: 180, height: 180, top: 10, borderRadius: 30}}
+                onLoad={() => setIsLoading(false)}
+              /> */}
+
+                  {/* <Image
+                source={
+                  camcoordinate.isLarge
+                    ? {uri: camcoordinate.uri}
+                    : require('../assets/camera.png')
+                }
+                style={{
+                  top: camcoordinate.isLarge ? 10 : null,
+                  width: camcoordinate.isLarge ? 180 : 30,
+                  height: camcoordinate.isLarge ? 180 : 30,
+                  borderRadius: camcoordinate.isLarge ? 30 : null,
+                  resizeMode: 'stretch',
+                }}
+              /> */}
+                  {camDeleteBtn ? (
+                    <TouchableOpacity
+                      style={{
+                        // backgroundColor: 'yellow',
+                        width: 10,
+                        height: 10,
+                        position: 'absolute',
+                        top: 0,
+                        right: camcoordinate.isLarge ? 10 : 0,
+                      }}>
+                      <View>
+                        <Image
+                          source={require('../assets/delete.png')}
+                          style={{
+                            width: camcoordinate.isLarge ? 20 : 10,
+                            height: camcoordinate.isLarge ? 20 : 10,
+                            position: 'absolute',
+                          }}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
+              </Marker>
+            ),
+        )}
         {hotplaceCoordinates.map((coordinate, index) => (
           <Marker
             key={index}
@@ -386,17 +601,31 @@ function Main({setIsTabVisible}: any) {
               longitude: coordinate.longitude,
             }}
             image={require('../assets/hotplace.png')}
-            width={30}
-            height={30}
+            //   source={
+            //     img
+            //     ? {uri: response?.assets[0]?.uri}
+            //     : require('../assets/puppy.jpg')
+            // }
+            width={40}
+            height={40}
             onClick={() => {
-              const newCoordinates = hotplaceCoordinates.filter(
-                (c, i) => i !== index,
-              );
-              setHotplaceCoordinates(newCoordinates);
+              Alert.alert('마커를 삭제하시겠습니까?', '마커 삭제 확인 확인', [
+                {
+                  text: '확인',
+                  onPress: () => {
+                    const newCoordinates = hotplaceCoordinates.filter(
+                      (c, i) => i !== index,
+                    );
+                    setHotplaceCoordinates(newCoordinates);
+                  },
+                },
+                {
+                  text: '취소',
+                },
+              ]);
             }}
           />
         ))}
-
         {dangerCoordinates.map((coordinate, index) => (
           <Marker
             key={index}
@@ -405,13 +634,23 @@ function Main({setIsTabVisible}: any) {
               longitude: coordinate.longitude,
             }}
             image={require('../assets/danger.png')}
-            width={30}
-            height={30}
+            width={40}
+            height={40}
             onClick={() => {
-              const newCoordinates = dangerCoordinates.filter(
-                (c, i) => i !== index,
-              );
-              setDangerCoordinates(newCoordinates);
+              Alert.alert('마커를 삭제하시겠습니까?', '마커 삭제 확인 확인', [
+                {
+                  text: '확인',
+                  onPress: () => {
+                    const newCoordinates = dangerCoordinates.filter(
+                      (c, i) => i !== index,
+                    );
+                    setDangerCoordinates(newCoordinates);
+                  },
+                },
+                {
+                  text: '취소',
+                },
+              ]);
             }}
           />
         ))}
@@ -475,6 +714,35 @@ function Main({setIsTabVisible}: any) {
             />
           ) : null)}
       </NaverMapView>
+      {camdogBtn ? (
+        <View
+          style={{
+            backgroundColor: 'white',
+            width: '70%',
+            height: '50%',
+            zIndex: 1,
+            position: 'absolute',
+            alignContent: 'center',
+            alignSelf: 'center',
+            top: '20%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 10,
+          }}>
+          <TouchableOpacity
+            onPress={() => {
+              setCamdogBtn(false);
+            }}>
+            <Image
+              source={require('../assets/dogwalk.jpg')}
+              style={{
+                width: 260,
+                height: 260,
+              }}
+            />
+          </TouchableOpacity>
+        </View>
+      ) : null}
       {markerListBtn ? (
         <>
           <View style={styles.MarkerListView}>
@@ -515,6 +783,7 @@ function Main({setIsTabVisible}: any) {
             <TouchableOpacity
               onPress={() => {
                 onLaunchCamera();
+                setCamMarkerBtn(true);
                 setMarkerListBtn(false);
               }}>
               <View>
@@ -526,6 +795,22 @@ function Main({setIsTabVisible}: any) {
                   }}
                 />
                 <Text style={styles.MarkerListText}>카메라</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setCamDeleteBtn(true);
+                setMarkerListBtn(false);
+              }}>
+              <View>
+                <Image
+                  source={require('../assets/delete.png')}
+                  style={{
+                    width: 40,
+                    height: 40,
+                  }}
+                />
+                <Text style={styles.MarkerListText}>포토마커삭제</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -600,6 +885,7 @@ function Main({setIsTabVisible}: any) {
                   shadowColor: 'black',
                 }}>
                 <TouchableOpacity
+                  disabled={routeCoordinates.length == 0 ? true : false}
                   onPressIn={() => {
                     setResultBtn(prev => !prev);
                     setEnergyDistance(
@@ -619,6 +905,18 @@ function Main({setIsTabVisible}: any) {
                         ).toFixed(2),
                       ),
                     );
+                    setAllCoordinates([
+                      ...routeCoordinates,
+                      ...energyCoordinates,
+                    ]);
+                    // setMediumLatitude(mediumLatitudefunc(allCoordinates));
+                    // setMediumLongitude(mediumLongitudefunc(allCoordinates));
+                    // setIsMediumLoading(true);
+                    // console.log('allcoordinates: ', allCoordinates);
+                  }}
+                  onPress={() => {
+                    setMediumLatitude(mediumLatitudefunc(allCoordinates));
+                    setMediumLongitude(mediumLongitudefunc(allCoordinates));
                   }}
                   onPressOut={() => {
                     captureImage();
@@ -765,14 +1063,7 @@ function Main({setIsTabVisible}: any) {
               <TouchableWithoutFeedback>
                 <View
                   style={{
-                    // backgroundColor: 'blue',
-                    // backgroundColor: 'white',
-
-                    // flex: 1,
                     width: 100,
-                    // height: 80,
-
-                    // alignContent: 'center',
                     alignItems: 'center',
                     borderLeftWidth: 2,
                     borderRightWidth: 2,
@@ -957,10 +1248,8 @@ function Main({setIsTabVisible}: any) {
                   zoom: myPosition ? 15 : 5.5,
                   //TODO: 산책 종료 후 라인 기록 센터가 현위치에 맞춰져서 라인이 짤릴 수 있음.
                   // 라인 전체를 볼 수 있도록
-                  latitude: myPosition?.latitude ? myPosition?.latitude : 37,
-                  longitude: myPosition?.longitude
-                    ? myPosition?.longitude
-                    : 127.6,
+                  latitude: myPosition?.latitude ? mediumLatitude : 37,
+                  longitude: myPosition?.longitude ? mediumLongitude : 127.6,
                   // latitude: myPosition?.latitude,
                   // longitude: myPosition?.longitude,
                 }}>
@@ -974,12 +1263,6 @@ function Main({setIsTabVisible}: any) {
                     image={require('../assets/hotplace.png')}
                     width={30}
                     height={30}
-                    onClick={() => {
-                      const newCoordinates = hotplaceCoordinates.filter(
-                        (c, i) => i !== index,
-                      );
-                      setHotplaceCoordinates(newCoordinates);
-                    }}
                   />
                 ))}
 
@@ -993,12 +1276,6 @@ function Main({setIsTabVisible}: any) {
                     image={require('../assets/danger.png')}
                     width={30}
                     height={30}
-                    onClick={() => {
-                      const newCoordinates = dangerCoordinates.filter(
-                        (c, i) => i !== index,
-                      );
-                      setDangerCoordinates(newCoordinates);
-                    }}
                   />
                 ))}
                 {myPosition?.latitude && (
@@ -1092,6 +1369,8 @@ function Main({setIsTabVisible}: any) {
                   setEnergyFinishDistance(0);
                   setCaptureCheck(false);
                   setTabVisible(true);
+                  setAllCoordinates([]);
+                  // setCamCoordinates([]); //카메라 마커 배열 초기화
                 }}>
                 <Text
                   style={{
@@ -1176,7 +1455,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   MarkerListView: {
-    width: 180,
+    width: 240,
     height: 60,
     backgroundColor: 'lightgray',
     zIndex: 1,

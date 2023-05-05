@@ -5,7 +5,6 @@ import React, {useCallback, useEffect, useState, useRef} from 'react';
 import {
   ScrollView,
   Share,
-  TouchableNativeFeedback,
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
@@ -23,6 +22,10 @@ import {
 import NaverMapView, {Marker, Polyline, Path} from 'react-native-nmap';
 import {LoggedInParamList} from '../../AppInner';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Fontisto from 'react-native-vector-icons/Fontisto';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {current} from '@reduxjs/toolkit';
 import haversine from 'haversine';
 import {useCounter, EuseCounter} from '../components/useCounter';
@@ -36,6 +39,7 @@ import IconRightButton from '../components/IconRightButton';
 import Icon from '../components/IconRightButton';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/reducer';
+import DaonBtn from '../components/daonBtn';
 
 interface CoordinateLongitudeLatitude {
   latitude: number;
@@ -740,289 +744,384 @@ function Main({setIsTabVisible}: any) {
         </View>
       ) : null}
       {markerListBtn ? (
-        <View style={styles.MarkerListView}>
-          <TouchableOpacity
-            onPress={() => {
-              setHotMarkerBtn(true);
-              setMarkerListBtn(false);
-            }}>
-            <View>
-              <Image
-                source={require('../assets/hotplace.png')}
-                style={{
-                  width: 40,
-                  height: 40,
-                }}
-              />
-              <Text style={styles.MarkerListText}>핫플레이스</Text>
-            </View>
-          </TouchableOpacity>
+        <>
+          <View style={styles.MarkerListView}>
+            <TouchableOpacity
+              onPress={() => {
+                setHotMarkerBtn(true);
+                setMarkerListBtn(false);
+              }}>
+              <View>
+                <Image
+                  source={require('../assets/hotplace.png')}
+                  style={{
+                    width: 40,
+                    height: 40,
+                  }}
+                />
+                <Text style={styles.MarkerListText}>핫플레이스</Text>
+              </View>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => {
-              setDangerMarkerBtn(true);
-              setMarkerListBtn(false);
-            }}>
-            <View>
-              <Image
-                source={require('../assets/danger.png')}
-                style={{
-                  width: 40,
-                  height: 40,
-                }}
-              />
-              <Text style={styles.MarkerListText}>주의 지역</Text>
-            </View>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setDangerMarkerBtn(true);
+                setMarkerListBtn(false);
+              }}>
+              <View>
+                <Image
+                  source={require('../assets/danger.png')}
+                  style={{
+                    width: 40,
+                    height: 40,
+                  }}
+                />
+                <Text style={styles.MarkerListText}>주의 지역</Text>
+              </View>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => {
-              onLaunchCamera();
-              setCamMarkerBtn(true);
-              setMarkerListBtn(false);
-            }}>
-            <View>
-              <Image
-                source={require('../assets/camera.png')}
-                style={{
-                  width: 40,
-                  height: 40,
-                }}
-              />
-              <Text style={styles.MarkerListText}>카메라</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              setCamDeleteBtn(true);
-              setMarkerListBtn(false);
-            }}>
-            <View>
-              <Image
-                source={require('../assets/delete.png')}
-                style={{
-                  width: 40,
-                  height: 40,
-                }}
-              />
-              <Text style={styles.MarkerListText}>포토마커삭제</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              onPress={() => {
+                onLaunchCamera();
+                setCamMarkerBtn(true);
+                setMarkerListBtn(false);
+              }}>
+              <View>
+                <Image
+                  source={require('../assets/camera.png')}
+                  style={{
+                    width: 40,
+                    height: 40,
+                  }}
+                />
+                <Text style={styles.MarkerListText}>카메라</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setCamDeleteBtn(true);
+                setMarkerListBtn(false);
+              }}>
+              <View>
+                <Image
+                  source={require('../assets/delete.png')}
+                  style={{
+                    width: 40,
+                    height: 40,
+                  }}
+                />
+                <Text style={styles.MarkerListText}>포토마커삭제</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.MarkerView}>
+            <TouchableOpacity
+              onPress={() => {
+                setMarkerListBtn(false);
+              }}>
+              <Ionicons name="list" style={styles.MarkerImage} />
+            </TouchableOpacity>
+          </View>
+        </>
       ) : (
         <View style={styles.MarkerView}>
           <TouchableOpacity
             onPress={() => {
               setMarkerListBtn(true);
             }}>
-            {/* <Text style={styles.MarkerText}>
-            마커
-          </Text> */}
-            <Image
-              source={require('../assets/plus.png')}
-              style={styles.MarkerImage}
-            />
+            <Ionicons name="list" style={styles.MarkerImage} />
           </TouchableOpacity>
         </View>
       )}
-
       <View
-        style={{
-          // backgroundColor: 'green',
-          width: '100%',
-          height: 80,
-          zIndex: 1,
-          position: 'absolute',
-          alignContent: 'center',
-          alignItems: 'center',
-          alignSelf: 'center',
-          bottom: 10,
-        }}>
+        style={[
+          styles.walkControler,
+          {backgroundColor: startBtn ? 'white' : 'rgba(255, 255, 255, 0)'},
+          {borderColor: startBtn ? '#8AA2F8' : 'rgba(255, 255, 255, 0)'},
+        ]}>
         {startBtn ? ( //산책 시작 버튼 눌렀을때
-          <View
-            style={{
-              backgroundColor: 'white',
-              width: '100%',
-              height: 80,
-              flexDirection: 'row',
-              alignItems: 'center',
-              alignContent: 'space-around',
-            }}>
+          <>
             <View
               style={{
-                backgroundColor: 'white',
                 flex: 1,
-                height: 80,
-                marginLeft: 30,
-              }}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: 20,
-                  fontWeight: 'bold',
-                  color: 'black',
-                  height: 30,
-                  marginTop: 10,
-                }}>
-                {distanceTravelled.toFixed(2)} km
-              </Text>
-              <Text style={{textAlign: 'center'}}> 거리</Text>
-            </View>
-            <View
-              style={{
-                backgroundColor: 'white',
-                flex: 1,
-                height: 80,
-                alignContent: 'center',
+                flexDirection: 'row',
+                width: '100%',
                 alignItems: 'center',
               }}>
-              <TouchableOpacity
-                disabled={routeCoordinates.length == 0 ? true : false}
-                onPressIn={() => {
-                  setResultBtn(prev => !prev);
-                  setEnergyDistance(
-                    parseFloat(distanceTravelled.toFixed(2)) -
-                      parseFloat(firstDistance.toFixed(2)),
-                  );
-                  stop();
-                  Estop();
-                  // captureImage();
-                  setDistance(parseFloat(distanceTravelled.toFixed(2)));
-                  setFinishTime(now);
-                  setEnergyFinishDistance(
-                    parseFloat(
-                      (
-                        parseFloat(distanceTravelled.toFixed(2)) -
-                        parseFloat(firstDistance.toFixed(2))
-                      ).toFixed(2),
-                    ),
-                  );
-                  setAllCoordinates([
-                    ...routeCoordinates,
-                    ...energyCoordinates,
-                  ]);
-                  // setMediumLatitude(mediumLatitudefunc(allCoordinates));
-                  // setMediumLongitude(mediumLongitudefunc(allCoordinates));
-                  // setIsMediumLoading(true);
-                  // console.log('allcoordinates: ', allCoordinates);
-                }}
-                onPress={() => {
-                  setMediumLatitude(mediumLatitudefunc(allCoordinates));
-                  setMediumLongitude(mediumLongitudefunc(allCoordinates));
-                }}
-                onPressOut={() => {
-                  captureImage();
-                }}>
-                <FontAwesome
-                  name="stop-circle"
-                  style={{
-                    fontSize: 60,
-                    top: 8,
-                    color: '#8AA2F8',
-                  }}
-                />
-              </TouchableOpacity>
-            </View>
-            <View
-              style={{
-                backgroundColor: 'white',
-                flex: 1,
-                height: 80,
-                marginRight: 30,
-              }}>
-              <Text
+              <View
                 style={{
-                  textAlign: 'center',
-                  fontSize: 20,
-                  fontWeight: 'bold',
-                  color: 'black',
-                  height: 30,
-                  marginTop: 10,
+                  flexDirection: 'column',
+                  flex: 1,
                 }}>
-                {currentHours < 10 ? `0${currentHours}` : currentHours}:
-                {currentMinutes < 10 ? `0${currentMinutes}` : currentMinutes}:
-                {currentSeconds < 10 ? `0${currentSeconds}` : currentSeconds}
-              </Text>
-              <Text style={{textAlign: 'center'}}>시간</Text>
-            </View>
-            <View
-              style={{
-                // backgroundColor: energyBtn ? 'green' : 'red',
-                zIndex: 1,
-                position: 'absolute',
-                bottom: 35,
-              }}>
-              {routeCoordinates.length >= 5 ? ( //거리배열이 5개 이상일때만 에너지버튼이 활성화 되도록
-                <TouchableOpacity
-                  onPress={() => {
-                    Alert.alert(
-                      '에너지가 떨어지셨나요?',
-                      '에너지 떨어짐 확인',
-                      [
-                        {
-                          text: '확인',
-                          onPress: () => {
-                            setEnergyBtn(true);
-                            setFirstDistance(distanceTravelled);
-                            Estartcnt();
-                            setEnergyCoordinates([
-                              routeCoordinates[routeCoordinates.length - 1],
-                            ]);
-                            setEnergyFinishTime(now);
-                          },
-                        },
-                        {
-                          text: '취소',
-                        },
-                      ],
-                    );
-                  }}>
-                  <FontAwesome
-                    name="battery"
+                <View style={styles.walkcomp}>
+                  <Text
                     style={{
-                      fontSize: 30,
-                      color: energyBtn ? 'red' : 'green',
-                      left: 5,
+                      textAlign: 'center',
+                      fontSize: 45,
+                      fontFamily: 'ConcertOne-Regular',
+                      color: 'black',
+                    }}>
+                    {distanceTravelled.toFixed(2)}
+                  </Text>
+                  <Text
+                    style={{
+                      textAlignVertical: 'bottom',
+                      fontSize: 15,
+                      fontFamily: 'Blinker-Bold',
+                      color: 'black',
+                    }}>
+                    km
+                  </Text>
+                </View>
+                <Text
+                  style={{textAlign: 'center', color: 'black', fontSize: 13}}>
+                  산책거리
+                </Text>
+              </View>
+              <View
+                style={{
+                  flex: 0.8,
+                  alignItems: 'center',
+                  shadowColor: 'black',
+                }}>
+                <TouchableOpacity
+                  disabled={routeCoordinates.length == 0 ? true : false}
+                  onPressIn={() => {
+                    setResultBtn(prev => !prev);
+                    setEnergyDistance(
+                      parseFloat(distanceTravelled.toFixed(2)) -
+                        parseFloat(firstDistance.toFixed(2)),
+                    );
+                    stop();
+                    Estop();
+                    // captureImage();
+                    setDistance(parseFloat(distanceTravelled.toFixed(2)));
+                    setFinishTime(now);
+                    setEnergyFinishDistance(
+                      parseFloat(
+                        (
+                          parseFloat(distanceTravelled.toFixed(2)) -
+                          parseFloat(firstDistance.toFixed(2))
+                        ).toFixed(2),
+                      ),
+                    );
+                    setAllCoordinates([
+                      ...routeCoordinates,
+                      ...energyCoordinates,
+                    ]);
+                    // setMediumLatitude(mediumLatitudefunc(allCoordinates));
+                    // setMediumLongitude(mediumLongitudefunc(allCoordinates));
+                    // setIsMediumLoading(true);
+                    // console.log('allcoordinates: ', allCoordinates);
+                  }}
+                  onPress={() => {
+                    setMediumLatitude(mediumLatitudefunc(allCoordinates));
+                    setMediumLongitude(mediumLongitudefunc(allCoordinates));
+                  }}
+                  onPressOut={() => {
+                    captureImage();
+                  }}>
+                  <Feather
+                    name="pause-circle"
+                    style={{
+                      fontSize: 70,
+                      top: 8,
+                      color: '#8AA2F8',
                     }}
                   />
-                  {/* <Text>에너지</Text>
-                <Text>떨어짐</Text> */}
-                  {/* <Text>{energyBtn ? 'on' : 'off'}</Text> */}
+                  {/* <AntDesign
+                    name="playcircleo"
+                    style={{
+                      fontSize: 50,
+                      top: 8,
+                      color: '#8AA2F8',
+                    }}
+                  /> */}
                 </TouchableOpacity>
-              ) : null}
+              </View>
+              <View
+                style={{
+                  flex: 0.9,
+                }}>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    fontSize: 40,
+                    fontFamily: 'ConcertOne-Regular',
+                    color: 'black',
+                    // @@@@
+                    // TODO: Hourts 나왔을때 폰트 크기 조정 필요
+                  }}>
+                  {currentHours < 10 ? '' : currentHours + ':'}
+                  {currentMinutes < 10 ? `0${currentMinutes}` : currentMinutes}:
+                  {currentSeconds < 10 ? `0${currentSeconds}` : currentSeconds}
+                </Text>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    color: 'black',
+                  }}>
+                  산책시간
+                </Text>
+              </View>
+              <View
+                style={{
+                  zIndex: 1,
+                  position: 'absolute',
+                  bottom: 35,
+                }}>
+                {routeCoordinates.length >= 5 ? ( //거리배열이 5개 이상일때만 에너지버튼이 활성화 되도록
+                  <TouchableOpacity
+                    onPress={() => {
+                      Alert.alert(
+                        '에너지가 떨어지셨나요?',
+                        '에너지 떨어짐 확인',
+                        [
+                          {
+                            text: '확인',
+                            onPress: () => {
+                              setEnergyBtn(true);
+                              setFirstDistance(distanceTravelled);
+                              Estartcnt();
+                              setEnergyCoordinates([
+                                routeCoordinates[routeCoordinates.length - 1],
+                              ]);
+                              setEnergyFinishTime(now);
+                            },
+                          },
+                          {
+                            text: '취소',
+                          },
+                        ],
+                      );
+                    }}
+                  />
+                ) : null}
+              </View>
             </View>
-          </View>
+            {/* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@아래부분은2222번쨰라인 */}
+            <View
+              style={{
+                width: '100%',
+                flex: 0.5,
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                alignItems: 'center',
+                paddingLeft: 20,
+                paddingRight: 20,
+              }}>
+              <View
+                style={{
+                  zIndex: 1,
+                  alignItems: 'center',
+                }}>
+                {routeCoordinates.length >= 5 ? ( //거리배열이 5개 이상일때만 에너지버튼이 활성화 되도록
+                  <TouchableOpacity
+                    onPress={() => {
+                      Alert.alert(
+                        '에너지가 떨어지셨나요?',
+                        '에너지 떨어짐 확인',
+                        [
+                          {
+                            text: '확인',
+                            onPress: () => {
+                              setEnergyBtn(true);
+                              setFirstDistance(distanceTravelled);
+                              Estartcnt();
+                              setEnergyCoordinates([
+                                routeCoordinates[routeCoordinates.length - 1],
+                              ]);
+                              setEnergyFinishTime(now);
+                            },
+                          },
+                          {
+                            text: '취소',
+                          },
+                        ],
+                      );
+                    }}>
+                    <MaterialCommunityIcons
+                      name="battery-alert-variant-outline"
+                      style={{
+                        fontSize: 40,
+                        color: energyBtn ? 'red' : '#FFAEC9',
+                        // left: 65,
+                      }}
+                    />
+                  </TouchableOpacity>
+                ) : (
+                  <MaterialCommunityIcons
+                    name="battery-alert-variant-outline"
+                    style={{
+                      fontSize: 40,
+                      color: energyBtn ? 'red' : '#FFAEC9',
+                      // left: 65,
+                    }}
+                  />
+                )}
+              </View>
+              <TouchableWithoutFeedback>
+                <View
+                  style={{
+                    width: 100,
+                    alignItems: 'center',
+                    borderLeftWidth: 2,
+                    borderRightWidth: 2,
+                    borderColor: 'rgba(0, 0, 0, 0.5)',
+                  }}>
+                  <TouchableOpacity
+                    onPressIn={() => {
+                      setResultBtn(prev => !prev);
+                      setEnergyDistance(
+                        parseFloat(distanceTravelled.toFixed(2)) -
+                          parseFloat(firstDistance.toFixed(2)),
+                      );
+                      stop();
+                      Estop();
+                      // captureImage();
+                      setDistance(parseFloat(distanceTravelled.toFixed(2)));
+                      setFinishTime(now);
+                      setEnergyFinishDistance(
+                        parseFloat(
+                          (
+                            parseFloat(distanceTravelled.toFixed(2)) -
+                            parseFloat(firstDistance.toFixed(2))
+                          ).toFixed(2),
+                        ),
+                      );
+                    }}
+                    onPressOut={() => {
+                      captureImage();
+                    }}>
+                    <Ionicons
+                      name="stop-circle-outline"
+                      style={{
+                        fontSize: 50,
+                        // top: 8,
+                        color: '#8AA2F8',
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </TouchableWithoutFeedback>
+              <View style={{}}>
+                <Text style={{color: 'white'}}>ㅁㅁ</Text>
+              </View>
+            </View>
+            {/*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  위에는2222번쨰 */}
+          </>
         ) : (
-          <TouchableOpacity
-            style={{
-              backgroundColor: '#8AA2F8',
-              width: '70%',
-              height: 50,
-              zIndex: 1,
-              alignSelf: 'center',
-              alignContent: 'center',
-              alignItems: 'center',
-              borderRadius: 10,
-            }}
+          <DaonBtn
+            text="산책 시작하기"
+            style={styles.loginBtn}
+            activeOpacity={0.6}
             onPress={() => {
               setStartBtn(true);
               startcnt();
               setStartTime(now);
               setTabVisible(false);
-            }}>
-            <Text
-              style={{
-                color: 'white',
-                textAlign: 'center',
-                textAlignVertical: 'bottom',
-                fontSize: 16,
-                fontWeight: 'bold',
-                height: 35,
-              }}>
-              산책 시작하기
-            </Text>
-          </TouchableOpacity>
+            }}
+          />
         )}
       </View>
       {resultBtn ? (
@@ -1296,6 +1395,17 @@ function Main({setIsTabVisible}: any) {
 export default Main;
 
 const styles = StyleSheet.create({
+  loginBtn: {
+    alignSelf: 'center',
+    marginTop: 50,
+    height: 50,
+    width: '70%',
+    borderRadius: 12,
+  },
+  walkcomp: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
   naverMap: {
     flex: 1,
   },
@@ -1305,14 +1415,25 @@ const styles = StyleSheet.create({
     borderColor: 'red',
     borderWidth: 1,
   },
+  walkControler: {
+    flexDirection: 'column',
+    width: '100%',
+    height: HEIGHT * 0.2,
+    borderWidth: 1.5,
+    borderBottomWidth: 0,
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    position: 'absolute',
+    bottom: 0,
+  },
   MarkerView: {
     width: 60,
     height: 60,
     // backgroundColor: 'white',
     zIndex: 1,
     position: 'absolute',
-    bottom: 100,
-    right: 5,
+    bottom: 0,
+    right: 40,
     alignItems: 'center',
     borderRadius: 10,
   },
@@ -1326,17 +1447,20 @@ const styles = StyleSheet.create({
     left: 9,
   },
   MarkerImage: {
-    width: 40,
-    height: 40,
+    fontSize: 40,
     top: 10,
+    marginRight: 10,
+    // color: '#8AA2F8',
+    color: 'black',
+    opacity: 0.5,
   },
   MarkerListView: {
     width: 240,
     height: 60,
-    backgroundColor: 'white',
+    backgroundColor: 'lightgray',
     zIndex: 1,
     position: 'absolute',
-    bottom: 100,
+    bottom: HEIGHT * 0.23,
     right: 5,
     alignItems: 'center',
     flexDirection: 'row',
@@ -1347,6 +1471,6 @@ const styles = StyleSheet.create({
     fontSize: 8,
     fontWeight: 'bold',
     alignSelf: 'center',
-    color: 'grey',
+    color: 'black',
   },
 });

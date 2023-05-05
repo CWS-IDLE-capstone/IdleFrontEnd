@@ -59,8 +59,7 @@ const CalanderScreen = () => {
       const fetchData = async () => {
         try {
           setLoading(true);
-          // const token = await AsyncStorage.getItem('accessToken');
-          const token = accessToken;
+          const token = await AsyncStorage.getItem('accessToken');
           // const token = accessToken;
           if (token !== null) {
             const response = await axios.get(

@@ -63,36 +63,102 @@ export type RootStackParamList = {
 
 const Tab = createBottomTabNavigator<LoggedInParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
-
 function LoggedInStack() {
-  // 캘린더에서 상세정보페이지로 데이터 전달이 안되어 함수로 묶었습니다
-  // 스택 네비게이터 고수님의 보호관찰이 필요합니다.
   const [isTabVisible, setIsTabVisible] = useState(true);
-
   return (
-    <Stack.Navigator>
-      <Stack.Screen
+    <Tab.Navigator
+      initialRouteName="Main"
+      screenOptions={{
+        headerStyle: styles.headerStyle,
+        headerTintColor: '#8AA2F8',
+        headerTitleStyle: {fontSize: 23, fontWeight: 'bold'},
+        headerShown: false,
+        tabBarStyle: {
+          ...styles.tabStyle,
+          display: isTabVisible ? 'flex' : 'none',
+        },
+      }}>
+      <Tab.Screen
+        name="Community"
+        component={Community}
+        options={{
+          title: '게시판',
+          tabBarActiveTintColor: '#8AA2F8',
+
+          tabBarIcon: ({focused}) => (
+            <Image
+              source={
+                focused
+                  ? require('./src/assets/selectChat.png')
+                  : require('./src/assets/chat.png')
+              }
+              style={{width: 35, height: 35}}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
         name="Main"
         children={() => <Main setIsTabVisible={setIsTabVisible} />}
-        options={{headerShown: false}}
+        options={{
+          title: '산책',
+          tabBarActiveTintColor: '#8AA2F8',
+          tabBarLabelStyle: {marginRight: 8},
+          tabBarIcon: ({focused}) => (
+            <Image
+              source={
+                focused
+                  ? require('./src/assets/free-icon-dog-walking-3330957.png')
+                  : require('./src/assets/free-icon-dog-walking-3330956.png')
+              }
+              style={{width: 35, height: 35}}
+            />
+          ),
+        }}
       />
-      {/* <Stack.Screen name="CalanderScreen" component={CalanderScreen} /> */}
-      <Stack.Screen
-        name="CheckWalkScreen"
-        component={CheckWalkScreen}
-        options={{headerShown: false}}
+      <Tab.Screen
+        name="CalanderScreen"
+        component={CalanderScreen}
+        options={{
+          title: '산책달력',
+          tabBarActiveTintColor: '#8AA2F8',
+          tabBarIcon: ({focused}) => (
+            <Image
+              source={
+                focused
+                  ? require('./src/assets/selectCalendar.png')
+                  : require('./src/assets/calendar.png')
+              }
+              style={{width: 35, height: 35}}
+            />
+          ),
+        }}
       />
-    </Stack.Navigator>
+      <Tab.Screen
+        name="MyPage"
+        component={MyPage}
+        options={{
+          title: '마이페이지',
+          tabBarActiveTintColor: '#8AA2F8',
+          tabBarIcon: ({focused}) => (
+            <Image
+              source={
+                focused
+                  ? require('./src/assets/selectUser.png')
+                  : require('./src/assets/user.png')
+              }
+              style={{width: 35, height: 35}}
+            />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 }
-
-function AppInner({isTabVisible}: any) {
+function AppInner() {
   const isLoggedIn = useSelector(
     (state: RootState) => !!state.user.accessToken,
   ); //리덕스에서 가져오기
-  // TODO: isLoggedIn = useSelector 이용하여 상태관리
-  // const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const TabVisible = {isTabVisible};
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
@@ -107,96 +173,31 @@ function AppInner({isTabVisible}: any) {
   return (
     <NavigationContainer>
       {isLoggedIn ? (
-        <Tab.Navigator
-          initialRouteName="Main"
+        <Stack.Navigator
           screenOptions={{
-            headerStyle: styles.headerStyle,
-            headerTintColor: '#8AA2F8',
-            headerTitleStyle: {fontSize: 23, fontWeight: 'bold'},
-            tabBarStyle: {
-              ...styles.tabStyle,
-              display: TabVisible ? 'flex' : 'none',
-            },
+            headerShadowVisible: false,
           }}>
-          <Tab.Screen
-            name="Community"
-            component={Community}
-            options={{
-              title: '게시판',
-              tabBarActiveTintColor: '#8AA2F8',
-              headerTintColor: '#000000',
-              tabBarIcon: ({focused}) => (
-                <Image
-                  source={
-                    focused
-                      ? require('./src/assets/selectChat.png')
-                      : require('./src/assets/chat.png')
-                  }
-                  style={{width: 35, height: 35}}
-                />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="Main1"
+          <Stack.Screen
+            name="Inner"
             component={LoggedInStack}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="CheckWalkScreen"
+            component={CheckWalkScreen}
             options={{
-              title: '산책',
-              tabBarActiveTintColor: '#8AA2F8',
-              tabBarLabelStyle: {marginRight: 8},
-              tabBarIcon: ({focused}) => (
-                <Image
-                  source={
-                    focused
-                      ? require('./src/assets/free-icon-dog-walking-3330957.png')
-                      : require('./src/assets/free-icon-dog-walking-3330956.png')
-                  }
-                  style={{width: 35, height: 35}}
-                />
-              ),
+              headerLeft: () => null,
+              headerTitle: '',
+              gestureEnabled: false,
+              // headerShown: false, //뒤로가기버튼
             }}
           />
-          <Tab.Screen
-            name="CalanderScreen"
-            component={CalanderScreen}
-            options={{
-              title: '산책달력',
-              tabBarActiveTintColor: '#8AA2F8',
-              tabBarIcon: ({focused}) => (
-                <Image
-                  source={
-                    focused
-                      ? require('./src/assets/selectCalendar.png')
-                      : require('./src/assets/calendar.png')
-                  }
-                  style={{width: 35, height: 35}}
-                />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="MyPage"
-            component={MyPage}
-            options={{
-              title: '마이페이지',
-              tabBarActiveTintColor: '#8AA2F8',
-              tabBarIcon: ({focused}) => (
-                <Image
-                  source={
-                    focused
-                      ? require('./src/assets/selectUser.png')
-                      : require('./src/assets/user.png')
-                  }
-                  style={{width: 35, height: 35}}
-                />
-              ),
-            }}
-          />
-        </Tab.Navigator>
+        </Stack.Navigator>
       ) : (
-        <Stack.Navigator>
-          <Stack.Screen name="Welcome" component={Welcome} />
-          <Stack.Screen name="Start" component={Start} />
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}>
           <Stack.Screen
             name="Login"
             component={Login}
@@ -224,9 +225,15 @@ function AppInner({isTabVisible}: any) {
 export default AppInner;
 
 const styles = StyleSheet.create({
+  headerStyle1: {
+    borderWidth: 0,
+    elevation: 0,
+  },
   headerStyle: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#AAAAAA',
+    // borderBottomWidth: 2,
+    borderWidth: 3,
+
+    // borderBottomColor: '#AAAAAA',
   },
   tabStyle: {
     height: '10%',

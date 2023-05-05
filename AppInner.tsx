@@ -70,9 +70,10 @@ function LoggedInStack() {
       initialRouteName="Main"
       screenOptions={{
         headerStyle: styles.headerStyle,
-        headerTintColor: '#8AA2F8',
-        headerTitleStyle: {fontSize: 23, fontWeight: 'bold'},
-        headerShown: false,
+        // headerTintColor: '#8AA2F8',
+        headerTintColor: '#000000',
+        headerTitleStyle: {fontSize: 23, fontWeight: '500'},
+        // headerShown: false,
         tabBarStyle: {
           ...styles.tabStyle,
           // display: isTabVisible ? 'flex' : 'none', //산책시 하단탭 사라질지
@@ -92,7 +93,8 @@ function LoggedInStack() {
                   ? require('./src/assets/selectChat.png')
                   : require('./src/assets/chat.png')
               }
-              style={{width: 35, height: 35}}
+              style={{width: 30, height: 30}}
+              // style={{width: 35, height: 35}}
             />
           ),
         }}
@@ -104,6 +106,7 @@ function LoggedInStack() {
           title: '산책',
           tabBarActiveTintColor: '#8AA2F8',
           tabBarLabelStyle: {marginRight: 8},
+          headerShown: false,
           tabBarIcon: ({focused}) => (
             <Image
               source={
@@ -111,7 +114,8 @@ function LoggedInStack() {
                   ? require('./src/assets/free-icon-dog-walking-3330957.png')
                   : require('./src/assets/free-icon-dog-walking-3330956.png')
               }
-              style={{width: 35, height: 35}}
+              style={{width: 30, height: 30}}
+              // style={{width: 35, height: 35}}
             />
           ),
         }}
@@ -129,7 +133,8 @@ function LoggedInStack() {
                   ? require('./src/assets/selectCalendar.png')
                   : require('./src/assets/calendar.png')
               }
-              style={{width: 35, height: 35}}
+              style={{width: 30, height: 30}}
+              // style={{width: 35, height: 35}}
             />
           ),
         }}
@@ -147,7 +152,8 @@ function LoggedInStack() {
                   ? require('./src/assets/selectUser.png')
                   : require('./src/assets/user.png')
               }
-              style={{width: 35, height: 35}}
+              // style={{width: 35, height: 35}}
+              style={{width: 30, height: 30}}
             />
           ),
         }}
@@ -230,9 +236,7 @@ const styles = StyleSheet.create({
     elevation: 0,
   },
   headerStyle: {
-    // borderBottomWidth: 2,
-    borderWidth: 3,
-
+    // borderBottomWidth: 1,
     // borderBottomColor: '#AAAAAA',
   },
   tabStyle: {

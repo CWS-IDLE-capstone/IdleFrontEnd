@@ -2,7 +2,13 @@ import Geolocation from '@react-native-community/geolocation';
 import {NavigationContainer, useFocusEffect} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useCallback, useEffect, useState, useRef} from 'react';
-import {ScrollView, Share, TouchableOpacity} from 'react-native';
+import {
+  ScrollView,
+  Share,
+  TouchableNativeFeedback,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {
   Pressable,
   Text,
@@ -36,6 +42,13 @@ interface CoordinateLongitudeLatitude {
   longitude: number;
 }
 
+interface CoordinateCamMarker {
+  latitude: number;
+  longitude: number;
+  uri: string;
+  isLarge: boolean;
+}
+
 // type ScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 // type MainScreenProps = NativeStackScreenProps<LoggedInParamList, 'Community'>;
 const {width: WIDTH} = Dimensions.get('window');
@@ -45,6 +58,10 @@ function Main({setIsTabVisible}: any) {
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
 
   const [myPosition, setMyPosition] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [myCamPosition, setMyCamPosition] = useState<{
     latitude: number;
     longitude: number;
   } | null>(null);
@@ -60,6 +77,13 @@ function Main({setIsTabVisible}: any) {
   const [dangerCoordinates, setDangerCoordinates] = useState<
     CoordinateLongitudeLatitude[]
   >([]); //주의 마커 배열
+  const [camCoordinates, setCamCoordinates] = useState<
+    CoordinateLongitudeLatitude[] | CoordinateCamMarker[]
+  >([]); //카메라 마커 배열
+
+  const [camResponse, setCamResponse] = useState(null);
+  const [camdogBtn, setCamdogBtn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [distanceTravelled, setDistanceTravelled] = useState<number>(0); //거리
   const [firstDistance, setFirstDistance] = useState<number>(0); //측정 거리
@@ -74,6 +98,8 @@ function Main({setIsTabVisible}: any) {
   const [markerListBtn, setMarkerListBtn] = useState(false); //마커 리스트 버튼 state
   const [hotMarkerBtn, setHotMarkerBtn] = useState(false); //핫플 마커 버튼 state
   const [dangerMarkerBtn, setDangerMarkerBtn] = useState(false); //주의 마커 버튼 state
+  const [camMarkerBtn, setCamMarkerBtn] = useState(false); //카메라 마커 버튼 state
+  const [camDeleteBtn, setCamDeleteBtn] = useState(false); //카메라 사진 확대 버튼 state
 
   const [currentHours, setCurrentHours] = useState<Number>(0); //시간
   const [currentMinutes, setCurrentMinutes] = useState<Number>(0); //분
@@ -116,6 +142,9 @@ function Main({setIsTabVisible}: any) {
           longitude,
         };
         setMyPosition(newCoordinate);
+        camMarkerBtn
+          ? setCamCoordinates(prev => [...prev, newCoordinate])
+          : null;
         // setRouteCoordinates([newCoordinate]); //처음위치를 무조건 배열에 안넣고 산책시작하면 배열에 넣게 없앴음
         // setPrevLatLng(null);
         console.log('getCurrentPosition 실행');
@@ -128,7 +157,7 @@ function Main({setIsTabVisible}: any) {
         distanceFilter: 50,
       },
     );
-  }, []);
+  }, [camMarkerBtn]);
   // console.log(`시간: ${typeof(today.getHours().toString())}, 분: ${today.getMinutes()}`);
   useEffect(() => {
     const watchId = Geolocation.watchPosition(
@@ -216,7 +245,31 @@ function Main({setIsTabVisible}: any) {
           //취소했을 경우
           return;
         }
-        // setResponse(res); //이미지 보낼때 이거 쓰면 될거같음
+        setCamCoordinates(prevCoordinates =>
+          prevCoordinates.map((coordinate, index) =>
+            index === prevCoordinates.length - 1
+              ? {...coordinate, isLarge: false}
+              : coordinate,
+          ),
+        );
+        setCamCoordinates(prevCoordinates =>
+          prevCoordinates.map((coordinate, index) =>
+            index === prevCoordinates.length - 1
+              ? {...coordinate, uri: res.assets[0].uri}
+              : coordinate,
+          ),
+        );
+        setCamMarkerBtn(false);
+        // // const uri = res.assets[0].uri;
+        // camCoordinates.forEach((coordinate, index) => {
+        //   // const response = res;
+        //   const uri = res.assets[0].uri;
+        //   Object.assign(coordinate, {uri});
+        //   // setCamCoordinates(Object);
+        // });
+        // setCamMarkerBtn(false);
+        // // setCamResponse(res); //이미지 보낼때 이거 쓰면 될거같음
+        // // console.log(`res: ${res.assets[0].uri}`);
       },
     );
   }, []);
@@ -226,12 +279,12 @@ function Main({setIsTabVisible}: any) {
 
   // console.log('거리: ', distanceTravelled.toFixed(2), 'km');
   // console.log(`accessToken: ${accessToken}`);
-  console.log(`distance: ${distance}`);
-  console.log(`startTime: ${startTime}`);
-  console.log(`finsihTime: ${finishTime}`);
-  console.log(`energyFinsihTime: ${energyFinishTime}`);
-  console.log(`energyFinishDistance: ${energyFinishDistance}`);
-
+  // console.log(`distance: ${distance}`);
+  // console.log(`startTime: ${startTime}`);
+  // console.log(`finsihTime: ${finishTime}`);
+  // console.log(`energyFinsihTime: ${energyFinishTime}`);
+  // console.log(`energyFinishDistance: ${energyFinishDistance}`);
+  console.log('카메라 마커 배열', camCoordinates);
   // console.log('일반 배열: ', routeCoordinates);
   // console.log('에너지 떨어짐 배열: ', energyCoordinates);
   // console.log(`count: ${count}, Ecount: ${Ecount}`);
@@ -253,6 +306,23 @@ function Main({setIsTabVisible}: any) {
     }, 1500);
   }
 
+  // const shareImage = async () => {
+  //   try {
+  //     const uri = await captureRef(viewShotRef, {
+  //       format: 'jpg',
+  //       quality: 0.8,
+  //     });
+  //     // const base64Data = await RNFetchBlob.fs.readFile(imageCapture, 'base64');
+  //     const url = `data:image/png;base64,${uri}`;
+  //     await Share.share({
+  //       title: 'walk image',
+  //       message: '',
+  //       url: `${uploadImageToServer.formData._parts[0].uri}`,
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
   async function uploadImageToServer() {
     //캡쳐 이미지 전송
     console.log('uploadImageToServer 동작');
@@ -338,6 +408,7 @@ function Main({setIsTabVisible}: any) {
             latitude,
             longitude,
           };
+          console.log(newCoordinate);
           // setMarker(newCoordinate)
           hotMarkerBtn
             ? setHotplaceCoordinates(prev => [...prev, newCoordinate])
@@ -351,6 +422,121 @@ function Main({setIsTabVisible}: any) {
           setHotMarkerBtn(false);
           // console.log(`latitude: ${e.latitude}, longitude: ${e.longitude}`);
         }}>
+        {camCoordinates.map((camcoordinate, index) => (
+          <Marker
+            key={index}
+            coordinate={{
+              latitude: camcoordinate.latitude,
+              longitude: camcoordinate.longitude,
+            }}
+            // image={
+            //   camcoordinate.isLarge
+            //     ? {uri: camcoordinate.uri}
+            //     : require('../assets/camera.png')
+            // }
+            width={camcoordinate.isLarge ? 200 : 30}
+            height={camcoordinate.isLarge ? 200 : 30}
+            // width={50}
+            // height={50}
+            // TODO 마커 리스트에 사진 삭제 버튼 하나 추가해서 사진 삭제 버튼 누르고(사진 삭제 state 활성화) 사진 마커를 클릭할시 삭제하게끔
+            onClick={() => {
+              if (camDeleteBtn) {
+                const newCoordinates = camCoordinates.filter(
+                  (c, i) => i !== index,
+                );
+                setCamCoordinates(newCoordinates);
+                setCamDeleteBtn(false);
+              } else {
+                setCamCoordinates(prev => {
+                  const newCoordinates = [...prev];
+                  newCoordinates[index].isLarge = !camcoordinate.isLarge;
+                  return newCoordinates;
+                });
+              }
+            }}
+            // onClick={() => {
+            //   // !camcoordinate.isLarge &&
+            //   setCamCoordinates(prev => {
+            //     const newCoordinates = [...prev];
+            //     newCoordinates[index].isLarge = !camcoordinate.isLarge;
+            //     return newCoordinates;
+            //   });
+            // }}
+          >
+            <View
+              style={{
+                width: camcoordinate.isLarge ? 200 : 30,
+                height: camcoordinate.isLarge ? 200 : 30,
+                backgroundColor: camcoordinate.isLarge ? 'skyblue' : null,
+                borderRadius: 30,
+                alignContent: 'center',
+                alignSelf: 'center',
+                alignItems: 'center',
+              }}>
+              {!camcoordinate.isLarge && (
+                <Image
+                  source={require('../assets/camera.png')}
+                  style={{
+                    width: 30,
+                    height: 30,
+                    alignContent: 'center',
+                    alignSelf: 'center',
+                    alignItems: 'center',
+                  }}
+                />
+              )}
+              {camcoordinate.isLarge && (
+                <Image
+                  source={{uri: camcoordinate.uri}}
+                  style={{width: 180, height: 180, top: 10, borderRadius: 30}}
+                  onLoad={prev => setIsLoading(!prev)}
+                />
+              )}
+              {/* <Image
+                source={{uri: camcoordinate.uri}}
+                style={{width: 180, height: 180, top: 10, borderRadius: 30}}
+                onLoad={() => setIsLoading(false)}
+              /> */}
+
+              {/* <Image
+                source={
+                  camcoordinate.isLarge
+                    ? {uri: camcoordinate.uri}
+                    : require('../assets/camera.png')
+                }
+                style={{
+                  top: camcoordinate.isLarge ? 10 : null,
+                  width: camcoordinate.isLarge ? 180 : 30,
+                  height: camcoordinate.isLarge ? 180 : 30,
+                  borderRadius: camcoordinate.isLarge ? 30 : null,
+                  resizeMode: 'stretch',
+                }}
+              /> */}
+              {camDeleteBtn ? (
+                <TouchableOpacity
+                  style={{
+                    // backgroundColor: 'yellow',
+                    width: 10,
+                    height: 10,
+                    position: 'absolute',
+                    top: 0,
+                    right: camcoordinate.isLarge ? 10 : 0,
+                  }}>
+                  <View>
+                    <Image
+                      source={require('../assets/delete.png')}
+                      style={{
+                        width: camcoordinate.isLarge ? 20 : 10,
+                        height: camcoordinate.isLarge ? 20 : 10,
+                        position: 'absolute',
+                      }}
+                    />
+                  </View>
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          </Marker>
+        ))}
         {hotplaceCoordinates.map((coordinate, index) => (
           <Marker
             key={index}
@@ -359,6 +545,11 @@ function Main({setIsTabVisible}: any) {
               longitude: coordinate.longitude,
             }}
             image={require('../assets/hotplace.png')}
+            //   source={
+            //     img
+            //     ? {uri: response?.assets[0]?.uri}
+            //     : require('../assets/puppy.jpg')
+            // }
             width={30}
             height={30}
             onClick={() => {
@@ -369,7 +560,6 @@ function Main({setIsTabVisible}: any) {
             }}
           />
         ))}
-
         {dangerCoordinates.map((coordinate, index) => (
           <Marker
             key={index}
@@ -448,6 +638,35 @@ function Main({setIsTabVisible}: any) {
             />
           ) : null)}
       </NaverMapView>
+      {camdogBtn ? (
+        <View
+          style={{
+            backgroundColor: 'white',
+            width: '70%',
+            height: '50%',
+            zIndex: 1,
+            position: 'absolute',
+            alignContent: 'center',
+            alignSelf: 'center',
+            top: '20%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 10,
+          }}>
+          <TouchableOpacity
+            onPress={() => {
+              setCamdogBtn(false);
+            }}>
+            <Image
+              source={require('../assets/dogwalk.jpg')}
+              style={{
+                width: 260,
+                height: 260,
+              }}
+            />
+          </TouchableOpacity>
+        </View>
+      ) : null}
       {markerListBtn ? (
         <View style={styles.MarkerListView}>
           <TouchableOpacity
@@ -487,6 +706,7 @@ function Main({setIsTabVisible}: any) {
           <TouchableOpacity
             onPress={() => {
               onLaunchCamera();
+              setCamMarkerBtn(true);
               setMarkerListBtn(false);
             }}>
             <View>
@@ -498,6 +718,23 @@ function Main({setIsTabVisible}: any) {
                 }}
               />
               <Text style={styles.MarkerListText}>카메라</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              setCamDeleteBtn(true);
+              setMarkerListBtn(false);
+            }}>
+            <View>
+              <Image
+                source={require('../assets/delete.png')}
+                style={{
+                  width: 40,
+                  height: 40,
+                }}
+              />
+              <Text style={styles.MarkerListText}>포토마커삭제</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -962,6 +1199,7 @@ function Main({setIsTabVisible}: any) {
                   setEnergyFinishDistance(0);
                   setCaptureCheck(false);
                   setTabVisible(true);
+                  // setCamCoordinates([]); //카메라 마커 배열 초기화
                 }}>
                 <Text
                   style={{
@@ -1021,7 +1259,7 @@ const styles = StyleSheet.create({
     top: 10,
   },
   MarkerListView: {
-    width: 180,
+    width: 240,
     height: 60,
     backgroundColor: 'white',
     zIndex: 1,
@@ -1037,5 +1275,6 @@ const styles = StyleSheet.create({
     fontSize: 8,
     fontWeight: 'bold',
     alignSelf: 'center',
+    color: 'grey',
   },
 });

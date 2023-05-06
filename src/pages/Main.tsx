@@ -470,8 +470,8 @@ function Main({setIsTabVisible}: any) {
                 //     ? {uri: camcoordinate.uri}
                 //     : require('../assets/camera.png')
                 // }
-                width={camcoordinate.isLarge ? 200 : 30}
-                height={camcoordinate.isLarge ? 200 : 30}
+                width={camcoordinate.isLarge ? 200 : 80}
+                height={camcoordinate.isLarge ? 200 : 80}
                 // width={50}
                 // height={50}
                 // TODO 마커 리스트에 사진 삭제 버튼 하나 추가해서 사진 삭제 버튼 누르고(사진 삭제 state 활성화) 사진 마커를 클릭할시 삭제하게끔
@@ -503,35 +503,38 @@ function Main({setIsTabVisible}: any) {
                       return newCoordinates;
                     });
                   }
-                }}
-                // onClick={() => {
-                //   // !camcoordinate.isLarge &&
-                //   setCamCoordinates(prev => {
-                //     const newCoordinates = [...prev];
-                //     newCoordinates[index].isLarge = !camcoordinate.isLarge;
-                //     return newCoordinates;
-                //   });
-                // }}
-              >
+                }}>
                 <View
                   style={{
-                    width: camcoordinate.isLarge ? 200 : 30,
-                    height: camcoordinate.isLarge ? 200 : 30,
-                    backgroundColor: camcoordinate.isLarge ? 'skyblue' : null,
-                    borderRadius: 30,
-                    alignContent: 'center',
-                    alignSelf: 'center',
+                    width: camcoordinate.isLarge ? 200 : 80,
+                    height: camcoordinate.isLarge ? 200 : 80,
+                    backgroundColor: camcoordinate.isLarge
+                      ? // ? '#B6E59E'
+                        // : '#B6E59E',
+                        '#5472DE'
+                      : '#5472DE',
+                    borderRadius: camcoordinate.isLarge ? 20 : 10,
+
+                    // alignContent: 'center',
+                    // alignSelf: 'center',
                     alignItems: 'center',
+                    justifyContent: 'center',
+                    borderWidth: camcoordinate.isLarge ? 2 : 1,
+                    borderColor: '#3849CC',
+                    borderStyle: 'solid',
                   }}>
                   {!camcoordinate.isLarge && (
                     <Image
-                      source={require('../assets/camera.png')}
+                      source={{uri: camcoordinate.uri}}
                       style={{
-                        width: 30,
-                        height: 30,
+                        width: '90%',
+                        height: '90%',
                         alignContent: 'center',
                         alignSelf: 'center',
                         alignItems: 'center',
+                        borderRadius: 5,
+                        borderWidth: 1,
+                        borderColor: '#3849CC',
                       }}
                     />
                   )}
@@ -539,38 +542,19 @@ function Main({setIsTabVisible}: any) {
                     <Image
                       source={{uri: camcoordinate.uri}}
                       style={{
-                        width: 180,
-                        height: 180,
-                        top: 10,
-                        borderRadius: 30,
+                        width: '91%',
+                        height: '91%',
+                        borderRadius: 10,
+                        borderWidth: 2,
+                        borderColor: '#3849CC',
                       }}
                       onLoad={prev => setIsLoading(!prev)}
                     />
                   )}
-                  {/* <Image
-                source={{uri: camcoordinate.uri}}
-                style={{width: 180, height: 180, top: 10, borderRadius: 30}}
-                onLoad={() => setIsLoading(false)}
-              /> */}
 
-                  {/* <Image
-                source={
-                  camcoordinate.isLarge
-                    ? {uri: camcoordinate.uri}
-                    : require('../assets/camera.png')
-                }
-                style={{
-                  top: camcoordinate.isLarge ? 10 : null,
-                  width: camcoordinate.isLarge ? 180 : 30,
-                  height: camcoordinate.isLarge ? 180 : 30,
-                  borderRadius: camcoordinate.isLarge ? 30 : null,
-                  resizeMode: 'stretch',
-                }}
-              /> */}
                   {camDeleteBtn ? (
                     <TouchableOpacity
                       style={{
-                        // backgroundColor: 'yellow',
                         width: 10,
                         height: 10,
                         position: 'absolute',
@@ -601,11 +585,6 @@ function Main({setIsTabVisible}: any) {
               longitude: coordinate.longitude,
             }}
             image={require('../assets/hotplace.png')}
-            //   source={
-            //     img
-            //     ? {uri: response?.assets[0]?.uri}
-            //     : require('../assets/puppy.jpg')
-            // }
             width={40}
             height={40}
             onClick={() => {

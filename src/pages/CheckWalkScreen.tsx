@@ -12,6 +12,7 @@ import {
 import axios from 'axios';
 const {width: WIDTH} = Dimensions.get('window');
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNavigation} from '@react-navigation/native';
 
 // 개별 산책 데이터 인터페이스
 interface Walk {
@@ -36,7 +37,7 @@ type Props = {
 };
 
 // 산책 기록을 삭제하는 함수
-const deleteWalkData = async (id: number) => {
+const deleteWalkData = async (id: number, navigation) => {
   Alert.alert(
     '산책 기록 삭제',
     '해당 산책 기록이 삭제되는 것에 동의하십니까?',
@@ -65,6 +66,7 @@ const deleteWalkData = async (id: number) => {
                 console.log('Walk data deleted successfully');
                 // 산책 데이터 삭제 후, 리스트를 업데이트하기 위해 API 요청을 다시 실행합니다.
                 // fetchData();
+                navigation.goBack();
               } else {
                 console.log('Failed to delete walk data');
               }
@@ -80,35 +82,6 @@ const deleteWalkData = async (id: number) => {
     {cancelable: false},
   );
 };
-
-// // 산책 기록을 삭제하는 함수
-// const deleteWalkData = async (id: number) => {
-//   try {
-//     const token = await AsyncStorage.getItem('accessToken');
-//     if (token !== null) {
-//       const response = await axios.delete(
-//         `http://awsv4-env.eba-mre2mcnv.ap-northeast-2.elasticbeanstalk.com/api/walk/${id}`,
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//           },
-//         },
-//       );
-
-//       if (response.status === 200) {
-//         console.log('Walk data deleted successfully');
-//         // 산책 데이터 삭제 후, 리스트를 업데이트하기 위해 API 요청을 다시 실행합니다.
-//         // fetchData();
-//       } else {
-//         console.log('Failed to delete walk data');
-//       }
-//     } else {
-//       console.log('Token not found');
-//     }
-//   } catch (error) {
-//     console.log('Error deleting walk data:', error);
-//   }
-// };
 
 const CheckWalkScreen: React.FC<Props> = ({route}) => {
   const {walkData} = route.params;
@@ -141,6 +114,7 @@ const CheckWalkScreen: React.FC<Props> = ({route}) => {
   const paceSec = Math.floor(pace % 60);
 
   const scrollViewRef = useRef(null);
+  const navigation = useNavigation();
 
   return (
     <ScrollView
@@ -163,7 +137,9 @@ const CheckWalkScreen: React.FC<Props> = ({route}) => {
         </Text>
 
         <View style={styles.durationcontainer}>
-          <Text style={styles.duration1}>{`${durationMin}`}분</Text>
+          <Text style={styles.duration1}>
+            {durationMin < 10 ? `0${durationMin}` : `${durationMin}`}분
+          </Text>
           <Text style={styles.duration2}>{`${durationSec}`}초 동안</Text>
         </View>
         <View style={styles.distancecontainer}>
@@ -183,7 +159,7 @@ const CheckWalkScreen: React.FC<Props> = ({route}) => {
               y: 800,
             });
           }}>
-          <Text style={styles.buttonText}>레쓰기릿!</Text>
+          <Text style={styles.buttonText}>상세 기록 확인</Text>
         </TouchableOpacity>
       </View>
 
@@ -213,7 +189,7 @@ const CheckWalkScreen: React.FC<Props> = ({route}) => {
           <View style={styles.EnergeContainer1}>
             {/* <Text style={styles.energeLow2_1}>{`${E_durationMin}`}분</Text> */}
             <Text style={styles.energeLow2_1}>
-              {isNaN(E_durationMin) ? ' *^^*' : `${E_durationMin}분`}
+              {isNaN(E_durationMin) ? ' *^^*' : ` ${E_durationMin}분`}
             </Text>
             <Text style={styles.energeLow2_2}>
               {isNaN(E_durationSec)
@@ -235,21 +211,23 @@ const CheckWalkScreen: React.FC<Props> = ({route}) => {
           <Text style={styles.month2}>산책 횟수: 16회</Text>
           <Text style={styles.month2}>평균 산책 시간: 30분</Text>
           <Text style={styles.month2}>평균 산책 거리: 2.7km </Text>
-          <TouchableOpacity
-            style={styles.button2}
-            onPress={() => {
-              scrollViewRef.current.scrollTo({
-                x: 0,
-                y: 0,
-              });
-            }}>
-            <Text style={styles.buttonText2}>위로</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button3}
-            onPress={() => deleteWalkData(walkData.id)}>
-            <Text style={styles.buttonText3}>기록삭제</Text>
-          </TouchableOpacity>
+          <View style={styles.button_container}>
+            <TouchableOpacity
+              style={styles.button2}
+              onPress={() => {
+                scrollViewRef.current.scrollTo({
+                  x: 0,
+                  y: 0,
+                });
+              }}>
+              <Text style={styles.buttonText2}>위로</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button3}
+              onPress={() => deleteWalkData(walkData.id, navigation)}>
+              <Text style={styles.buttonText3}>기록삭제</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -267,7 +245,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '5%',
+    marginTop: '-4%',
   },
   titlecontainer: {
     flexDirection: 'row',
@@ -297,7 +275,7 @@ const styles = StyleSheet.create({
     lineHeight: 50,
     textAlign: 'left',
     color: '#000000',
-    marginLeft: '-7%',
+    marginLeft: '-13%',
   },
   imagecontainer: {
     width: '100%',
@@ -391,7 +369,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     backgroundColor: '#8AA2F8',
-    width: WIDTH * 0.5,
+    width: WIDTH * 0.35,
 
     height: 40,
     color: 'white',
@@ -549,6 +527,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 30,
     marginBottom: 80,
+    marginHorizontal: 10,
   },
   buttonText3: {
     backgroundColor: '#FF4848',
@@ -562,6 +541,11 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: 'bold',
     borderRadius: 77,
+  },
+  button_container: {
+    // alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
 });
 

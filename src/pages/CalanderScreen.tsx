@@ -269,9 +269,10 @@ const styles = StyleSheet.create({
   noDataContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    // padding: 10,
   },
   noDataText: {
+    color: '#00000060',
     fontSize: 18,
     textAlign: 'center',
     lineHeight: 30,

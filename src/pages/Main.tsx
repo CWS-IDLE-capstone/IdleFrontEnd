@@ -885,7 +885,8 @@ function Main({setIsTabVisible}: any) {
                   shadowColor: 'black',
                 }}>
                 <TouchableOpacity
-                  disabled={routeCoordinates.length == 0 ? true : false}
+                  //일시정지버튼
+                  disabled={routeCoordinates.length === 0 ? true : false}
                   onPressIn={() => {
                     setResultBtn(prev => !prev);
                     setEnergyDistance(
@@ -1070,6 +1071,8 @@ function Main({setIsTabVisible}: any) {
                     borderColor: 'rgba(0, 0, 0, 0.5)',
                   }}>
                   <TouchableOpacity
+                    //정지버튼
+                    disabled={routeCoordinates.length === 0 ? true : false}
                     onPressIn={() => {
                       setResultBtn(prev => !prev);
                       setEnergyDistance(
@@ -1089,6 +1092,18 @@ function Main({setIsTabVisible}: any) {
                           ).toFixed(2),
                         ),
                       );
+                      setAllCoordinates([
+                        ...routeCoordinates,
+                        ...energyCoordinates,
+                      ]);
+                      // setMediumLatitude(mediumLatitudefunc(allCoordinates));
+                      // setMediumLongitude(mediumLongitudefunc(allCoordinates));
+                      // setIsMediumLoading(true);
+                      // console.log('allcoordinates: ', allCoordinates);
+                    }}
+                    onPress={() => {
+                      setMediumLatitude(mediumLatitudefunc(allCoordinates));
+                      setMediumLongitude(mediumLongitudefunc(allCoordinates));
                     }}
                     onPressOut={() => {
                       captureImage();

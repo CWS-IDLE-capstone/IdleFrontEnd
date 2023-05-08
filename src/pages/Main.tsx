@@ -1495,6 +1495,7 @@ function Main({setIsTabVisible}: any) {
             {captureCheck ? (
               <DaonBtn
                 text="확인"
+                touchableStyle={styles.okTouchBtn}
                 style={styles.okBtn}
                 onPressIn={async () => {
                   await getImageAndSendData();
@@ -1534,12 +1535,12 @@ export default Main;
 
 const styles = StyleSheet.create({
   loginTouchBtn: {
-    marginTop: 50,
+    marginTop: 30,
+    width: '70%',
+    alignSelf: 'center',
   },
   loginBtn: {
-    alignSelf: 'center',
     height: 50,
-    width: '70%',
     borderRadius: 12,
   },
   walkcomp: {
@@ -1621,6 +1622,8 @@ const styles = StyleSheet.create({
     zIndex: 1,
     borderRadius: 10,
     alignSelf: 'center',
-    bottom: '-80%',
+  },
+  okTouchBtn: {
+    marginTop: HEIGHT * 0.04,
   },
 });

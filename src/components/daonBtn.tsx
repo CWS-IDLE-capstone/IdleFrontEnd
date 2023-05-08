@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   touchable: {},
   text2: {
     backgroundColor: '#8AA2F8',
-    width: WIDTH * 0.7,
+    // width: WIDTH * 0.7,
     height: 50,
     color: 'white',
     textAlign: 'center',

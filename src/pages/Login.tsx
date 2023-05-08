@@ -253,6 +253,8 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     marginTop: 50,
+    width: '100%',
+    alignSelf: 'center',
   },
   loginBtn2: {
     borderRadius: 12,

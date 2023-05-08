@@ -1620,6 +1620,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     borderRadius: 10,
     alignSelf: 'center',
+    width: '70%',
   },
   okTouchBtn: {
     marginTop: HEIGHT * 0.04,

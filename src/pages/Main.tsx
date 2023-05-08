@@ -1380,7 +1380,7 @@ function Main({setIsTabVisible}: any) {
               ) : null}
             </View> */}
           </View>
-          <View style={{flex: 1.8, backgroundColor: 'yellow'}}>
+          <View style={{flex: 1.8}}>
             {/* <ViewShot ref={ref => (this.viewShot = ref)}> */}
             <ViewShot
               ref={viewShotRef}
@@ -1392,7 +1392,6 @@ function Main({setIsTabVisible}: any) {
               }}>
               <NaverMapView
                 style={{
-                  backgroundColor: 'red',
                   width: '90%',
                   // height: 350,
                   height: HEIGHT * 0.4,
@@ -1491,7 +1490,7 @@ function Main({setIsTabVisible}: any) {
               style={{width: 300, height: 150}}
             /> */}
           </View>
-          <View style={{flex: 1, backgroundColor: 'red'}}>
+          <View style={{flex: 1, backgroundColor: 'white'}}>
             {captureCheck ? (
               <DaonBtn
                 text="확인"

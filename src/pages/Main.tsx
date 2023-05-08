@@ -1386,7 +1386,7 @@ function Main({setIsTabVisible}: any) {
                 zoomControl={true}
                 // showsMyLocationButton={true}
                 center={{
-                  zoom: myPosition ? 15 : 5.5,
+                  zoom: myPosition ? 13.8 : 5.5,
                   //TODO: 산책 종료 후 라인 기록 센터가 현위치에 맞춰져서 라인이 짤릴 수 있음.
                   // 라인 전체를 볼 수 있도록
                   latitude: myPosition?.latitude ? mediumLatitude : 37,

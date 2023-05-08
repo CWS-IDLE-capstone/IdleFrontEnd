@@ -40,7 +40,7 @@ import Icon from '../components/IconRightButton';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/reducer';
 import DaonBtn from '../components/daonBtn';
-
+import geolibGetDistance from 'geolib/es/getDistance';
 interface CoordinateLongitudeLatitude {
   latitude: number;
   longitude: number;
@@ -326,6 +326,118 @@ function Main({setIsTabVisible}: any) {
   //   `currentSeconds: ${currentSeconds}, energySeconds: ${energySeconds}`,
   // );
 
+  // if ((mediumLatitude && mediumLongitude) !== null) {
+  //   const mydistance1 = geolib.getDistance(
+  //     {
+  //       latitude: allCoordinates[0].latitude,
+  //       longitude: allCoordinates[0].longitude,
+  //     },
+  //     {latitude: mediumLatitude, longitude: mediumLongitude},
+  //   );
+  //   setMydistance(mydistance1);
+  //   console.log('mydistance : @@@@@@            &&&:' + mydistance);
+  // }
+
+  // if (!allCoordinates && mediumLatitude !== 0 && mediumLongitude !== 0) {
+  // useEffect(() => {
+  console.log('11111111 mediumLatitude : ', mediumLatitude);
+  console.log('22222222 mediumLongitude : ', mediumLongitude);
+  const [mydistance, setMydistance] = useState<Number | null>(null);
+
+  // useEffect(() => {
+  // if (allCoordinates.length !== 0) {
+  // function workDistance(){
+  // const getMyDistance = () => {
+  // const mydistance1 = useCallback(() => {
+  //   geolibGetDistance(
+  //     {
+  //       latitude: allCoordinates[0].latitude,
+  //       longitude: allCoordinates[0].longitude,
+  //     },
+  //     {latitude: mediumLatitude, longitude: mediumLongitude},
+  //   );
+  console.log('@@@@@@@@@ mediumLatitude : ', mediumLatitude);
+  console.log('@@@@@@@@@ mediumLongitude : ', mediumLongitude);
+  // setMydistance(mydistance1);
+  // return mydistance1;
+  // });
+  // };
+  // useEffect(() => {
+  //   mydistance1();
+  // }, [mediumLatitude, mediumLongitude]);
+  // return getMyDistance;
+  // }
+  // }
+  // }, [allCoordinates, mediumLatitude, mediumLongitude]);
+  // }
+  // const getMyDistance = useCallback(() => {
+  // function getMyDistance() {
+  //   if (allCoordinates.length === 0) {
+  //     console.log('allCoordinates.length === 0');
+  //     return;
+  //   }
+  //   if (allCoordinates.length !== 0) {
+  //     console.log('allCoordinates.length !== 0');
+  //     const point1 = {
+  //       latitude: allCoordinates[0].latitude,
+  //       longitude: allCoordinates[0].longitude,
+  //     };
+  //     console.log('point1: ', point1);
+  //     console.log('point1: ', point1.latitude);
+  //     console.log('point1: ', point1.longitude);
+  //     console.log('point2 typeof: ', typeof point1);
+  //     console.log('point2 typeof: ', typeof allCoordinates[0].latitude);
+
+  //     const point2 = {
+  //       latitude: mediumLatitude,
+  //       longitude: mediumLongitude,
+  //       // latitude: 37.50722714216133,
+  //       // longitude: 127.67020313663637,
+  //     };
+  //     console.log('point2: ', point2);
+  //     console.log('point2 typeof: ', typeof point2);
+  //     console.log('point2 typeof: ', typeof point2.latitude);
+
+  //     // const mydistance1 = geolib.getDistance(point1, point2, 1);
+  //     // setMydistance(mydistance1);
+  //     console.log('@@@@@@@@@ mediumLatitude : ', mediumLatitude);
+  //     console.log('@@@@@@@@@ mediumLongitude : ', mediumLongitude);
+  //     console.log('mydistance : @@@@@@            &&&:' + mydistance);
+  //     console.log('you are ', geolibGetDistance(point1, point2), 'Meter');
+  //     const mds = geolibGetDistance(point1, point2);
+  //     // console.log(
+  //     //   'you are ',
+  //     //   geolibGetDistance(
+  //     //     {
+  //     //       latitude: 37.4068,
+  //     //       longitude: 126.6705,
+  //     //     },
+  //     //     {
+  //     //       latitude: 37.5072,
+  //     //       longitude: 127.6702,
+  //     //     },
+  //     //     1,
+  //     //   ),
+  //     //   'Meter',
+  //     // );
+  //     // return mydistance1;
+  //     return setMydistance(mds);
+  //   } else {
+  //     console.log('allCoordinates.length ??? 0 ');
+  //   }
+  // }
+
+  function getmydis() {
+    // useEffect(() => {
+    if (allCoordinates.length > 0) {
+      console.log('allCoordinates.length > 0인 상태');
+      getMyDistance();
+      // setMydistance(mymymym());
+      console.log('mydistance: ', mydistance);
+      return mydistance;
+    }
+    // }, [allCoordinates, getMyDistance]);
+  }
   function captureImage() {
     setTimeout(async () => {
       const imageUri = await viewShotRef.current.capture();
@@ -846,6 +958,7 @@ function Main({setIsTabVisible}: any) {
                 flex: 1,
                 flexDirection: 'row',
                 width: '100%',
+                justifyContent: 'space-evenly',
                 alignItems: 'center',
               }}>
               <View
@@ -857,7 +970,7 @@ function Main({setIsTabVisible}: any) {
                   <Text
                     style={{
                       textAlign: 'center',
-                      fontSize: 45,
+                      fontSize: 40,
                       fontFamily: 'ConcertOne-Regular',
                       color: 'black',
                     }}>
@@ -880,7 +993,7 @@ function Main({setIsTabVisible}: any) {
               </View>
               <View
                 style={{
-                  flex: 0.8,
+                  width: 100,
                   alignItems: 'center',
                   shadowColor: 'black',
                 }}>
@@ -942,7 +1055,7 @@ function Main({setIsTabVisible}: any) {
               </View>
               <View
                 style={{
-                  flex: 0.9,
+                  flex: 1,
                 }}>
                 <Text
                   style={{
@@ -1006,14 +1119,15 @@ function Main({setIsTabVisible}: any) {
                 width: '100%',
                 flex: 0.5,
                 flexDirection: 'row',
-                justifyContent: 'space-around',
+                justifyContent: 'space-evenly',
                 alignItems: 'center',
-                paddingLeft: 20,
-                paddingRight: 20,
               }}>
+              {/* <View style={{flexDirection: 'row'}}> */}
               <View
                 style={{
                   zIndex: 1,
+                  // width: 100,
+                  flex: 1,
                   alignItems: 'center',
                 }}>
                 {routeCoordinates.length >= 5 ? ( //거리배열이 5개 이상일때만 에너지버튼이 활성화 되도록
@@ -1046,7 +1160,6 @@ function Main({setIsTabVisible}: any) {
                       style={{
                         fontSize: 40,
                         color: energyBtn ? 'red' : '#FFAEC9',
-                        // left: 65,
                       }}
                     />
                   </TouchableOpacity>
@@ -1056,11 +1169,11 @@ function Main({setIsTabVisible}: any) {
                     style={{
                       fontSize: 40,
                       color: energyBtn ? 'red' : '#FFAEC9',
-                      // left: 65,
                     }}
                   />
                 )}
               </View>
+              {/* </View> */}
               <TouchableWithoutFeedback>
                 <View
                   style={{
@@ -1068,7 +1181,7 @@ function Main({setIsTabVisible}: any) {
                     alignItems: 'center',
                     borderLeftWidth: 2,
                     borderRightWidth: 2,
-                    borderColor: 'rgba(0, 0, 0, 0.5)',
+                    borderColor: 'rgba(0, 0, 0, 0.3)',
                   }}>
                   <TouchableOpacity
                     //정지버튼
@@ -1107,6 +1220,13 @@ function Main({setIsTabVisible}: any) {
                     }}
                     onPressOut={() => {
                       captureImage();
+
+                      // getmydis();
+                      // setMydistance(getMyDistance());
+                      // setMydistance(mydistance1());
+                      console.log(mydistance);
+
+                      // setMydistance(getMyDistance());
                     }}>
                     <Ionicons
                       name="stop-circle-outline"
@@ -1119,8 +1239,14 @@ function Main({setIsTabVisible}: any) {
                   </TouchableOpacity>
                 </View>
               </TouchableWithoutFeedback>
-              <View style={{}}>
-                <Text style={{color: 'white'}}>ㅁㅁ</Text>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'center',
+                }}>
+                <TouchableOpacity disabled={true}>
+                  <Ionicons name="list" style={styles.MarkerImage1} />
+                </TouchableOpacity>
               </View>
             </View>
             {/*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  위에는2222번쨰 */}
@@ -1439,7 +1565,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     position: 'absolute',
-    bottom: 0,
+    bottom: -2,
   },
   MarkerView: {
     width: 60,
@@ -1469,6 +1595,7 @@ const styles = StyleSheet.create({
     color: 'black',
     opacity: 0.5,
   },
+  MarkerImage1: {},
   MarkerListView: {
     width: 240,
     height: 60,

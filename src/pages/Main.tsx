@@ -1617,8 +1617,6 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   okBtn: {
-    width: '70%',
-    height: 50,
     zIndex: 1,
     borderRadius: 10,
     alignSelf: 'center',

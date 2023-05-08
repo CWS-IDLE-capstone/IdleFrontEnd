@@ -1272,13 +1272,13 @@ function Main({setIsTabVisible}: any) {
             zIndex: 1,
             position: 'absolute',
             width: WIDTH,
-            height: HEIGHT * 0.7, //HEIGHT * 0.9
+            height: HEIGHT * 0.81,
             top: 0,
           }}>
           <View
             style={{
               top: 10,
-              flex: 1.2,
+              flex: 0.8,
             }}>
             <View
               style={{
@@ -1312,7 +1312,7 @@ function Main({setIsTabVisible}: any) {
               }}>
               오늘도 열심히 산책해서 멋있어요!
             </Text>
-            <View
+            {/* <View
               style={{flexDirection: 'row', justifyContent: 'space-around'}}>
               <View
                 style={{
@@ -1323,23 +1323,23 @@ function Main({setIsTabVisible}: any) {
                   // alignSelf: 'center',
                   marginHorizontal: 20,
                   marginBottom: 10,
-                }}>
-                <Text style={{fontSize: 15, fontWeight: 'bold'}}>
+                }}> */}
+            {/* <Text style={{fontSize: 15, fontWeight: 'bold'}}>
                   산책 결과:{' '}
                 </Text>
                 <Text style={{fontSize: 12}}>
                   거리 {distanceTravelled.toFixed(2)} km{' '}
-                </Text>
-                {/* <Text style={{fontSize: 12}}>처음거리 {firstDistance.toFixed(2)} km , </Text> */}
-                <Text style={{fontSize: 12}}>
+                </Text> */}
+            {/* <Text style={{fontSize: 12}}>처음거리 {firstDistance.toFixed(2)} km , </Text> */}
+            {/* <Text style={{fontSize: 12}}>
                   총 시간{' '}
                   {currentHours < 10 ? `0${currentHours}` : currentHours}:
                   {currentMinutes < 10 ? `0${currentMinutes}` : currentMinutes}:
                   {currentSeconds < 10 ? `0${currentSeconds}` : currentSeconds}
                   {'초'}
                 </Text>
-              </View>
-              {energyBtn ? (
+              </View> */}
+            {/* {energyBtn ? (
                 <View
                   style={{
                     flexDirection: 'column',
@@ -1363,9 +1363,9 @@ function Main({setIsTabVisible}: any) {
                   </Text>
                 </View>
               ) : null}
-            </View>
+            </View> */}
           </View>
-          <View style={{flex: 2}}>
+          <View style={{flex: 1.8, backgroundColor: 'yellow'}}>
             {/* <ViewShot ref={ref => (this.viewShot = ref)}> */}
             <ViewShot
               ref={viewShotRef}
@@ -1379,7 +1379,8 @@ function Main({setIsTabVisible}: any) {
                 style={{
                   backgroundColor: 'red',
                   width: '90%',
-                  height: 350,
+                  // height: 350,
+                  height: HEIGHT * 0.4,
                   marginHorizontal: 20,
                   marginBottom: 10,
                 }}
@@ -1475,19 +1476,11 @@ function Main({setIsTabVisible}: any) {
               style={{width: 300, height: 150}}
             /> */}
           </View>
-          <View style={{flex: 1}}>
+          <View style={{flex: 1, backgroundColor: 'red'}}>
             {captureCheck ? (
-              <TouchableOpacity
-                style={{
-                  backgroundColor: '#8AA2F8',
-                  width: '70%',
-                  height: 50,
-                  zIndex: 1,
-                  alignSelf: 'center',
-                  alignContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 10,
-                }}
+              <DaonBtn
+                text="확인"
+                style={styles.okBtn}
                 onPressIn={async () => {
                   await getImageAndSendData();
                 }}
@@ -1512,19 +1505,8 @@ function Main({setIsTabVisible}: any) {
                   setTabVisible(true);
                   setAllCoordinates([]);
                   // setCamCoordinates([]); //카메라 마커 배열 초기화
-                }}>
-                <Text
-                  style={{
-                    color: 'white',
-                    textAlign: 'center',
-                    textAlignVertical: 'bottom',
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    height: 35,
-                  }}>
-                  확인
-                </Text>
-              </TouchableOpacity>
+                }}
+              />
             ) : null}
           </View>
         </View>
@@ -1566,12 +1548,13 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 40,
     position: 'absolute',
     bottom: -2,
+    zIndex: 2,
   },
   MarkerView: {
     width: 60,
     height: 60,
     // backgroundColor: 'white',
-    zIndex: 1,
+    zIndex: 3,
     position: 'absolute',
     bottom: 0,
     right: 40,
@@ -1614,5 +1597,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     alignSelf: 'center',
     color: 'black',
+  },
+  okBtn: {
+    width: '70%',
+    height: 50,
+    zIndex: 1,
+    borderRadius: 10,
+    alignSelf: 'center',
+    bottom: '-80%',
   },
 });

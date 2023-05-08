@@ -1285,15 +1285,31 @@ function Main({setIsTabVisible}: any) {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  marginHorizontal: 20,
-                  marginBottom: 10,
-                  width: '40%',
-                }}>
-                {year}. {month}. {day} (일)
-              </Text>
+              <View>
+                <Text
+                  style={{
+                    color: 'orange',
+                    fontSize: 25,
+                    fontFamily: 'ConcertOne-Regular',
+                    fontWeight: 'bold',
+                    marginLeft: 20,
+                    marginRight: 70,
+                  }}>
+                  오늘도 열심히 산책해서
+                </Text>
+                <Text
+                  style={{
+                    color: 'orange',
+                    fontSize: 25,
+                    fontFamily: 'ConcertOne-Regular',
+                    fontWeight: 'bold',
+                    marginLeft: 20,
+                    marginRight: 70,
+                    marginBottom: 10,
+                  }}>
+                  멋있어요!
+                </Text>
+              </View>
               <IconRightButton
                 style={styles.share}
                 name="share-google"
@@ -1303,14 +1319,12 @@ function Main({setIsTabVisible}: any) {
             </View>
             <Text
               style={{
-                color: 'orange',
-                fontSize: 25,
-                fontWeight: 'bold',
-                marginLeft: 20,
-                marginRight: 70,
+                fontSize: 20,
+                marginHorizontal: 20,
                 marginBottom: 10,
+                width: '40%',
               }}>
-              오늘도 열심히 산책해서 멋있어요!
+              {year}. {month}. {day} (일)
             </Text>
             {/* <View
               style={{flexDirection: 'row', justifyContent: 'space-around'}}>

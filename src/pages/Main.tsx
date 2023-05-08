@@ -1277,7 +1277,7 @@ function Main({setIsTabVisible}: any) {
           }}>
           <View
             style={{
-              top: 10,
+              top: 15,
               flex: 0.8,
             }}>
             <View
@@ -1320,9 +1320,10 @@ function Main({setIsTabVisible}: any) {
             <Text
               style={{
                 fontSize: 20,
+                fontFamily: 'ConcertOne-Regular',
                 marginHorizontal: 20,
-                marginBottom: 10,
                 width: '40%',
+                color: 'slategray',
               }}>
               {year}. {month}. {day} (일)
             </Text>

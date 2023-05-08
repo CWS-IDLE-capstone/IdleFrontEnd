@@ -1254,6 +1254,7 @@ function Main({setIsTabVisible}: any) {
         ) : (
           <DaonBtn
             text="산책 시작하기"
+            touchableStyle={styles.loginTouchBtn}
             style={styles.loginBtn}
             activeOpacity={0.6}
             onPress={() => {
@@ -1532,9 +1533,11 @@ function Main({setIsTabVisible}: any) {
 export default Main;
 
 const styles = StyleSheet.create({
+  loginTouchBtn: {
+    marginTop: 50,
+  },
   loginBtn: {
     alignSelf: 'center',
-    marginTop: 50,
     height: 50,
     width: '70%',
     borderRadius: 12,

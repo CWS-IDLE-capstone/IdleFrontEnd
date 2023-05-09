@@ -83,17 +83,17 @@ function LoggedInStack() {
         name="Community"
         component={Community}
         options={{
-          title: '게시판',
+          title: '갤러리',
           tabBarActiveTintColor: '#8AA2F8',
 
           tabBarIcon: ({focused}) => (
             <Image
               source={
                 focused
-                  ? require('./src/assets/selectChat.png')
-                  : require('./src/assets/chat.png')
+                  ? require('./src/assets/selectedGallery.png')
+                  : require('./src/assets/Gallery.png')
               }
-              style={{width: 30, height: 30}}
+              style={{width: 33.5, height: 33.5}}
               // style={{width: 35, height: 35}}
             />
           ),

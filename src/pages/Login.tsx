@@ -165,7 +165,8 @@ function Login({navigation}: ScreenProps) {
         /> */}
           <DaonBtn
             text="로그인"
-            style={styles.loginBtn}
+            touchableStyle={styles.loginBtn}
+            style={styles.loginBtn2}
             activeOpacity={0.6}
             onPress={onSubmit}
           />
@@ -252,9 +253,13 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     marginTop: 50,
-    height: 50,
+    width: '100%',
+    alignSelf: 'center',
+  },
+  loginBtn2: {
     borderRadius: 12,
   },
+
   socialLoginCon: {
     flexDirection: 'row',
     // justifyContent: 'space-evenly', //로그인이추가될경우

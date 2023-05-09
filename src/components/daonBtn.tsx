@@ -3,10 +3,10 @@ import {Dimensions, StyleSheet, Text, TouchableOpacity} from 'react-native';
 
 const {width: WIDTH} = Dimensions.get('window');
 
-function DaonBtn({activeOpacity, onPress, text, style}: any) {
+function DaonBtn({activeOpacity, onPress, text, touchableStyle, style}: any) {
   return (
     <TouchableOpacity
-      style={styles.text1}
+      style={[styles.touchable, touchableStyle]}
       activeOpacity={activeOpacity}
       onPress={onPress}>
       <Text style={[styles.text2, style]}>{text}</Text>
@@ -14,11 +14,11 @@ function DaonBtn({activeOpacity, onPress, text, style}: any) {
   );
 }
 const styles = StyleSheet.create({
-  text1: {},
+  touchable: {},
   text2: {
     backgroundColor: '#8AA2F8',
-    // width: WIDTH * 0.4,
-    // height: 40,
+    // width: WIDTH * 0.7,
+    height: 50,
     color: 'white',
     textAlign: 'center',
     textAlignVertical: 'center',

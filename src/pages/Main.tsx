@@ -1132,20 +1132,20 @@ function Main({setIsTabVisible}: any) {
                         ],
                       );
                     }}>
-                    <MaterialCommunityIcons
-                      name="battery-alert-variant-outline"
+                    <Ionicons
+                      name="ios-battery-full-sharp"
                       style={{
                         fontSize: 40,
-                        color: energyBtn ? 'red' : '#FFAEC9',
+                        color: energyBtn ? '#FFAEC9' : '#8AA2F8',
                       }}
                     />
                   </TouchableOpacity>
                 ) : (
-                  <MaterialCommunityIcons
-                    name="battery-alert-variant-outline"
+                  <Ionicons
+                    name="ios-battery-half-sharp"
                     style={{
                       fontSize: 40,
-                      color: energyBtn ? 'red' : '#FFAEC9',
+                      color: energyBtn ? '#FFAEC9' : '#FFAEC9',
                     }}
                   />
                 )}
@@ -1292,7 +1292,7 @@ function Main({setIsTabVisible}: any) {
                 style={styles.share}
                 name="share-google"
                 size={35}
-                color={'black'}
+                color={'white'}
               />
             </View>
             <Text
@@ -1536,15 +1536,17 @@ const styles = StyleSheet.create({
   MarkerListView: {
     width: 240,
     height: 60,
-    backgroundColor: 'lightgray',
+    backgroundColor: '#FFFFFF50',
     zIndex: 1,
     position: 'absolute',
-    bottom: HEIGHT * 0.23,
+    bottom: HEIGHT * 0.21,
     right: 5,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#000000',
   },
   MarkerListText: {
     fontSize: 8,

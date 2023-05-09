@@ -59,8 +59,8 @@ const CalanderScreen = () => {
       const fetchData = async () => {
         try {
           setLoading(true);
-          // const token = await AsyncStorage.getItem('accessToken');
-          const token = accessToken;
+          const token = await AsyncStorage.getItem('accessToken');
+          // const token = accessToken;
           if (token !== null) {
             const response = await axios.get(
               'http://awsv4-env.eba-mre2mcnv.ap-northeast-2.elasticbeanstalk.com/api/walk/list',
@@ -269,9 +269,10 @@ const styles = StyleSheet.create({
   noDataContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    // padding: 10,
   },
   noDataText: {
+    color: '#00000060',
     fontSize: 18,
     textAlign: 'center',
     lineHeight: 30,

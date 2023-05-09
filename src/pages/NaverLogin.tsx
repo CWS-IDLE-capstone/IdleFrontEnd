@@ -85,11 +85,11 @@ function NaverLogin({navigation}: ScreenProps) {
         style={styles.webview}
         onNavigationStateChange={handleWebViewNavigationStateChange}
       />
-      {loading && (
+      {/* {loading && (
         <View style={styles.loadingContainer}>
           <Text style={styles.loadingText}>로그인중...</Text>
         </View>
-      )}
+      )} */}
     </View>
   );
 }

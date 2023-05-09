@@ -40,6 +40,7 @@ import Icon from '../components/IconRightButton';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/reducer';
 import DaonBtn from '../components/daonBtn';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface CoordinateLongitudeLatitude {
   latitude: number;
@@ -111,6 +112,7 @@ function Main({setIsTabVisible}: any) {
   const [camMarkerBtn, setCamMarkerBtn] = useState(false); //카메라 마커 버튼 state
   const [camBackBtn, setCamBackBtn] = useState(false); //카메라 마커 뒤로가기 버튼 state
   const [camDeleteBtn, setCamDeleteBtn] = useState(false); //카메라 사진 삭제 버튼 state
+  // const [updateCamCoord, setupdateCamCoord] = useState(false); //카메라 배열 업데이트 버튼 state
 
   const [currentHours, setCurrentHours] = useState<Number>(0); //시간
   const [currentMinutes, setCurrentMinutes] = useState<Number>(0); //분
@@ -215,6 +217,41 @@ function Main({setIsTabVisible}: any) {
     };
   }, [startBtn, energyBtn, distanceTravelled]); //prevLatLng TODO 무한렌더링 문제 해결해야함
 
+  useEffect(() => {
+    const getCamCoordinates = async () => {
+      try {
+        const camCoordinatesString = await AsyncStorage.getItem(
+          'camCoordinates',
+        );
+        if (camCoordinatesString !== null) {
+          setCamCoordinates(JSON.parse(camCoordinatesString));
+        }
+        console.log('getItem Success');
+        console.log(camCoordinates);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getCamCoordinates();
+  }, []);
+
+  useEffect(() => {
+    const onSavePress = async () => {
+      try {
+        await AsyncStorage.setItem(
+          'camCoordinates',
+          JSON.stringify(camCoordinates),
+        );
+        console.log('Cam coordinates saved successfully');
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    onSavePress();
+  }, [camCoordinates]);
+
   const calcDistance = (
     prevLatLng: CoordinateLongitudeLatitude,
     newLatLng: CoordinateLongitudeLatitude,
@@ -259,6 +296,7 @@ function Main({setIsTabVisible}: any) {
       res => {
         if (res.didCancel) {
           //취소했을 경우
+          setCamCoordinates(prevCoordinates => prevCoordinates.slice(0, -1)); // 마지막 요소를 제거
           return;
         }
         setCamCoordinates(prevCoordinates =>
@@ -493,6 +531,9 @@ function Main({setIsTabVisible}: any) {
                         },
                         {
                           text: '취소',
+                          onPress: () => {
+                            setCamDeleteBtn(false);
+                          },
                         },
                       ],
                     );
@@ -643,6 +684,7 @@ function Main({setIsTabVisible}: any) {
             width={40}
             height={42}
             image={require('../assets/dogIcon2.png')}
+            zIndex={3}
           />
         )}
         {myPosition?.latitude &&
@@ -1049,6 +1091,7 @@ function Main({setIsTabVisible}: any) {
                     borderColor: 'rgba(0, 0, 0, 0.5)',
                   }}>
                   <TouchableOpacity
+                    disabled={routeCoordinates.length == 0 ? true : false}
                     onPressIn={() => {
                       setResultBtn(prev => !prev);
                       setEnergyDistance(
@@ -1068,6 +1111,18 @@ function Main({setIsTabVisible}: any) {
                           ).toFixed(2),
                         ),
                       );
+                      setAllCoordinates([
+                        ...routeCoordinates,
+                        ...energyCoordinates,
+                      ]);
+                      // setMediumLatitude(mediumLatitudefunc(allCoordinates));
+                      // setMediumLongitude(mediumLongitudefunc(allCoordinates));
+                      // setIsMediumLoading(true);
+                      // console.log('allcoordinates: ', allCoordinates);
+                    }}
+                    onPress={() => {
+                      setMediumLatitude(mediumLatitudefunc(allCoordinates));
+                      setMediumLongitude(mediumLongitudefunc(allCoordinates));
                     }}
                     onPressOut={() => {
                       captureImage();

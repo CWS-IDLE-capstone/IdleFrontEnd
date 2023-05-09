@@ -1491,59 +1491,10 @@ function Main({setIsTabVisible}: any) {
               style={{width: 300, height: 150}}
             /> */}
           </View>
-          {/* <View style={{flex: 1, backgroundColor: 'white'}}>
-            {captureCheck ? (
-              <DaonBtn
-                text="확인"
-                touchableStyle={styles.okTouchBtn}
-                style={styles.okBtn}
-                onPressIn={async () => {
-                  await getImageAndSendData();
-                  console.log('확인버튼클릭');
-                }}
-                onPress={() => {
-                  setResultBtn(false); //결과 화면 닫기
-                  setStartBtn(prev => !prev); //스타트 버튼 열기
-                  reset(); //시간초기화
-                  Ereset(); //E시간초기화
-                  setRouteCoordinates([]); //폴리라인 배열 초기화
-                  setEnergyCoordinates([]); //에너지 떨어짐 배열 초기화
-                  setDistanceTravelled(0); //측정거리 초기화
-                  setPrevLatLng(null); //이전거리 초기화
-                  setEnergyBtn(false); //에너지 떨어짐 버튼 초기화
-                  setFirstDistance(0); //측정 거리 초기화
-                  setEnergyDistance(0); //에너지 떨어짐 거리 초기화
-                  setDistance(0);
-                  setStartTime('');
-                  setFinishTime('');
-                  setEnergyFinishTime('');
-                  setEnergyFinishDistance(0);
-                  setCaptureCheck(false);
-                  setTabVisible(true);
-                  setAllCoordinates([]);
-                  // setCamCoordinates([]); //카메라 마커 배열 초기화
-                }}
-              />
-            ) : null}
-          </View>
-        </View>
-      ) : null}
-    </View>
-  );
-} */}
-          <View style={{flex: 1}}>
+          <View style={{flex: 1, backgroundColor: 'white'}}>
             {captureCheck ? (
               <TouchableOpacity
-                style={{
-                  backgroundColor: '#8AA2F8',
-                  width: '70%',
-                  height: 50,
-                  zIndex: 1,
-                  alignSelf: 'center',
-                  alignContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 10,
-                }}
+                style={styles.okBtn}
                 onPressIn={async () => {
                   await getImageAndSendData();
                 }}
@@ -1569,17 +1520,7 @@ function Main({setIsTabVisible}: any) {
                   setAllCoordinates([]);
                   // setCamCoordinates([]); //카메라 마커 배열 초기화
                 }}>
-                <Text
-                  style={{
-                    color: 'white',
-                    textAlign: 'center',
-                    textAlignVertical: 'bottom',
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    height: 35,
-                  }}>
-                  확인
-                </Text>
+                <Text style={styles.okBtnText}>확인</Text>
               </TouchableOpacity>
             ) : null}
           </View>
@@ -1675,12 +1616,19 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   okBtn: {
-    zIndex: 1,
-    borderRadius: 10,
-    alignSelf: 'center',
+    backgroundColor: '#8AA2F8',
     width: '70%',
-  },
-  okTouchBtn: {
+    height: 50,
+    zIndex: 1,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
     marginTop: HEIGHT * 0.04,
+  },
+  okBtnText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

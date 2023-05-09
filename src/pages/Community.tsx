@@ -33,6 +33,7 @@ function Community() {
   const [bigImgbtn, setBigImgbtn] = useState(false);
   const [bigImg, setBigImg] = useState();
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const getCamCoordinates = async () => {
@@ -116,7 +117,8 @@ function Community() {
             <Image
               source={{uri: bigImg}}
               style={styles.bigImg}
-              resizeMode="stretch"
+              resizeMode="cover"
+              onLoad={prev => setIsLoading(!prev)}
             />
           </TouchableOpacity>
         </View>

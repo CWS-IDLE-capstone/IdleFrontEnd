@@ -33,6 +33,7 @@ function Community() {
   const [bigImgbtn, setBigImgbtn] = useState(false);
   const [bigImg, setBigImg] = useState();
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getCamCoordinates = async () => {
@@ -103,6 +104,7 @@ function Community() {
                   width: '100%',
                   height: 150,
                 }}
+                onLoad={prev => setIsLoading(!prev)}
               />
             </TouchableOpacity>
           ))}
@@ -116,7 +118,7 @@ function Community() {
             <Image
               source={{uri: bigImg}}
               style={styles.bigImg}
-              resizeMode="stretch"
+              resizeMode="cover"
             />
           </TouchableOpacity>
         </View>
@@ -138,14 +140,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     top: 5,
     borderRadius: 10,
+    resizeMode: 'cover',
   },
   bigImgView: {
-    width: WIDTH * 0.9,
-    height: HEIGHT * 0.8,
+    width: WIDTH * 0.95,
+    height: HEIGHT * 0.6,
     position: 'absolute',
     alignContent: 'center',
     alignSelf: 'center',
-    top: 10,
+    top: 40,
     backgroundColor: 'white',
     borderRadius: 10,
     borderWidth: 2,

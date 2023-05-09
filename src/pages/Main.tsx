@@ -40,7 +40,7 @@ import Icon from '../components/IconRightButton';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/reducer';
 import DaonBtn from '../components/daonBtn';
-
+import geolibGetDistance from 'geolib/es/getDistance';
 interface CoordinateLongitudeLatitude {
   latitude: number;
   longitude: number;
@@ -90,10 +90,10 @@ function Main({setIsTabVisible}: any) {
 
   const [camResponse, setCamResponse] = useState(null);
   const [camdogBtn, setCamdogBtn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isMediumLoading, setIsMediumLoading] = useState(false);
   const [mediumLatitude, setMediumLatitude] = useState<number>(0);
   const [mediumLongitude, setMediumLongitude] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState(true);
 
   const [distanceTravelled, setDistanceTravelled] = useState<number>(0); //거리
   const [firstDistance, setFirstDistance] = useState<number>(0); //측정 거리
@@ -326,6 +326,118 @@ function Main({setIsTabVisible}: any) {
   //   `currentSeconds: ${currentSeconds}, energySeconds: ${energySeconds}`,
   // );
 
+  // if ((mediumLatitude && mediumLongitude) !== null) {
+  //   const mydistance1 = geolib.getDistance(
+  //     {
+  //       latitude: allCoordinates[0].latitude,
+  //       longitude: allCoordinates[0].longitude,
+  //     },
+  //     {latitude: mediumLatitude, longitude: mediumLongitude},
+  //   );
+  //   setMydistance(mydistance1);
+  //   console.log('mydistance : @@@@@@            &&&:' + mydistance);
+  // }
+
+  // if (!allCoordinates && mediumLatitude !== 0 && mediumLongitude !== 0) {
+  // useEffect(() => {
+  console.log('11111111 mediumLatitude : ', mediumLatitude);
+  console.log('22222222 mediumLongitude : ', mediumLongitude);
+  const [mydistance, setMydistance] = useState<Number | null>(null);
+
+  // useEffect(() => {
+  // if (allCoordinates.length !== 0) {
+  // function workDistance(){
+  // const getMyDistance = () => {
+  // const mydistance1 = useCallback(() => {
+  //   geolibGetDistance(
+  //     {
+  //       latitude: allCoordinates[0].latitude,
+  //       longitude: allCoordinates[0].longitude,
+  //     },
+  //     {latitude: mediumLatitude, longitude: mediumLongitude},
+  //   );
+  console.log('@@@@@@@@@ mediumLatitude : ', mediumLatitude);
+  console.log('@@@@@@@@@ mediumLongitude : ', mediumLongitude);
+  // setMydistance(mydistance1);
+  // return mydistance1;
+  // });
+  // };
+  // useEffect(() => {
+  //   mydistance1();
+  // }, [mediumLatitude, mediumLongitude]);
+  // return getMyDistance;
+  // }
+  // }
+  // }, [allCoordinates, mediumLatitude, mediumLongitude]);
+  // }
+  // const getMyDistance = useCallback(() => {
+  // function getMyDistance() {
+  //   if (allCoordinates.length === 0) {
+  //     console.log('allCoordinates.length === 0');
+  //     return;
+  //   }
+  //   if (allCoordinates.length !== 0) {
+  //     console.log('allCoordinates.length !== 0');
+  //     const point1 = {
+  //       latitude: allCoordinates[0].latitude,
+  //       longitude: allCoordinates[0].longitude,
+  //     };
+  //     console.log('point1: ', point1);
+  //     console.log('point1: ', point1.latitude);
+  //     console.log('point1: ', point1.longitude);
+  //     console.log('point2 typeof: ', typeof point1);
+  //     console.log('point2 typeof: ', typeof allCoordinates[0].latitude);
+
+  //     const point2 = {
+  //       latitude: mediumLatitude,
+  //       longitude: mediumLongitude,
+  //       // latitude: 37.50722714216133,
+  //       // longitude: 127.67020313663637,
+  //     };
+  //     console.log('point2: ', point2);
+  //     console.log('point2 typeof: ', typeof point2);
+  //     console.log('point2 typeof: ', typeof point2.latitude);
+
+  //     // const mydistance1 = geolib.getDistance(point1, point2, 1);
+  //     // setMydistance(mydistance1);
+  //     console.log('@@@@@@@@@ mediumLatitude : ', mediumLatitude);
+  //     console.log('@@@@@@@@@ mediumLongitude : ', mediumLongitude);
+  //     console.log('mydistance : @@@@@@            &&&:' + mydistance);
+  //     console.log('you are ', geolibGetDistance(point1, point2), 'Meter');
+  //     const mds = geolibGetDistance(point1, point2);
+  //     // console.log(
+  //     //   'you are ',
+  //     //   geolibGetDistance(
+  //     //     {
+  //     //       latitude: 37.4068,
+  //     //       longitude: 126.6705,
+  //     //     },
+  //     //     {
+  //     //       latitude: 37.5072,
+  //     //       longitude: 127.6702,
+  //     //     },
+  //     //     1,
+  //     //   ),
+  //     //   'Meter',
+  //     // );
+  //     // return mydistance1;
+  //     return setMydistance(mds);
+  //   } else {
+  //     console.log('allCoordinates.length ??? 0 ');
+  //   }
+  // }
+
+  function getmydis() {
+    // useEffect(() => {
+    if (allCoordinates.length > 0) {
+      console.log('allCoordinates.length > 0인 상태');
+      getMyDistance();
+      // setMydistance(mymymym());
+      console.log('mydistance: ', mydistance);
+      return mydistance;
+    }
+    // }, [allCoordinates, getMyDistance]);
+  }
   function captureImage() {
     setTimeout(async () => {
       const imageUri = await viewShotRef.current.capture();
@@ -470,8 +582,8 @@ function Main({setIsTabVisible}: any) {
                 //     ? {uri: camcoordinate.uri}
                 //     : require('../assets/camera.png')
                 // }
-                width={camcoordinate.isLarge ? 200 : 80}
-                height={camcoordinate.isLarge ? 200 : 80}
+                width={camcoordinate.isLarge ? 200 : 30}
+                height={camcoordinate.isLarge ? 200 : 30}
                 // width={50}
                 // height={50}
                 // TODO 마커 리스트에 사진 삭제 버튼 하나 추가해서 사진 삭제 버튼 누르고(사진 삭제 state 활성화) 사진 마커를 클릭할시 삭제하게끔
@@ -503,38 +615,35 @@ function Main({setIsTabVisible}: any) {
                       return newCoordinates;
                     });
                   }
-                }}>
+                }}
+                // onClick={() => {
+                //   // !camcoordinate.isLarge &&
+                //   setCamCoordinates(prev => {
+                //     const newCoordinates = [...prev];
+                //     newCoordinates[index].isLarge = !camcoordinate.isLarge;
+                //     return newCoordinates;
+                //   });
+                // }}
+              >
                 <View
                   style={{
-                    width: camcoordinate.isLarge ? 200 : 80,
-                    height: camcoordinate.isLarge ? 200 : 80,
-                    backgroundColor: camcoordinate.isLarge
-                      ? // ? '#B6E59E'
-                        // : '#B6E59E',
-                        '#5472DE'
-                      : '#5472DE',
-                    borderRadius: camcoordinate.isLarge ? 20 : 10,
-
-                    // alignContent: 'center',
-                    // alignSelf: 'center',
+                    width: camcoordinate.isLarge ? 200 : 30,
+                    height: camcoordinate.isLarge ? 200 : 30,
+                    backgroundColor: camcoordinate.isLarge ? 'skyblue' : null,
+                    borderRadius: 30,
+                    alignContent: 'center',
+                    alignSelf: 'center',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    borderWidth: camcoordinate.isLarge ? 2 : 1,
-                    borderColor: '#3849CC',
-                    borderStyle: 'solid',
                   }}>
                   {!camcoordinate.isLarge && (
                     <Image
-                      source={{uri: camcoordinate.uri}}
+                      source={require('../assets/camera.png')}
                       style={{
-                        width: '90%',
-                        height: '90%',
+                        width: 30,
+                        height: 30,
                         alignContent: 'center',
                         alignSelf: 'center',
                         alignItems: 'center',
-                        borderRadius: 5,
-                        borderWidth: 1,
-                        borderColor: '#3849CC',
                       }}
                     />
                   )}
@@ -542,19 +651,38 @@ function Main({setIsTabVisible}: any) {
                     <Image
                       source={{uri: camcoordinate.uri}}
                       style={{
-                        width: '91%',
-                        height: '91%',
-                        borderRadius: 10,
-                        borderWidth: 2,
-                        borderColor: '#3849CC',
+                        width: 180,
+                        height: 180,
+                        top: 10,
+                        borderRadius: 30,
                       }}
                       onLoad={prev => setIsLoading(!prev)}
                     />
                   )}
+                  {/* <Image
+                source={{uri: camcoordinate.uri}}
+                style={{width: 180, height: 180, top: 10, borderRadius: 30}}
+                onLoad={() => setIsLoading(false)}
+              /> */}
 
+                  {/* <Image
+                source={
+                  camcoordinate.isLarge
+                    ? {uri: camcoordinate.uri}
+                    : require('../assets/camera.png')
+                }
+                style={{
+                  top: camcoordinate.isLarge ? 10 : null,
+                  width: camcoordinate.isLarge ? 180 : 30,
+                  height: camcoordinate.isLarge ? 180 : 30,
+                  borderRadius: camcoordinate.isLarge ? 30 : null,
+                  resizeMode: 'stretch',
+                }}
+              /> */}
                   {camDeleteBtn ? (
                     <TouchableOpacity
                       style={{
+                        // backgroundColor: 'yellow',
                         width: 10,
                         height: 10,
                         position: 'absolute',
@@ -585,6 +713,11 @@ function Main({setIsTabVisible}: any) {
               longitude: coordinate.longitude,
             }}
             image={require('../assets/hotplace.png')}
+            //   source={
+            //     img
+            //     ? {uri: response?.assets[0]?.uri}
+            //     : require('../assets/puppy.jpg')
+            // }
             width={40}
             height={40}
             onClick={() => {
@@ -825,6 +958,7 @@ function Main({setIsTabVisible}: any) {
                 flex: 1,
                 flexDirection: 'row',
                 width: '100%',
+                justifyContent: 'space-evenly',
                 alignItems: 'center',
               }}>
               <View
@@ -836,7 +970,7 @@ function Main({setIsTabVisible}: any) {
                   <Text
                     style={{
                       textAlign: 'center',
-                      fontSize: 45,
+                      fontSize: 40,
                       fontFamily: 'ConcertOne-Regular',
                       color: 'black',
                     }}>
@@ -859,12 +993,13 @@ function Main({setIsTabVisible}: any) {
               </View>
               <View
                 style={{
-                  flex: 0.8,
+                  width: 100,
                   alignItems: 'center',
                   shadowColor: 'black',
                 }}>
                 <TouchableOpacity
-                  disabled={routeCoordinates.length == 0 ? true : false}
+                  //일시정지버튼
+                  disabled={routeCoordinates.length === 0 ? true : false}
                   onPressIn={() => {
                     setResultBtn(prev => !prev);
                     setEnergyDistance(
@@ -920,7 +1055,7 @@ function Main({setIsTabVisible}: any) {
               </View>
               <View
                 style={{
-                  flex: 0.9,
+                  flex: 1,
                 }}>
                 <Text
                   style={{
@@ -984,14 +1119,15 @@ function Main({setIsTabVisible}: any) {
                 width: '100%',
                 flex: 0.5,
                 flexDirection: 'row',
-                justifyContent: 'space-around',
+                justifyContent: 'space-evenly',
                 alignItems: 'center',
-                paddingLeft: 20,
-                paddingRight: 20,
               }}>
+              {/* <View style={{flexDirection: 'row'}}> */}
               <View
                 style={{
                   zIndex: 1,
+                  // width: 100,
+                  flex: 1,
                   alignItems: 'center',
                 }}>
                 {routeCoordinates.length >= 5 ? ( //거리배열이 5개 이상일때만 에너지버튼이 활성화 되도록
@@ -1024,7 +1160,6 @@ function Main({setIsTabVisible}: any) {
                       style={{
                         fontSize: 40,
                         color: energyBtn ? 'red' : '#FFAEC9',
-                        // left: 65,
                       }}
                     />
                   </TouchableOpacity>
@@ -1034,11 +1169,11 @@ function Main({setIsTabVisible}: any) {
                     style={{
                       fontSize: 40,
                       color: energyBtn ? 'red' : '#FFAEC9',
-                      // left: 65,
                     }}
                   />
                 )}
               </View>
+              {/* </View> */}
               <TouchableWithoutFeedback>
                 <View
                   style={{
@@ -1046,9 +1181,11 @@ function Main({setIsTabVisible}: any) {
                     alignItems: 'center',
                     borderLeftWidth: 2,
                     borderRightWidth: 2,
-                    borderColor: 'rgba(0, 0, 0, 0.5)',
+                    borderColor: 'rgba(0, 0, 0, 0.3)',
                   }}>
                   <TouchableOpacity
+                    //정지버튼
+                    disabled={routeCoordinates.length === 0 ? true : false}
                     onPressIn={() => {
                       setResultBtn(prev => !prev);
                       setEnergyDistance(
@@ -1068,9 +1205,28 @@ function Main({setIsTabVisible}: any) {
                           ).toFixed(2),
                         ),
                       );
+                      setAllCoordinates([
+                        ...routeCoordinates,
+                        ...energyCoordinates,
+                      ]);
+                      // setMediumLatitude(mediumLatitudefunc(allCoordinates));
+                      // setMediumLongitude(mediumLongitudefunc(allCoordinates));
+                      // setIsMediumLoading(true);
+                      // console.log('allcoordinates: ', allCoordinates);
+                    }}
+                    onPress={() => {
+                      setMediumLatitude(mediumLatitudefunc(allCoordinates));
+                      setMediumLongitude(mediumLongitudefunc(allCoordinates));
                     }}
                     onPressOut={() => {
                       captureImage();
+
+                      // getmydis();
+                      // setMydistance(getMyDistance());
+                      // setMydistance(mydistance1());
+                      console.log(mydistance);
+
+                      // setMydistance(getMyDistance());
                     }}>
                     <Ionicons
                       name="stop-circle-outline"
@@ -1083,8 +1239,14 @@ function Main({setIsTabVisible}: any) {
                   </TouchableOpacity>
                 </View>
               </TouchableWithoutFeedback>
-              <View style={{}}>
-                <Text style={{color: 'white'}}>ㅁㅁ</Text>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'center',
+                }}>
+                <TouchableOpacity disabled={true}>
+                  <Ionicons name="list" style={styles.MarkerImage1} />
+                </TouchableOpacity>
               </View>
             </View>
             {/*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  위에는2222번쨰 */}
@@ -1092,6 +1254,7 @@ function Main({setIsTabVisible}: any) {
         ) : (
           <DaonBtn
             text="산책 시작하기"
+            touchableStyle={styles.loginTouchBtn}
             style={styles.loginBtn}
             activeOpacity={0.6}
             onPress={() => {
@@ -1110,28 +1273,44 @@ function Main({setIsTabVisible}: any) {
             zIndex: 1,
             position: 'absolute',
             width: WIDTH,
-            height: HEIGHT * 0.7, //HEIGHT * 0.9
+            height: HEIGHT * 0.81,
             top: 0,
           }}>
           <View
             style={{
-              top: 10,
-              flex: 1.2,
+              top: 15,
+              flex: 0.8,
             }}>
             <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  marginHorizontal: 20,
-                  marginBottom: 10,
-                  width: '40%',
-                }}>
-                {year}. {month}. {day} (일)
-              </Text>
+              <View>
+                <Text
+                  style={{
+                    color: 'orange',
+                    fontSize: 25,
+                    fontFamily: 'ConcertOne-Regular',
+                    fontWeight: 'bold',
+                    marginLeft: 20,
+                    marginRight: 70,
+                  }}>
+                  오늘도 열심히 산책해서
+                </Text>
+                <Text
+                  style={{
+                    color: 'orange',
+                    fontSize: 25,
+                    fontFamily: 'ConcertOne-Regular',
+                    fontWeight: 'bold',
+                    marginLeft: 20,
+                    marginRight: 70,
+                    marginBottom: 10,
+                  }}>
+                  멋있어요!
+                </Text>
+              </View>
               <IconRightButton
                 style={styles.share}
                 name="share-google"
@@ -1141,16 +1320,15 @@ function Main({setIsTabVisible}: any) {
             </View>
             <Text
               style={{
-                color: 'orange',
-                fontSize: 25,
-                fontWeight: 'bold',
-                marginLeft: 20,
-                marginRight: 70,
-                marginBottom: 10,
+                fontSize: 20,
+                fontFamily: 'ConcertOne-Regular',
+                marginHorizontal: 20,
+                width: '40%',
+                color: 'slategray',
               }}>
-              오늘도 열심히 산책해서 멋있어요!
+              {year}. {month}. {day} (일)
             </Text>
-            <View
+            {/* <View
               style={{flexDirection: 'row', justifyContent: 'space-around'}}>
               <View
                 style={{
@@ -1161,23 +1339,23 @@ function Main({setIsTabVisible}: any) {
                   // alignSelf: 'center',
                   marginHorizontal: 20,
                   marginBottom: 10,
-                }}>
-                <Text style={{fontSize: 15, fontWeight: 'bold'}}>
+                }}> */}
+            {/* <Text style={{fontSize: 15, fontWeight: 'bold'}}>
                   산책 결과:{' '}
                 </Text>
                 <Text style={{fontSize: 12}}>
                   거리 {distanceTravelled.toFixed(2)} km{' '}
-                </Text>
-                {/* <Text style={{fontSize: 12}}>처음거리 {firstDistance.toFixed(2)} km , </Text> */}
-                <Text style={{fontSize: 12}}>
+                </Text> */}
+            {/* <Text style={{fontSize: 12}}>처음거리 {firstDistance.toFixed(2)} km , </Text> */}
+            {/* <Text style={{fontSize: 12}}>
                   총 시간{' '}
                   {currentHours < 10 ? `0${currentHours}` : currentHours}:
                   {currentMinutes < 10 ? `0${currentMinutes}` : currentMinutes}:
                   {currentSeconds < 10 ? `0${currentSeconds}` : currentSeconds}
                   {'초'}
                 </Text>
-              </View>
-              {energyBtn ? (
+              </View> */}
+            {/* {energyBtn ? (
                 <View
                   style={{
                     flexDirection: 'column',
@@ -1201,9 +1379,9 @@ function Main({setIsTabVisible}: any) {
                   </Text>
                 </View>
               ) : null}
-            </View>
+            </View> */}
           </View>
-          <View style={{flex: 2}}>
+          <View style={{flex: 1.8}}>
             {/* <ViewShot ref={ref => (this.viewShot = ref)}> */}
             <ViewShot
               ref={viewShotRef}
@@ -1215,16 +1393,16 @@ function Main({setIsTabVisible}: any) {
               }}>
               <NaverMapView
                 style={{
-                  backgroundColor: 'red',
                   width: '90%',
-                  height: 350,
+                  // height: 350,
+                  height: HEIGHT * 0.4,
                   marginHorizontal: 20,
                   marginBottom: 10,
                 }}
                 zoomControl={true}
                 // showsMyLocationButton={true}
                 center={{
-                  zoom: myPosition ? 15 : 5.5,
+                  zoom: myPosition ? 13.8 : 5.5,
                   //TODO: 산책 종료 후 라인 기록 센터가 현위치에 맞춰져서 라인이 짤릴 수 있음.
                   // 라인 전체를 볼 수 있도록
                   latitude: myPosition?.latitude ? mediumLatitude : 37,
@@ -1313,6 +1491,46 @@ function Main({setIsTabVisible}: any) {
               style={{width: 300, height: 150}}
             /> */}
           </View>
+          {/* <View style={{flex: 1, backgroundColor: 'white'}}>
+            {captureCheck ? (
+              <DaonBtn
+                text="확인"
+                touchableStyle={styles.okTouchBtn}
+                style={styles.okBtn}
+                onPressIn={async () => {
+                  await getImageAndSendData();
+                  console.log('확인버튼클릭');
+                }}
+                onPress={() => {
+                  setResultBtn(false); //결과 화면 닫기
+                  setStartBtn(prev => !prev); //스타트 버튼 열기
+                  reset(); //시간초기화
+                  Ereset(); //E시간초기화
+                  setRouteCoordinates([]); //폴리라인 배열 초기화
+                  setEnergyCoordinates([]); //에너지 떨어짐 배열 초기화
+                  setDistanceTravelled(0); //측정거리 초기화
+                  setPrevLatLng(null); //이전거리 초기화
+                  setEnergyBtn(false); //에너지 떨어짐 버튼 초기화
+                  setFirstDistance(0); //측정 거리 초기화
+                  setEnergyDistance(0); //에너지 떨어짐 거리 초기화
+                  setDistance(0);
+                  setStartTime('');
+                  setFinishTime('');
+                  setEnergyFinishTime('');
+                  setEnergyFinishDistance(0);
+                  setCaptureCheck(false);
+                  setTabVisible(true);
+                  setAllCoordinates([]);
+                  // setCamCoordinates([]); //카메라 마커 배열 초기화
+                }}
+              />
+            ) : null}
+          </View>
+        </View>
+      ) : null}
+    </View>
+  );
+} */}
           <View style={{flex: 1}}>
             {captureCheck ? (
               <TouchableOpacity
@@ -1374,11 +1592,13 @@ function Main({setIsTabVisible}: any) {
 export default Main;
 
 const styles = StyleSheet.create({
-  loginBtn: {
-    alignSelf: 'center',
-    marginTop: 50,
-    height: 50,
+  loginTouchBtn: {
+    marginTop: 30,
     width: '70%',
+    alignSelf: 'center',
+  },
+  loginBtn: {
+    height: 50,
     borderRadius: 12,
   },
   walkcomp: {
@@ -1403,13 +1623,14 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     position: 'absolute',
-    bottom: 0,
+    bottom: -2,
+    zIndex: 2,
   },
   MarkerView: {
     width: 60,
     height: 60,
     // backgroundColor: 'white',
-    zIndex: 1,
+    zIndex: 3,
     position: 'absolute',
     bottom: 0,
     right: 40,
@@ -1433,6 +1654,7 @@ const styles = StyleSheet.create({
     color: 'black',
     opacity: 0.5,
   },
+  MarkerImage1: {},
   MarkerListView: {
     width: 240,
     height: 60,
@@ -1451,5 +1673,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     alignSelf: 'center',
     color: 'black',
+  },
+  okBtn: {
+    zIndex: 1,
+    borderRadius: 10,
+    alignSelf: 'center',
+    width: '70%',
+  },
+  okTouchBtn: {
+    marginTop: HEIGHT * 0.04,
   },
 });

@@ -1195,20 +1195,21 @@ function Main({setIsTabVisible}: any) {
                 <Text
                   style={{
                     color: 'orange',
-                    fontSize: 25,
-                    fontFamily: 'ConcertOne-Regular',
-                    fontWeight: 'bold',
+                    fontSize: 22,
+                    fontFamily: 'Binggrae-Bold',
+                    // fontWeight: 'bold',
                     marginLeft: 20,
                     marginRight: 70,
                   }}>
-                  오늘도 열심히 산책해서
+                  오늘도 열심히 산책한 당신
                 </Text>
                 <Text
                   style={{
                     color: 'orange',
-                    fontSize: 25,
-                    fontFamily: 'ConcertOne-Regular',
-                    fontWeight: 'bold',
+                    fontSize: 20,
+                    // fontFamily: 'ConcertOne-Regular',
+                    fontFamily: 'Binggrae-Bold',
+                    // fontWeight: 'bold',
                     marginLeft: 20,
                     marginRight: 70,
                     marginBottom: 10,

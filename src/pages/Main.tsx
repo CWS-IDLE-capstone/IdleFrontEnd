@@ -1125,13 +1125,6 @@ function Main({setIsTabVisible}: any) {
                     }}
                     onPressOut={() => {
                       captureImage();
-
-                      // getmydis();
-                      // setMydistance(getMyDistance());
-                      // setMydistance(mydistance1());
-                      console.log(mydistance);
-
-                      // setMydistance(getMyDistance());
                     }}>
                     <Ionicons
                       name="stop-circle-outline"

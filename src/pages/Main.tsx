@@ -410,118 +410,6 @@ function Main({setIsTabVisible}: any) {
   //   `currentSeconds: ${currentSeconds}, energySeconds: ${energySeconds}`,
   // );
 
-  // if ((mediumLatitude && mediumLongitude) !== null) {
-  //   const mydistance1 = geolib.getDistance(
-  //     {
-  //       latitude: allCoordinates[0].latitude,
-  //       longitude: allCoordinates[0].longitude,
-  //     },
-  //     {latitude: mediumLatitude, longitude: mediumLongitude},
-  //   );
-  //   setMydistance(mydistance1);
-  //   console.log('mydistance : @@@@@@            &&&:' + mydistance);
-  // }
-
-  // if (!allCoordinates && mediumLatitude !== 0 && mediumLongitude !== 0) {
-  // useEffect(() => {
-  console.log('11111111 mediumLatitude : ', mediumLatitude);
-  console.log('22222222 mediumLongitude : ', mediumLongitude);
-  const [mydistance, setMydistance] = useState<Number | null>(null);
-
-  // useEffect(() => {
-  // if (allCoordinates.length !== 0) {
-  // function workDistance(){
-  // const getMyDistance = () => {
-  // const mydistance1 = useCallback(() => {
-  //   geolibGetDistance(
-  //     {
-  //       latitude: allCoordinates[0].latitude,
-  //       longitude: allCoordinates[0].longitude,
-  //     },
-  //     {latitude: mediumLatitude, longitude: mediumLongitude},
-  //   );
-  console.log('@@@@@@@@@ mediumLatitude : ', mediumLatitude);
-  console.log('@@@@@@@@@ mediumLongitude : ', mediumLongitude);
-  // setMydistance(mydistance1);
-  // return mydistance1;
-  // });
-  // };
-  // useEffect(() => {
-  //   mydistance1();
-  // }, [mediumLatitude, mediumLongitude]);
-  // return getMyDistance;
-  // }
-  // }
-  // }, [allCoordinates, mediumLatitude, mediumLongitude]);
-  // }
-  // const getMyDistance = useCallback(() => {
-  // function getMyDistance() {
-  //   if (allCoordinates.length === 0) {
-  //     console.log('allCoordinates.length === 0');
-  //     return;
-  //   }
-  //   if (allCoordinates.length !== 0) {
-  //     console.log('allCoordinates.length !== 0');
-  //     const point1 = {
-  //       latitude: allCoordinates[0].latitude,
-  //       longitude: allCoordinates[0].longitude,
-  //     };
-  //     console.log('point1: ', point1);
-  //     console.log('point1: ', point1.latitude);
-  //     console.log('point1: ', point1.longitude);
-  //     console.log('point2 typeof: ', typeof point1);
-  //     console.log('point2 typeof: ', typeof allCoordinates[0].latitude);
-
-  //     const point2 = {
-  //       latitude: mediumLatitude,
-  //       longitude: mediumLongitude,
-  //       // latitude: 37.50722714216133,
-  //       // longitude: 127.67020313663637,
-  //     };
-  //     console.log('point2: ', point2);
-  //     console.log('point2 typeof: ', typeof point2);
-  //     console.log('point2 typeof: ', typeof point2.latitude);
-
-  //     // const mydistance1 = geolib.getDistance(point1, point2, 1);
-  //     // setMydistance(mydistance1);
-  //     console.log('@@@@@@@@@ mediumLatitude : ', mediumLatitude);
-  //     console.log('@@@@@@@@@ mediumLongitude : ', mediumLongitude);
-  //     console.log('mydistance : @@@@@@            &&&:' + mydistance);
-  //     console.log('you are ', geolibGetDistance(point1, point2), 'Meter');
-  //     const mds = geolibGetDistance(point1, point2);
-  //     // console.log(
-  //     //   'you are ',
-  //     //   geolibGetDistance(
-  //     //     {
-  //     //       latitude: 37.4068,
-  //     //       longitude: 126.6705,
-  //     //     },
-  //     //     {
-  //     //       latitude: 37.5072,
-  //     //       longitude: 127.6702,
-  //     //     },
-  //     //     1,
-  //     //   ),
-  //     //   'Meter',
-  //     // );
-  //     // return mydistance1;
-  //     return setMydistance(mds);
-  //   } else {
-  //     console.log('allCoordinates.length ??? 0 ');
-  //   }
-  // }
-
-  // function getmydis() {
-  //   // useEffect(() => {
-  //   if (allCoordinates.length > 0) {
-  //     console.log('allCoordinates.length > 0인 상태');
-  //     getMyDistance();
-  //     // setMydistance(mymymym());
-  //     console.log('mydistance: ', mydistance);
-  //     return mydistance;
-  //   }
-  //   // }, [allCoordinates, getMyDistance]);
-  // }
   function captureImage() {
     setTimeout(async () => {
       const imageUri = await viewShotRef.current.capture();
@@ -1284,13 +1172,6 @@ function Main({setIsTabVisible}: any) {
                     }}
                     onPressOut={() => {
                       captureImage();
-
-                      // getmydis();
-                      // setMydistance(getMyDistance());
-                      // setMydistance(mydistance1());
-                      console.log(mydistance);
-
-                      // setMydistance(getMyDistance());
                     }}>
                     <Ionicons
                       name="stop-circle-outline"
@@ -1354,20 +1235,21 @@ function Main({setIsTabVisible}: any) {
                 <Text
                   style={{
                     color: 'orange',
-                    fontSize: 25,
-                    fontFamily: 'ConcertOne-Regular',
-                    fontWeight: 'bold',
+                    fontSize: 22,
+                    fontFamily: 'Binggrae-Bold',
+                    // fontWeight: 'bold',
                     marginLeft: 20,
                     marginRight: 70,
                   }}>
-                  오늘도 열심히 산책해서
+                  오늘도 열심히 산책한 당신
                 </Text>
                 <Text
                   style={{
                     color: 'orange',
-                    fontSize: 25,
-                    fontFamily: 'ConcertOne-Regular',
-                    fontWeight: 'bold',
+                    fontSize: 20,
+                    // fontFamily: 'ConcertOne-Regular',
+                    fontFamily: 'Binggrae-Bold',
+                    // fontWeight: 'bold',
                     marginLeft: 20,
                     marginRight: 70,
                     marginBottom: 10,
@@ -1495,20 +1377,10 @@ function Main({setIsTabVisible}: any) {
               </NaverMapView>
             </ViewShot>
           </View>
-          <View style={{flex: 1}}>
+          <View style={{flex: 1, backgroundColor: 'white'}}>
             {captureCheck ? (
               <TouchableOpacity
-                style={{
-                  backgroundColor: '#8AA2F8',
-                  width: '70%',
-                  height: 50,
-                  zIndex: 1,
-                  alignSelf: 'center',
-                  alignContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 13,
-                  marginTop: '5%',
-                }}
+                style={styles.okBtn}
                 onPressIn={async () => {
                   await getImageAndSendData();
                 }}
@@ -1534,17 +1406,7 @@ function Main({setIsTabVisible}: any) {
                   setAllCoordinates([]);
                   // setCamCoordinates([]); //카메라 마커 배열 초기화
                 }}>
-                <Text
-                  style={{
-                    color: 'white',
-                    textAlign: 'center',
-                    textAlignVertical: 'bottom',
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    height: 35,
-                  }}>
-                  확인
-                </Text>
+                <Text style={styles.okBtnText}>확인</Text>
               </TouchableOpacity>
             ) : null}
           </View>
@@ -1642,12 +1504,19 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   okBtn: {
-    zIndex: 1,
-    borderRadius: 10,
-    alignSelf: 'center',
+    backgroundColor: '#8AA2F8',
     width: '70%',
-  },
-  okTouchBtn: {
+    height: 50,
+    zIndex: 1,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    borderRadius: 13,
     marginTop: HEIGHT * 0.04,
+  },
+  okBtnText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

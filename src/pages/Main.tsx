@@ -30,7 +30,7 @@ import {current} from '@reduxjs/toolkit';
 import haversine from 'haversine';
 import {useCounter, EuseCounter} from '../components/useCounter';
 import Feather from 'react-native-vector-icons/Feather';
-import {launchCamera} from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import ViewShot, {captureRef} from 'react-native-view-shot';
 import RNFS from 'react-native-fs';
 import Config from 'react-native-config';
@@ -282,6 +282,52 @@ function Main({setIsTabVisible}: any) {
     setEnergySeconds(seconds);
     setEnergyMinutes(minutes);
   };
+
+  // 갤러리 선택
+  const onLaunchImageLibrary = useCallback(() => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        maxWidth: 512,
+        maxHeight: 512,
+        includeBase64: Platform.OS === 'android',
+      },
+      res => {
+        if (res.didCancel) {
+          //취소했을 경우
+          setCamCoordinates(prevCoordinates => prevCoordinates.slice(0, -1)); // 마지막 요소를 제거
+          return;
+        }
+        // 갤러리에서 선택한 사진을 처리하는 코드 작성
+        // 예시: setCamCoordinates와 같은 방식으로 사진 URI 설정
+        setCamCoordinates(prevCoordinates =>
+          prevCoordinates.map((coordinate, index) =>
+            index === prevCoordinates.length - 1
+              ? {...coordinate, isLarge: false}
+              : coordinate,
+          ),
+        );
+        setCamCoordinates(prevCoordinates =>
+          prevCoordinates.map((coordinate, index) =>
+            index === prevCoordinates.length - 1
+              ? {...coordinate, uri: res.assets[0].uri}
+              : coordinate,
+          ),
+        );
+        setCamMarkerBtn(false);
+        // // const uri = res.assets[0].uri;
+        // camCoordinates.forEach((coordinate, index) => {
+        //   // const response = res;
+        //   const uri = res.assets[0].uri;
+        //   Object.assign(coordinate, {uri});
+        //   // setCamCoordinates(Object);
+        // });
+        // setCamMarkerBtn(false);
+        // // setCamResponse(res); //이미지 보낼때 이거 쓰면 될거같음
+        // // console.log(`res: ${res.assets[0].uri}`);
+      },
+    );
+  }, []);
 
   // 카메라 촬영
   const onLaunchCamera = useCallback(() => {
@@ -802,6 +848,7 @@ function Main({setIsTabVisible}: any) {
             <TouchableOpacity
               onPress={() => {
                 onLaunchCamera();
+                // onLaunchImageLibrary();
                 setCamMarkerBtn(true);
                 setMarkerListBtn(false);
               }}>

@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     lineHeight: 50,
     textAlign: 'left',
     color: '#000000',
-    marginLeft: '-13%',
+    marginLeft: '-8%',
   },
   imagecontainer: {
     width: '100%',

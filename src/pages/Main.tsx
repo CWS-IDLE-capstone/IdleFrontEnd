@@ -237,7 +237,45 @@ function Main({setIsTabVisible}: any) {
   }, []);
 
   useEffect(() => {
-    const onSavePress = async () => {
+    const gethotplaceCoordinates = async () => {
+      try {
+        const hotplaceCoordinatesString = await AsyncStorage.getItem(
+          'hotplaceCoordinates',
+        );
+        if (hotplaceCoordinatesString !== null) {
+          setHotplaceCoordinates(JSON.parse(hotplaceCoordinatesString)); // 수정된 부분
+        }
+        console.log('getItem Success');
+        console.log(hotplaceCoordinates);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    gethotplaceCoordinates();
+  }, []);
+
+  useEffect(() => {
+    const getdangerCoordinates = async () => {
+      try {
+        const dangerCoordinatesString = await AsyncStorage.getItem(
+          'dangerCoordinates',
+        );
+        if (dangerCoordinatesString !== null) {
+          setDangerCoordinates(JSON.parse(dangerCoordinatesString)); // 수정된 부분
+        }
+        console.log('getItem Success');
+        console.log(dangerCoordinates);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getdangerCoordinates();
+  }, []);
+
+  useEffect(() => {
+    const onSaveCamCoordinates = async () => {
       try {
         await AsyncStorage.setItem(
           'camCoordinates',
@@ -249,8 +287,40 @@ function Main({setIsTabVisible}: any) {
       }
     };
 
-    onSavePress();
+    onSaveCamCoordinates();
   }, [camCoordinates]);
+
+  useEffect(() => {
+    const onSaveHotplaceCoordinates = async () => {
+      try {
+        await AsyncStorage.setItem(
+          'hotplaceCoordinates',
+          JSON.stringify(hotplaceCoordinates),
+        );
+        console.log('hotplaceCoordinates saved successfully');
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    onSaveHotplaceCoordinates();
+  }, [hotplaceCoordinates]);
+
+  useEffect(() => {
+    const onSaveDangerCoordinates = async () => {
+      try {
+        await AsyncStorage.setItem(
+          'dangerCoordinates',
+          JSON.stringify(dangerCoordinates),
+        );
+        console.log('dangerCoordinates saved successfully');
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    onSaveDangerCoordinates();
+  }, [dangerCoordinates]);
 
   const calcDistance = (
     prevLatLng: CoordinateLongitudeLatitude,

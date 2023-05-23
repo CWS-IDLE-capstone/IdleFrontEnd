@@ -29,7 +29,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Material from 'react-native-vector-icons/MaterialIcons';
 import {Picker} from '@react-native-picker/picker';
 
-function MoreInfo() {
+type ScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
+
+function MoreInfo({navigation}: ScreenProps) {
   const [response, setResponse] = useState(null);
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
@@ -115,6 +117,7 @@ function MoreInfo() {
       })
         .then(() => {
           console.log('success');
+          navigation.navigate('Login');
         })
         .catch(error => {
           console.log(error);
@@ -268,6 +271,7 @@ function MoreInfo() {
                     zIndex: 1,
                     top: 0,
                     left: 45,
+                    color: 'black',
                   }}>
                   <Picker.Item
                     label="선택하기"
@@ -312,7 +316,7 @@ function MoreInfo() {
               style={styles.btn1Align}
               activeOpacity={0.5}
               onPress={fetchMoreInfo}>
-              <Text style={styles.btnStyle}>다음 단계로</Text>
+              <Text style={styles.btnStyle}>로그인하기</Text>
             </TouchableOpacity>
           </View>
         </ImageBackground>
@@ -380,7 +384,7 @@ function MoreInfo() {
                     padding: 4,
                   }}
                 />
-                <Text style={{fontWeight: 'bold', padding: 4}}>
+                <Text style={{fontWeight: 'bold', padding: 4, color: 'black'}}>
                   갤러리에서 선택
                 </Text>
               </View>

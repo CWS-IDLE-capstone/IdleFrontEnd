@@ -27,6 +27,7 @@ import CalanderScreen from './src/pages/CalanderScreen';
 import CheckWalkScreen from './src/pages/CheckWalkScreen';
 import Walk from './src/pages/Walk';
 import {RootState} from './src/store/reducer';
+import notification from './src/pages/notification';
 
 export type LoggedInParamList = {
   Community: undefined;
@@ -52,13 +53,15 @@ export type RootStackParamList = {
   EmailSignUp: undefined;
   FinishSignUp: undefined;
   MoreInfo: undefined;
+  MoreInfo1: undefined;
   Setting: undefined;
+  MyPage: undefined;
   MyPage1: undefined;
   NaverLogin: undefined;
-
   Main: undefined;
   Calander: undefined;
   CheckWalkScreen: undefined;
+  notification: undefined;
 };
 
 const Tab = createBottomTabNavigator<LoggedInParamList>();
@@ -85,7 +88,7 @@ function LoggedInStack() {
         options={{
           title: '갤러리',
           tabBarActiveTintColor: '#8AA2F8',
-
+          headerTitleStyle: {opacity: 0.4, fontSize: 18},
           tabBarIcon: ({focused}) => (
             <Image
               source={
@@ -126,6 +129,7 @@ function LoggedInStack() {
         options={{
           title: '산책달력',
           tabBarActiveTintColor: '#8AA2F8',
+          headerShown: false,
           tabBarIcon: ({focused}) => (
             <Image
               source={
@@ -145,6 +149,8 @@ function LoggedInStack() {
         options={{
           title: '마이페이지',
           tabBarActiveTintColor: '#8AA2F8',
+          headerTitle: '마이페이지',
+          headerTitleStyle: {opacity: 0.4, fontSize: 18},
           tabBarIcon: ({focused}) => (
             <Image
               source={
@@ -197,6 +203,22 @@ function AppInner() {
               gestureEnabled: false,
               // headerShown: false, //뒤로가기버튼
             }}
+          />
+          <Stack.Screen name="MyPage1" component={MyPage} />
+          <Stack.Screen
+            name="MoreInfo1"
+            component={MoreInfo}
+            options={{headerTitle: '정보 입력하기'}}
+          />
+          <Stack.Screen
+            name="notification"
+            component={notification}
+            options={{headerTitle: '알림 설정'}}
+          />
+          <Stack.Screen
+            name="Setting"
+            component={Setting}
+            options={{headerTitle: '설정'}}
           />
         </Stack.Navigator>
       ) : (

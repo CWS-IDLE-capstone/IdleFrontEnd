@@ -66,7 +66,6 @@ function MoreInfo({navigation}: ScreenProps) {
       },
     );
   };
-
   // 갤러리에서 사진 선택
   const onLaunchImageLibrary = () => {
     launchImageLibrary(
@@ -82,6 +81,7 @@ function MoreInfo({navigation}: ScreenProps) {
           return;
         }
         setResponse(res);
+        // setResponse(res.assets[0].uri);
         setImg(true);
         setModal(prev => !prev);
         console.log(res.assets[0].uri);
@@ -93,9 +93,9 @@ function MoreInfo({navigation}: ScreenProps) {
     if (dogName === '') {
       return Alert.alert('강아지의 이름을 확인해주세요');
     }
-    if (dogSex === '') {
-      return Alert.alert('강아지의 성별을 클릭해주세요');
-    }
+    // if (dogSex === '') {
+    //   return Alert.alert('강아지의 성별을 클릭해주세요');
+    // }
     if (dogBreed === '') {
       return Alert.alert('강아지의 이름을 확인해주세요');
     }
@@ -109,10 +109,11 @@ function MoreInfo({navigation}: ScreenProps) {
           // 'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: JSON.stringify({
-          dogName,
-          dogAge,
-          dogBreed,
-          dogSex,
+          dogName: dogName,
+          age: dogAge,
+          breed: dogBreed,
+          // dogSex,
+          // imageUrl //프로필이미지
         }),
       })
         .then(() => {
@@ -163,10 +164,10 @@ function MoreInfo({navigation}: ScreenProps) {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView style={styles.header} behavior="position">
         <ImageBackground
-          source={require('../assets/bg1.jpg')}
+          // source={require('../assets/bg1.jpg')}
           style={styles.bgImage}>
           <View style={{marginBottom: 15}}>
-            <Text style={styles.title}>Profile</Text>
+            <Text style={styles.title}>프로필</Text>
           </View>
 
           <TouchableOpacity
@@ -199,7 +200,7 @@ function MoreInfo({navigation}: ScreenProps) {
           <View style={{marginBottom: 70}}>
             <View style={styles.row}>
               <View style={styles.row}>
-                <Text style={styles.login2}>name</Text>
+                <Text style={styles.login2}>이름</Text>
                 <TextInput
                   style={styles.Input}
                   value={dogName}
@@ -207,7 +208,7 @@ function MoreInfo({navigation}: ScreenProps) {
                 />
               </View>
               <View style={styles.row}>
-                <Text style={styles.login2}>sex</Text>
+                <Text style={styles.login2}>성별</Text>
                 {/* <TextInput style={styles.Input} value={dogSex} onChangeText={setDogSex} /> */}
                 <View
                   style={{
@@ -217,10 +218,12 @@ function MoreInfo({navigation}: ScreenProps) {
                     backgroundColor: 'white',
                     width: 75,
                     height: 40,
-                    borderRadius: 77,
+                    borderRadius: 15,
                     marginTop: 5,
                     marginBottom: 5,
                     justifyContent: 'center',
+                    borderColor: '#6A74CF',
+                    borderWidth: 1,
                   }}>
                   <TouchableOpacity
                     style={{
@@ -254,7 +257,7 @@ function MoreInfo({navigation}: ScreenProps) {
             </View>
             <View style={styles.row}>
               <View style={styles.row}>
-                <Text style={styles.login2}>breed</Text>
+                <Text style={styles.login2}>견종</Text>
                 {/* <TextInput style={styles.Input} value={dogBreed} onChangeText={setDogBreed} /> */}
                 <View style={styles.Input}></View>
                 <Picker
@@ -263,7 +266,7 @@ function MoreInfo({navigation}: ScreenProps) {
                     setDogBreed(itemValue)
                   }
                   style={{
-                    width: 140,
+                    width: 160,
                     height: 10,
                     alignSelf: 'center',
                     // backgroundColor: 'yellow',
@@ -274,7 +277,7 @@ function MoreInfo({navigation}: ScreenProps) {
                     color: 'black',
                   }}>
                   <Picker.Item
-                    label="선택하기"
+                    label="Select"
                     value="선택하기"
                     style={{color: 'grey'}}
                   />
@@ -289,7 +292,7 @@ function MoreInfo({navigation}: ScreenProps) {
                 </Picker>
               </View>
               <View style={styles.row}>
-                <Text style={styles.login2}>age</Text>
+                <Text style={styles.login2}>나이</Text>
                 <TextInput
                   style={{
                     flexDirection: 'row',
@@ -298,10 +301,12 @@ function MoreInfo({navigation}: ScreenProps) {
                     backgroundColor: 'white',
                     width: 75,
                     height: 40,
-                    borderRadius: 77,
+                    borderRadius: 15,
                     marginTop: 5,
                     marginBottom: 5,
                     justifyContent: 'center',
+                    borderColor: '#6A74CF',
+                    borderWidth: 1,
                   }}
                   keyboardType="number-pad"
                   value={dogAge}
@@ -316,7 +321,7 @@ function MoreInfo({navigation}: ScreenProps) {
               style={styles.btn1Align}
               activeOpacity={0.5}
               onPress={fetchMoreInfo}>
-              <Text style={styles.btnStyle}>로그인하기</Text>
+              <Text style={styles.btnStyle}>확인</Text>
             </TouchableOpacity>
           </View>
         </ImageBackground>
@@ -400,7 +405,7 @@ const {width: WIDTH} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   row: {flexDirection: 'row', marginTop: 5, justifyContent: 'space-evenly'},
-  header: {flex: 1},
+  header: {flex: 1, backgroundColor: '#d6E3F3'},
   bgImage: {width: '100%', height: '100%'},
 
   btn1Align: {
@@ -409,26 +414,28 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   btnStyle: {
-    backgroundColor: '#6A74CF',
+    backgroundColor: '#8AA2F8',
     width: WIDTH * 0.7,
-
-    height: 40,
+    fontFamily: 'Binggrae-Bold',
+    height: 50,
     color: 'white',
     textAlign: 'center',
     textAlignVertical: 'center',
-    borderRadius: 77,
+    borderRadius: 15,
   },
   title: {
     marginTop: 20,
     fontSize: 30,
-    color: 'white',
+    color: 'black',
     alignSelf: 'center',
+    fontFamily: 'Binggrae-Bold',
   },
   login2: {
     fontSize: 18,
-    color: 'white',
+    color: '#6A74CF',
     alignSelf: 'center',
     marginRight: 10,
+    fontFamily: 'Binggrae-Bold',
   },
   image: {
     width: '98%',
@@ -447,7 +454,9 @@ const styles = StyleSheet.create({
     color: 'black',
     textAlign: 'left',
     textAlignVertical: 'center',
-    borderRadius: 77,
+    borderRadius: 15,
+    borderColor: '#6A74CF',
+    borderWidth: 1,
   },
 });
 

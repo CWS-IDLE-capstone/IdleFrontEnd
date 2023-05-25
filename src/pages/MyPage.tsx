@@ -167,7 +167,7 @@ function MyPage({navigation}: ScreenProps) {
           </View>
           <View style={styles.editUserPetView}>
             <TouchableOpacity style={styles.editPetBtn} onPress={onEditPet}>
-              <Text style={styles.editText}> eidt </Text>
+              <Text style={styles.editText}> edit </Text>
               <Image
                 source={require('../assets/editBtn.png')}
                 style={styles.editImg}></Image>

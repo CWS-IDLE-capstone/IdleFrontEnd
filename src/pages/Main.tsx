@@ -992,7 +992,8 @@ function Main({setIsTabVisible}: any) {
                   <Feather
                     name="pause-circle"
                     style={{
-                      fontSize: 70,
+                      marginTop: 17,
+                      fontSize: 85,
                       top: 8,
                       color: '#8AA2F8',
                     }}
@@ -1133,8 +1134,8 @@ function Main({setIsTabVisible}: any) {
                   style={{
                     width: 100,
                     alignItems: 'center',
-                    borderLeftWidth: 2,
-                    borderRightWidth: 2,
+                    borderLeftWidth: 0,
+                    borderRightWidth: 0,
                     borderColor: 'rgba(0, 0, 0, 0.3)',
                   }}>
                   <TouchableOpacity
@@ -1173,14 +1174,14 @@ function Main({setIsTabVisible}: any) {
                     onPressOut={() => {
                       captureImage();
                     }}>
-                    <Ionicons
+                    {/* <Ionicons
                       name="stop-circle-outline"
                       style={{
                         fontSize: 50,
                         // top: 8,
-                        color: '#8AA2F8',
+                        color: '#FFFFFF',
                       }}
-                    />
+                    /> */}
                   </TouchableOpacity>
                 </View>
               </TouchableWithoutFeedback>

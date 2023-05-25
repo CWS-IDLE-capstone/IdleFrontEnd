@@ -12,6 +12,8 @@ import React, {useCallback, useEffect, useState} from 'react';
 // import {useUserContext} from '../components/UserContext';
 import {useNavigation} from '@react-navigation/native';
 import IconRightButton from '../components/IconRightButton';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import DaonBtn from '../components/daonBtn';
 import {useAppDispatch} from '../store';
 import userSlice from '../slices/user';
@@ -126,10 +128,10 @@ function MyPage({navigation}: ScreenProps) {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <IconRightButton
-          name="gear"
-          size={35}
-          color={'black'}
+        <Ionicons
+          name="settings-outline"
+          size={30}
+          color={'gray'}
           onPress={() => navigation.navigate('Setting')}
         />
       ),

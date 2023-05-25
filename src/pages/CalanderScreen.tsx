@@ -136,7 +136,7 @@ const CalanderScreen = () => {
           navigation.navigate('CheckWalkScreen', {walkData: item})
         }>
         <Text style={styles.eventText}>
-          {item.startTime.slice(11, 16)} am /{'  '}
+          {item.startTime.slice(11, 16)} /{' '}
           {Math.floor(
             (new Date(item.finishTime) - new Date(item.startTime)) /
               (1000 * 60),

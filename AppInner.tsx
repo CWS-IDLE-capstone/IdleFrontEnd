@@ -86,7 +86,7 @@ function LoggedInStack() {
         options={{
           title: '갤러리',
           tabBarActiveTintColor: '#8AA2F8',
-
+          headerTitleStyle: {opacity: 0.4, fontSize: 18},
           tabBarIcon: ({focused}) => (
             <Image
               source={
@@ -127,6 +127,7 @@ function LoggedInStack() {
         options={{
           title: '산책달력',
           tabBarActiveTintColor: '#8AA2F8',
+          headerShown: false,
           tabBarIcon: ({focused}) => (
             <Image
               source={
@@ -146,6 +147,8 @@ function LoggedInStack() {
         options={{
           title: '마이페이지',
           tabBarActiveTintColor: '#8AA2F8',
+          headerTitle: '마이페이지',
+          headerTitleStyle: {opacity: 0.4, fontSize: 18},
           tabBarIcon: ({focused}) => (
             <Image
               source={
@@ -201,6 +204,11 @@ function AppInner() {
           />
           <Stack.Screen name="MyPage1" component={MyPage} />
           <Stack.Screen name="MoreInfo1" component={MoreInfo} />
+          <Stack.Screen
+            name="Setting"
+            component={Setting}
+            options={{headerTitle: '설정'}}
+          />
         </Stack.Navigator>
       ) : (
         <Stack.Navigator

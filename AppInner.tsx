@@ -52,10 +52,11 @@ export type RootStackParamList = {
   EmailSignUp: undefined;
   FinishSignUp: undefined;
   MoreInfo: undefined;
+  MoreInfo1: undefined;
   Setting: undefined;
+  MyPage: undefined;
   MyPage1: undefined;
   NaverLogin: undefined;
-
   Main: undefined;
   Calander: undefined;
   CheckWalkScreen: undefined;
@@ -198,6 +199,8 @@ function AppInner() {
               // headerShown: false, //뒤로가기버튼
             }}
           />
+          <Stack.Screen name="MyPage1" component={MyPage} />
+          <Stack.Screen name="MoreInfo1" component={MoreInfo} />
         </Stack.Navigator>
       ) : (
         <Stack.Navigator

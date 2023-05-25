@@ -184,10 +184,10 @@ function MyPage({navigation}: ScreenProps) {
             width: '60%',
             height: 80,
             alignItems: 'center',
-            alignSelf: 'center',
-            top: HEIGHT / 3,
-            // left: windowWidth / 4,
+            top: HEIGHT / 5.4,
+            marginLeft: 10,
             borderRadius: 5,
+            borderWidth: 0.5,
           }}>
           <TouchableOpacity
             style={{flexDirection: 'row'}}
@@ -202,6 +202,7 @@ function MyPage({navigation}: ScreenProps) {
                 alignItems: 'center',
                 borderRadius: 5,
                 borderBottomColor: 'grey',
+                // borderWidth: 0.5,
                 borderBottomWidth: 0.5,
               }}>
               {/* <Material
@@ -211,7 +212,7 @@ function MyPage({navigation}: ScreenProps) {
                   padding: 4,
                 }}
               /> */}
-              <Text style={{fontWeight: 'bold', padding: 4}}>
+              <Text style={{fontWeight: 'bold', padding: 4, color: 'black'}}>
                 카메라로 촬영하기
               </Text>
             </View>
@@ -230,6 +231,8 @@ function MyPage({navigation}: ScreenProps) {
                 alignItems: 'center',
                 borderRadius: 5,
                 borderBottomColor: 'grey',
+                // borderLeftWidth: 0.5,
+                // borderRightWidth: 0.5,
                 borderBottomWidth: 0.5,
               }}>
               {/* <Material

@@ -39,3 +39,5 @@ messaging()
     console.log('test 토픽 구독 실패:', error);
   });
 AppRegistry.registerComponent(appName, () => App);
+
+console.disableYellowBox = true;

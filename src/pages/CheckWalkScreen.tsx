@@ -113,6 +113,9 @@ const CheckWalkScreen: React.FC<Props> = ({route}) => {
   const paceMin = Math.floor(pace / 60);
   const paceSec = Math.floor(pace % 60);
 
+  // 누적 산책기록 관련 변수들
+
+  //
   const scrollViewRef = useRef(null);
   const navigation = useNavigation();
 
@@ -189,7 +192,7 @@ const CheckWalkScreen: React.FC<Props> = ({route}) => {
           <View style={styles.EnergeContainer1}>
             {/* <Text style={styles.energeLow2_1}>{`${E_durationMin}`}분</Text> */}
             <Text style={styles.energeLow2_1}>
-              {isNaN(E_durationMin) ? ' *^^*' : ` ${E_durationMin}분`}
+              {isNaN(E_durationMin) ? 'wow!' : ` ${E_durationMin}분`}
             </Text>
             <Text style={styles.energeLow2_2}>
               {isNaN(E_durationSec)
@@ -207,10 +210,17 @@ const CheckWalkScreen: React.FC<Props> = ({route}) => {
         </View>
 
         <View style={styles.thirdcontainer}>
-          <Text style={styles.month1}>이번달 산책기록!</Text>
-          <Text style={styles.month2}>산책 횟수: 16회</Text>
-          <Text style={styles.month2}>평균 산책 시간: 30분</Text>
-          <Text style={styles.month2}>평균 산책 거리: 2.7km </Text>
+          <Text style={styles.month1}>최종 산책기록!</Text>
+          <Text style={styles.month2}>산책 거리: {`${distance}`} km</Text>
+          <Text style={styles.month2}>
+            산책 시간: {`${durationMin}`}분 {`${durationSec}`}초
+          </Text>
+          <Text style={styles.month3}>
+            {`${startTime}`} - {`${finishTime}`}
+          </Text>
+          <Text style={styles.month2}>
+            페이스: {`${paceMin}`}' {`${paceSec}`}''{''}
+          </Text>
           <View style={styles.button_container}>
             <TouchableOpacity
               style={styles.button2}
@@ -342,7 +352,7 @@ const styles = StyleSheet.create({
   },
   distance1: {
     fontSize: 50,
-    width: 180,
+    width: 200,
     height: 55,
     lineHeight: 50,
     fontFamily: 'Blinker-Bold',
@@ -436,7 +446,7 @@ const styles = StyleSheet.create({
   },
   EnergeContainer1: {flexDirection: 'row'},
   energeLow2_1: {
-    fontSize: 50,
+    fontSize: 45,
     width: 140,
     height: 55,
     lineHeight: 50,
@@ -491,8 +501,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Blinker-Bold',
     fontWeight: '400',
     textAlign: 'left',
-    color: '#8AA2F8',
-    marginLeft: 30,
+    color: '#8AA888',
+    marginLeft: 35,
   },
   month2: {
     fontSize: 28,
@@ -502,7 +512,18 @@ const styles = StyleSheet.create({
     fontFamily: 'Blinker-SemiBold',
     fontWeight: '900',
     textAlign: 'left',
-    color: '#8AA2F8',
+    color: '#8AA888',
+    marginLeft: 40,
+  },
+  month3: {
+    fontSize: 28,
+    width: 400,
+    height: 30,
+    lineHeight: 30,
+    fontFamily: 'Blinker-SemiBold',
+    fontWeight: '900',
+    textAlign: 'left',
+    color: '#8AA888',
     marginLeft: 40,
   },
   button2: {

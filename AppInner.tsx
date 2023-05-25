@@ -27,6 +27,7 @@ import CalanderScreen from './src/pages/CalanderScreen';
 import CheckWalkScreen from './src/pages/CheckWalkScreen';
 import Walk from './src/pages/Walk';
 import {RootState} from './src/store/reducer';
+import notification from './src/pages/notification';
 
 export type LoggedInParamList = {
   Community: undefined;
@@ -60,6 +61,7 @@ export type RootStackParamList = {
   Main: undefined;
   Calander: undefined;
   CheckWalkScreen: undefined;
+  notification: undefined;
 };
 
 const Tab = createBottomTabNavigator<LoggedInParamList>();
@@ -204,6 +206,11 @@ function AppInner() {
           />
           <Stack.Screen name="MyPage1" component={MyPage} />
           <Stack.Screen name="MoreInfo1" component={MoreInfo} />
+          <Stack.Screen
+            name="notification"
+            component={notification}
+            options={{headerTitle: '알림 설정'}}
+          />
           <Stack.Screen
             name="Setting"
             component={Setting}

@@ -205,7 +205,11 @@ function AppInner() {
             }}
           />
           <Stack.Screen name="MyPage1" component={MyPage} />
-          <Stack.Screen name="MoreInfo1" component={MoreInfo} />
+          <Stack.Screen
+            name="MoreInfo1"
+            component={MoreInfo}
+            options={{headerTitle: '정보 입력하기'}}
+          />
           <Stack.Screen
             name="notification"
             component={notification}
